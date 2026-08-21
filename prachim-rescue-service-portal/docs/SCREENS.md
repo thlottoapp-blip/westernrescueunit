@@ -1,0 +1,14 @@
+# Exhaustive Screen Matrix (SCREENS.md)
+## หน่วยกู้ภัยประจิม (สมาคมประจิมสารคาม พุทธศาสตร์สงเคราะห์)
+
+---
+
+### Matrix of Screens and Views
+
+| No | Route / View | Target Audience | Core Purpose | UI Elements & Structure | Key Actions |
+|---|---|---|---|---|---|
+| 1 | `/` (Main Portal) | ประชาชนทั่วไป / ชุมชน | หน้าหลักแสดงข้อมูลองค์กร, สไลเดอร์ภารกิจ, บริการ EMS, ผลงานเด่น, เกณฑ์ค่าบริการ, จุดบริการเครือข่าย | - Top Emergency Bar (092-925-3839 / 1669)<br>- Hero Slider (4 High-Impact Slides with Auto-play & Controls)<br>- Quick Services Strip (6 Badges)<br>- Specialized Departments Grid (EMS, Scuba, Disaster, Forensics)<br>- Organization Heritage & พ่อปู่จูมคำ Section<br>- 4-Step Rescue Response Process<br>- Service Fee Transparency Policy Card<br>- Hall of Fame / Major Operations Highlights<br>- Testimonials / Community Feedback<br>- Emergency Quick Dial CTA Bottom Bar | โทรแจ้งเหตุ 24 ชม., เปิดแบบฟอร์มแจ้งเหตุฉุกเฉิน, สลับสไลด์, กรองผลงานตามหมวดหมู่, ลิงก์ไปยังหน้าแอดมิน |
+| 2 | `/emergency-report` (Modal / View) | ผู้ประสบเหตุ / ประชาชน | แบบฟอร์มแจ้งเหตุด่วนฉุกเฉินออนไลน์แบบเรียลไทม์ | - Emergency Type Selector (Accident, Snake/Animal, Water Search, Bedridden Transport, Fire/Flood)<br>- Caller Name & Phone Input<br>- Incident Location & GPS Auto-detection<br>- Urgency Level Rating<br>- Victim Count & Condition Details<br>- Image Upload / Reference Attachment | ส่งเรื่องแจ้งเหตุเข้าศูนย์สั่งการทันที, คัดลอกพิกัด, รับ Incident Tracking Code |
+| 3 | `/missions` (Missions & Operations) | ประชาชน / สื่อมวลชน | คลังประวัติและรายงานผลการปฏิบัติงานฉุกเฉินและภารกิจพิเศษ | - Category Filter Tabs (ทั้งหมด, EMS & อุบัติเหตุ, ประดาน้ำกู้ภัย, สัตว์มีพิษ/สาธารณภัย, ช่วยเหลือผู้ยากไร้)<br>- Mission Cards with Badges, Date, Location, Team Assigned, Status<br>- Search bar by keyword or location (เช่น บรบือ, แม่น้ำชี)<br>- Mission Detail Modal | ค้นหาภารกิจ, อ่านรายงานฉบับเต็ม, แชร์ข้อมูล |
+| 4 | `/services` (Service Guidelines & Fee Policy) | ประชาชนทั่วไป | แจกแจงรายละเอียดและเกณฑ์ค่าบริการอย่างโปร่งใส | - EMS Free Service Policy Card<br>- Snake & Disaster Relief Policy Card<br>- Long-Distance Transport (Fuel Cost Only) Policy Card<br>- Tow Truck Network Pricing Notice<br>- Equipment & Ambulance Capability Specs | อ่านข้อกำหนด, ดาวน์โหลดเอกสารคำขอ, ติดต่อประสานงาน |
+| 5 | `/admin` (Management & Dispatch Portal) | เจ้าหน้าที่ / ผู้ดูแลระบบ | แผงควบคุมระบบสั่งการ, จัดการข่าวสาร, ภารกิจ, หมวดหมู่, และตั้งค่าระบบ | - Secure Password Protection Gate<br>- Emergency Incident Dispatch Queue (Live Status Changer: Pending -> En Route -> Arrived -> Completed)<br>- Mission Logs Manager (CRUD)<br>- News & Announcements Manager (CRUD)<br>- Category Manager (CRUD)<br>- Fleet & Rescue Equipment Tracker (Ambulance, Scuba Sets, Cutters)<br>- Personnel / Volunteer Registry<br>- Security & System Settings | ล็อกอิน/ออกจากระบบ, จัดการข้อมูลทุกโมดูล, เปลี่ยนสถานะรับแจ้งเหตุ, เปลี่ยนรหัสผ่านแอดมิน |

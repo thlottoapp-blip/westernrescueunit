@@ -1,0 +1,123 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-prompt: var(--font-prompt), 'Prompt', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  *, *::before, *::after {
+    font-family: var(--font-prompt) !important;
+  }
+
+  html, body {
+    font-family: var(--font-prompt) !important;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    word-break: normal;
+  }
+
+  h1, h2, h3, h4, h5, h6, p, span, a, button, input, select, textarea, label, table, th, td, badge {
+    font-family: var(--font-prompt) !important;
+  }
+}
+
+.font-prompt {
+  font-family: var(--font-prompt) !important;
+}
+
+.font-sarabun {
+  font-family: var(--font-prompt) !important;
+}
+
+/* Text Wrapping & No-Line-Break Safety Rules */
+.badge-nowrap, .pill-nowrap, .btn-nowrap, button, a.btn, .nav-item, .stat-badge {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+}
+
+/* Prevent numbers, phone numbers and codes from breaking mid-sequence */
+.tabular-nums, .phone-number, .hotline-text {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+}
+
+/* Standardized Icon & Button Ratios */
+.icon-box-sm {
+  width: 2rem;
+  height: 2rem;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+}
+
+.icon-box-md {
+  width: 2.5rem;
+  height: 2.5rem;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+}
+
+.icon-box-lg {
+  width: 3rem;
+  height: 3rem;
+  aspect-ratio: 1 / 1;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+}
+
+/* Uniform Rounded Action Buttons */
+.btn-primary-rounded {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  border-radius: 9999px;
+  font-weight: 700;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #dc2626;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(220, 38, 38, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(220, 38, 38, 0.8);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+

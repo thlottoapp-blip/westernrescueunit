@@ -1,0 +1,6 @@
+{
+  "name": "Prachim Rescue Service Portal",
+  "description": "Official portal and management platform for Prachim Rescue Association (สมาคมประจิมสารคาม พุทธศาสตร์สงเคราะห์) with 24/7 EMS dispatch, special operations, emergency reporting, and admin CMS.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
