@@ -199,9 +199,10 @@ export function AdminPortalView({
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(categories[0]?.id || null);
   const [selectedSlideId, setSelectedSlideId] = useState<string | null>(heroSlides[0]?.id || null);
 
-  // Search and Sub-filters
+  // Search, Sub-filters and In-Platform Navigation Mode
   const [searchTerm, setSearchTerm] = useState('');
   const [incidentFilter, setIncidentFilter] = useState<'all' | 'pending' | 'dispatched' | 'en_route' | 'on_scene' | 'resolved'>('all');
+  const [inPlatformNavMode, setInPlatformNavMode] = useState<'satellite' | 'directions'>('satellite');
 
   // Mobile Views
   const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
@@ -1528,58 +1529,81 @@ export function AdminPortalView({
                             </div>
                           </div>
 
-                          <a
-                            href={`https://www.google.com/maps/dir/?api=1&destination=${selectedIncident.latitude || 16.0375},${selectedIncident.longitude || 103.1186}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition-colors cursor-pointer min-h-[38px] shrink-0"
-                          >
-                            <Navigation className="w-4 h-4" />
-                            <span>เปิด Google Maps นำทางสด</span>
-                          </a>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => setInPlatformNavMode(inPlatformNavMode === 'directions' ? 'satellite' : 'directions')}
+                              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white text-xs font-bold shadow-sm transition-all cursor-pointer min-h-[38px]"
+                            >
+                              <Navigation className="w-4 h-4 text-amber-400" />
+                              <span>
+                                {inPlatformNavMode === 'directions'
+                                  ? '🛰️ สลับเป็น: ภาพดาวเทียมพิกัดสด'
+                                  : '🗺️ เปิดเส้นทางนำทางฉุกเฉิน (In-Platform)'}
+                              </span>
+                            </button>
+                          </div>
                         </div>
                       </div>
                     );
                   })()}
 
-                  <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
+                  <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
                     <div>
-                      <span className="text-[10px] text-slate-400 block font-sans">พิกัดเกิดเหตุ (Lat)</span>
-                      <span className="font-bold text-slate-800 dark:text-slate-200">{selectedIncident.latitude ? selectedIncident.latitude.toFixed(6) : '16.037500'}</span>
+                      <span className="text-[10px] text-slate-700 dark:text-slate-300 font-sans font-bold block">พิกัดเกิดเหตุ (Lat)</span>
+                      <span className="font-bold text-slate-950 dark:text-slate-100">{selectedIncident.latitude ? selectedIncident.latitude.toFixed(6) : '16.037500'}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 block font-sans">พิกัดเกิดเหตุ (Lng)</span>
-                      <span className="font-bold text-slate-800 dark:text-slate-200">{selectedIncident.longitude ? selectedIncident.longitude.toFixed(6) : '103.118600'}</span>
+                      <span className="text-[10px] text-slate-700 dark:text-slate-300 font-sans font-bold block">พิกัดเกิดเหตุ (Lng)</span>
+                      <span className="font-bold text-slate-950 dark:text-slate-100">{selectedIncident.longitude ? selectedIncident.longitude.toFixed(6) : '103.118600'}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 block font-sans">พิกัดเครื่องผู้แจ้ง (Lat)</span>
-                      <span className="font-bold text-blue-700 dark:text-amber-400">
+                      <span className="text-[10px] text-blue-900 dark:text-amber-300 font-sans font-bold block">พิกัดเครื่องผู้แจ้ง (Lat)</span>
+                      <span className="font-bold text-blue-900 dark:text-amber-400">
                         {selectedIncident.caller_latitude ? selectedIncident.caller_latitude.toFixed(6) : (selectedIncident.latitude ? selectedIncident.latitude.toFixed(6) : '16.037500')}
                       </span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 block font-sans">พิกัดเครื่องผู้แจ้ง (Lng)</span>
-                      <span className="font-bold text-blue-700 dark:text-amber-400">
+                      <span className="text-[10px] text-blue-900 dark:text-amber-300 font-sans font-bold block">พิกัดเครื่องผู้แจ้ง (Lng)</span>
+                      <span className="font-bold text-blue-900 dark:text-amber-400">
                         {selectedIncident.caller_longitude ? selectedIncident.caller_longitude.toFixed(6) : (selectedIncident.longitude ? selectedIncident.longitude.toFixed(6) : '103.118600')}
                       </span>
                     </div>
                   </div>
 
-                  {/* Interactive Satellite Map View of the Exact Incident Pinpoint */}
-                  <div className="rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-700 shadow-md relative h-64 sm:h-80 w-full bg-slate-950 mt-3">
-                    <iframe
-                      title="ภาพถ่ายดาวเทียมจุดเกิดเหตุ"
-                      width="100%"
-                      height="100%"
-                      className="border-0 w-full h-full"
-                      loading="lazy"
-                      allowFullScreen
-                      referrerPolicy="no-referrer-when-downgrade"
-                      src={`https://maps.google.com/maps?q=${selectedIncident.latitude || 16.0375},${selectedIncident.longitude || 103.1186}&t=k&z=17&ie=UTF8&iwloc=&output=embed`}
-                    />
-                    <div className="absolute top-3 left-3 bg-black/80 backdrop-blur-md text-amber-300 px-3 py-1.5 rounded-full text-xs font-mono font-bold flex items-center gap-2 border border-amber-400/50 shadow-md pointer-events-none">
-                      <span className="w-2 h-2 rounded-full bg-red-500 animate-ping shrink-0" />
-                      <span>🛰️ แผนที่ภาพถ่ายดาวเทียมหมุดจุดเกิดเหตุจริง (Verified Live Satellite Pinpoint)</span>
+                  {/* Embedded In-Platform Interactive Satellite & Navigation Map */}
+                  <div className="rounded-2xl overflow-hidden border-2 border-slate-400 dark:border-slate-700 shadow-xl relative h-72 sm:h-96 w-full bg-slate-950 mt-3">
+                    {inPlatformNavMode === 'directions' ? (
+                      <iframe
+                        title="เส้นทางนำทางกู้ชีพฉุกเฉินภายในแพลตฟอร์ม"
+                        width="100%"
+                        height="100%"
+                        className="border-0 w-full h-full"
+                        loading="lazy"
+                        allowFullScreen
+                        referrerPolicy="no-referrer-when-downgrade"
+                        src={`https://maps.google.com/maps?saddr=16.0372,103.1189&daddr=${selectedIncident.latitude || 16.0375},${selectedIncident.longitude || 103.1186}&t=k&z=15&ie=UTF8&output=embed`}
+                      />
+                    ) : (
+                      <iframe
+                        title="ภาพถ่ายดาวเทียมจุดเกิดเหตุภายในแพลตฟอร์ม"
+                        width="100%"
+                        height="100%"
+                        className="border-0 w-full h-full"
+                        loading="lazy"
+                        allowFullScreen
+                        referrerPolicy="no-referrer-when-downgrade"
+                        src={`https://maps.google.com/maps?q=${selectedIncident.latitude || 16.0375},${selectedIncident.longitude || 103.1186}&t=k&z=17&ie=UTF8&iwloc=&output=embed`}
+                      />
+                    )}
+
+                    <div className="absolute top-3 left-3 bg-black/85 backdrop-blur-md text-amber-300 px-3.5 py-1.5 rounded-full text-xs font-mono font-bold flex items-center gap-2 border border-amber-400/60 shadow-lg pointer-events-none">
+                      <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping shrink-0" />
+                      <span>
+                        {inPlatformNavMode === 'directions'
+                          ? '🗺️ แผนที่นำทางเส้นทางฉุกเฉินสดในแพลตฟอร์ม (In-Platform Live Navigation)'
+                          : '🛰️ แผนที่หมุดดาวเทียมภาพถ่ายจุดเกิดเหตุสด (In-Platform Satellite Pinpoint)'}
+                      </span>
                     </div>
                   </div>
                 </div>
