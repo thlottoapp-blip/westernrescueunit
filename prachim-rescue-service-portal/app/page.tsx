@@ -334,6 +334,51 @@ export default function HomePage() {
         onOpenAdminModal={handleOpenAdminPage}
         onNavigateSection={handleNavigateSection}
       />
+
+      {/* 15. Native App Bottom Dock Navigation Bar (Mobile Only) */}
+      <div className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-[#070e1e]/95 backdrop-blur-lg border-t border-blue-900/80 p-2 pb-safe flex items-center justify-around text-slate-300 shadow-2xl">
+        <button
+          onClick={() => handleNavigateSection('home')}
+          className={`flex flex-col items-center justify-center p-1 rounded-xl text-[10px] font-prompt transition-colors ${
+            activeNavTab === 'home' ? 'text-amber-400 font-bold' : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          <span className="text-base">🏠</span>
+          <span>หน้าหลัก</span>
+        </button>
+
+        <button
+          onClick={handleOpenReportPage}
+          className="flex flex-col items-center justify-center p-1 rounded-xl text-[10px] font-prompt text-red-400 font-bold animate-pulse"
+        >
+          <span className="text-base">🚨</span>
+          <span>แจ้งเหตุ</span>
+        </button>
+
+        <a
+          href={`tel:${siteConfig?.hotline_primary?.replace(/-/g, '') || '0611193342'}`}
+          className="flex flex-col items-center justify-center p-2.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold -mt-5 shadow-lg border-2 border-slate-900 active:scale-95 transition-transform"
+          title="โทรด่วน 24 ชม."
+        >
+          <span className="text-lg">📞</span>
+        </a>
+
+        <button
+          onClick={handleOpenNewsPage}
+          className="flex flex-col items-center justify-center p-1 rounded-xl text-[10px] font-prompt text-slate-400 hover:text-white"
+        >
+          <span className="text-base">📰</span>
+          <span>ข่าวสาร</span>
+        </button>
+
+        <button
+          onClick={handleOpenAdminPage}
+          className="flex flex-col items-center justify-center p-1 rounded-xl text-[10px] font-prompt text-slate-400 hover:text-white"
+        >
+          <span className="text-base">🔒</span>
+          <span>แอดมิน</span>
+        </button>
+      </div>
     </div>
   );
 }

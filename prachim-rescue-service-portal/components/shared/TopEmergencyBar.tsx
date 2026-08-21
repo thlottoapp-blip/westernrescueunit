@@ -13,7 +13,7 @@ export function TopEmergencyBar({
   onOpenAdminModal,
 }: TopEmergencyBarProps) {
   return (
-    <div className="bg-gradient-to-r from-[#0f2452] via-[#16377e] to-[#0f2452] text-white text-xs sm:text-sm font-medium border-b border-amber-500/40 shadow-md select-none">
+    <div className="hidden md:block bg-gradient-to-r from-[#0f2452] via-[#16377e] to-[#0f2452] text-white text-xs sm:text-sm font-medium border-b border-amber-500/40 shadow-md select-none">
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-2 flex flex-col md:flex-row items-center justify-between gap-2.5">
         {/* Left: Emergency Status & 24/7 Notice */}
         <div className="flex items-center gap-2.5 sm:gap-3 flex-nowrap overflow-x-auto w-full md:w-auto justify-center md:justify-start scrollbar-none">
