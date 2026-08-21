@@ -17,6 +17,11 @@
     word-break: normal;
   }
 
+  h1, h2, h3, h4, h5, h6 {
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
   h1, h2, h3, h4, h5, h6, p, span, a, button, input, select, textarea, label, table, th, td, badge {
     font-family: var(--font-prompt) !important;
   }
@@ -30,14 +35,20 @@
   font-family: var(--font-prompt) !important;
 }
 
-/* Text Wrapping & No-Line-Break Safety Rules */
-.badge-nowrap, .pill-nowrap, .btn-nowrap, button, a.btn, .nav-item, .stat-badge {
+/* Text Wrapping & Strict No-Line-Break Rules across Entire Project */
+.badge-nowrap, .pill-nowrap, .btn-nowrap, button, a.btn, .nav-item, .stat-badge, .badge, [role="button"] {
   white-space: nowrap !important;
   word-break: keep-all !important;
+  flex-shrink: 0;
+}
+
+/* Prevent names, titles, and codes from wrapping awkwardly */
+.title-keep-all, h1, h2, h3, h4 {
+  word-break: keep-all;
 }
 
 /* Prevent numbers, phone numbers and codes from breaking mid-sequence */
-.tabular-nums, .phone-number, .hotline-text {
+.tabular-nums, .phone-number, .hotline-text, .font-mono {
   font-variant-numeric: tabular-nums;
   white-space: nowrap !important;
   word-break: keep-all !important;
