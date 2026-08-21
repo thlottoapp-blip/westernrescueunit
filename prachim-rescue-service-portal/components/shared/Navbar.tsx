@@ -147,10 +147,10 @@ export function Navbar({
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20 gap-3">
+        <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4">
           {/* Logo and Org Name */}
           <div
-            className="flex items-center gap-3 sm:gap-4 cursor-pointer group shrink min-w-0"
+            className="flex items-center gap-2.5 sm:gap-3.5 cursor-pointer group shrink-0"
             onClick={() => handleNavClick('home')}
           >
             {/* Official Rescue Logo Badge */}
@@ -160,26 +160,26 @@ export function Navbar({
             </div>
 
             {/* Typography */}
-            <div className="flex flex-col min-w-0 justify-center">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-base sm:text-xl md:text-2xl font-black tracking-tight text-slate-900 font-prompt leading-tight group-hover:text-blue-900 transition-colors whitespace-nowrap">
+            <div className="flex flex-col justify-center shrink-0">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="text-base sm:text-lg md:text-xl xl:text-2xl font-black tracking-tight text-slate-900 font-prompt leading-none group-hover:text-blue-900 transition-colors whitespace-nowrap">
                   หน่วยกู้ภัยประจิม
                 </span>
-                <span className="inline-block bg-amber-400 text-slate-950 text-[10px] sm:text-[11px] font-black uppercase tracking-wide px-2.5 py-0.5 rounded-md border border-amber-500 font-prompt whitespace-nowrap shrink-0 shadow-xs">
+                <span className="inline-block bg-amber-400 text-slate-950 text-[10px] sm:text-[11px] font-black uppercase tracking-wide px-2 py-0.5 rounded-md border border-amber-500 font-prompt whitespace-nowrap shrink-0 shadow-xs">
                   สมาคมประจิมสารคาม
                 </span>
               </div>
-              <span className="text-xs text-slate-600 font-sarabun hidden sm:block font-medium truncate max-w-[260px] md:max-w-md lg:max-w-none mt-0.5">
+              <span className="text-[11px] sm:text-xs text-slate-600 font-sarabun hidden sm:block font-medium whitespace-nowrap mt-1">
                 สมาคมประจิมสารคาม พุทธศาสตร์สงเคราะห์ • อ.บรบือ จ.มหาสารคาม
               </span>
-              <span className="text-[10px] text-slate-500 font-sarabun block sm:hidden font-medium leading-tight truncate max-w-[170px] xs:max-w-[220px] mt-0.5">
+              <span className="text-[10px] text-slate-500 font-sarabun block sm:hidden font-medium leading-tight whitespace-nowrap mt-0.5">
                 พุทธศาสตร์สงเคราะห์ • บรบือ
               </span>
             </div>
           </div>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden xl:flex items-center space-x-1.5">
+          <nav className="hidden 2xl:flex items-center space-x-1 shrink-0">
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isActive = activeTab === link.id;
@@ -188,13 +188,13 @@ export function Navbar({
                   key={link.id}
                   id={`nav-link-${link.id}`}
                   onClick={() => handleNavClick(link.id)}
-                  className={`inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer font-prompt whitespace-nowrap min-h-[38px] ${
+                  className={`inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all cursor-pointer font-prompt whitespace-nowrap min-h-[36px] ${
                     isActive
                       ? 'bg-[#16377e] text-white shadow-md shadow-blue-950/20 font-bold border border-amber-400/50'
                       : 'text-slate-700 hover:text-[#16377e] hover:bg-blue-50/80'
                   }`}
                 >
-                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-amber-300' : 'text-slate-500'}`} />
+                  <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-amber-300' : 'text-slate-500'}`} />
                   <span className="whitespace-nowrap">{link.label}</span>
                 </button>
               );
@@ -202,14 +202,14 @@ export function Navbar({
           </nav>
 
           {/* Action CTA & Admin Portal Button */}
-          <div className="hidden lg:flex items-center gap-2.5">
+          <div className="hidden lg:flex items-center gap-2 shrink-0">
             <button
               id="navbar-open-report-btn"
               onClick={onOpenReportModal}
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 via-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-xs px-4.5 py-2.5 rounded-full shadow-md shadow-red-600/25 hover:shadow-red-600/40 border border-red-500 transition-all cursor-pointer transform hover:-translate-y-0.5 font-prompt whitespace-nowrap shrink-0 min-h-[40px] whitespace-nowrap"
+              className="inline-flex items-center justify-center gap-1.5 bg-gradient-to-r from-red-600 via-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-xs px-3.5 py-2 rounded-full shadow-md shadow-red-600/25 hover:shadow-red-600/40 border border-red-500 transition-all cursor-pointer transform hover:-translate-y-0.5 font-prompt whitespace-nowrap shrink-0 min-h-[38px]"
             >
-              <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-                <BadgeAlert className="w-3.5 h-3.5 animate-pulse text-white" />
+              <div className="w-4.5 h-4.5 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                <BadgeAlert className="w-3 h-3 animate-pulse text-white" />
               </div>
               <span className="whitespace-nowrap">แจ้งเหตุฉุกเฉิน</span>
             </button>
@@ -218,19 +218,19 @@ export function Navbar({
               id="navbar-open-admin-btn"
               onClick={onOpenAdminModal}
               title="เข้าสู่ระบบจัดการศูนย์สั่งการ (Admin)"
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full text-xs font-bold border transition-all cursor-pointer font-prompt bg-slate-900 hover:bg-[#16377e] text-amber-300 hover:text-white border-amber-400/60 shadow-md shadow-blue-950/20 whitespace-nowrap shrink-0 min-h-[40px] whitespace-nowrap"
+              className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold border transition-all cursor-pointer font-prompt bg-slate-900 hover:bg-[#16377e] text-amber-300 hover:text-white border-amber-400/60 shadow-md shadow-blue-950/20 whitespace-nowrap shrink-0 min-h-[38px]"
             >
               <div className="w-4 h-4 rounded-full bg-amber-400/20 flex items-center justify-center shrink-0">
                 <Lock className="w-2.5 h-2.5 text-amber-300" />
               </div>
               <span suppressHydrationWarning className="whitespace-nowrap">
-                {isAdminAuthenticated ? 'ศูนย์สั่งการ (Admin)' : 'ระบบแอดมิน'}
+                {isAdminAuthenticated ? 'ศูนย์สั่งการ' : 'แอดมิน'}
               </span>
             </button>
           </div>
 
-          {/* Mobile Right Controls */}
-          <div className="flex xl:hidden items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* Mobile/Tablet Right Controls */}
+          <div className="flex lg:hidden items-center gap-1.5 sm:gap-2 shrink-0">
             <button
               onClick={onOpenReportModal}
               className="inline-flex items-center gap-1 sm:gap-1.5 bg-red-600 hover:bg-red-700 active:scale-95 text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-full shadow-sm whitespace-nowrap min-h-[32px] sm:min-h-[34px] transition-all cursor-pointer whitespace-nowrap"
