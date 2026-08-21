@@ -177,8 +177,9 @@ export function AdminPortalView({
   const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-  // Creating Mode State
-  const [isCreatingNew, setIsCreatingNew] = useState(false);
+  // Right Slide-Over Drawer State (Slide out from the right on PC)
+  const [isSlideDrawerOpen, setIsSlideDrawerOpen] = useState(false);
+  const [slideDrawerModule, setSlideDrawerModule] = useState<typeof activeMenu>('missions');
 
   // Password Update Form State
   const [currentPassInput, setCurrentPassInput] = useState('');
@@ -187,6 +188,12 @@ export function AdminPortalView({
 
   // Site Config Edit State
   const [configForm, setConfigForm] = useState<SiteConfig>(siteConfig);
+
+  // Open Creation Slide-over Drawer
+  const handleOpenCreateDrawer = (moduleName: typeof activeMenu) => {
+    setSlideDrawerModule(moduleName);
+    setIsSlideDrawerOpen(true);
+  };
 
   // Handle Login
   const handleLoginSubmit = (e: React.FormEvent) => {
@@ -339,7 +346,7 @@ export function AdminPortalView({
   const selectedSlide = heroSlides.find((s) => s.id === selectedSlideId) || heroSlides[0];
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-slate-900 text-slate-100 font-prompt overflow-hidden selection:bg-red-600 selection:text-white">
+    <div className="h-screen w-screen flex flex-col bg-slate-900 text-slate-100 font-prompt overflow-hidden selection:bg-red-600 selection:text-white relative">
       {/* 1. Global Top Navigation Header */}
       <header className="h-14 bg-[#08132b] border-b border-blue-900/60 px-4 flex items-center justify-between shrink-0 z-30">
         <div className="flex items-center gap-3">
@@ -366,6 +373,15 @@ export function AdminPortalView({
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Quick Create Button in Header for Desktop */}
+          <button
+            onClick={() => handleOpenCreateDrawer(activeMenu)}
+            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-xs font-bold shadow-md transition-all cursor-pointer"
+          >
+            <Plus className="w-3.5 h-3.5 text-slate-950" />
+            <span>เพิ่มรายการใหม่</span>
+          </button>
+
           <button
             onClick={onTestSoundAlert}
             title="ทดสอบสัญญาณเสียงฉุกเฉิน"
@@ -428,7 +444,6 @@ export function AdminPortalView({
                   onClick={() => {
                     setActiveMenu(item.id as typeof activeMenu);
                     setSearchTerm('');
-                    setIsCreatingNew(false);
                     setMobileDetailOpen(false);
                     setMobileSidebarOpen(false);
                   }}
@@ -486,19 +501,17 @@ export function AdminPortalView({
             ${mobileDetailOpen ? 'hidden lg:flex' : 'flex'}
           `}
         >
-          {/* Pane 2 Header with Search & Add Button */}
+          {/* Pane 2 Header with Search & Slide-Over Add Button */}
           <div className="p-4 border-b border-blue-900/60 space-y-3 bg-[#0c1a40]">
             <div className="flex items-center justify-between gap-2">
               <h2 className="text-sm font-bold text-white font-prompt truncate">
                 {menuList.find((m) => m.id === activeMenu)?.label}
               </h2>
-              {['missions', 'news', 'fleet', 'officers', 'categories', 'hero_slides'].includes(activeMenu) && (
+              {['incidents', 'missions', 'news', 'fleet', 'officers', 'categories', 'hero_slides'].includes(activeMenu) && (
                 <button
-                  onClick={() => {
-                    setIsCreatingNew(true);
-                    setMobileDetailOpen(true);
-                  }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-sm transition-all cursor-pointer"
+                  onClick={() => handleOpenCreateDrawer(activeMenu)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-sm transition-all cursor-pointer hover:scale-105"
+                  title="เปิดสไลด์เพิ่มรายการใหม่จากฝั่งขวา"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>เพิ่มใหม่</span>
@@ -549,13 +562,12 @@ export function AdminPortalView({
             {/* INCIDENTS LIST */}
             {activeMenu === 'incidents' &&
               filteredIncidents.map((inc) => {
-                const isSelected = selectedIncidentId === inc.id && !isCreatingNew;
+                const isSelected = selectedIncidentId === inc.id;
                 return (
                   <div
                     key={inc.id}
                     onClick={() => {
                       setSelectedIncidentId(inc.id);
-                      setIsCreatingNew(false);
                       setMobileDetailOpen(true);
                     }}
                     className={`
@@ -600,13 +612,12 @@ export function AdminPortalView({
             {/* MISSIONS LIST */}
             {activeMenu === 'missions' &&
               filteredMissions.map((m) => {
-                const isSelected = selectedMissionId === m.id && !isCreatingNew;
+                const isSelected = selectedMissionId === m.id;
                 return (
                   <div
                     key={m.id}
                     onClick={() => {
                       setSelectedMissionId(m.id);
-                      setIsCreatingNew(false);
                       setMobileDetailOpen(true);
                     }}
                     className={`
@@ -634,13 +645,12 @@ export function AdminPortalView({
             {/* NEWS LIST */}
             {activeMenu === 'news' &&
               filteredNews.map((n) => {
-                const isSelected = selectedNewsId === n.id && !isCreatingNew;
+                const isSelected = selectedNewsId === n.id;
                 return (
                   <div
                     key={n.id}
                     onClick={() => {
                       setSelectedNewsId(n.id);
-                      setIsCreatingNew(false);
                       setMobileDetailOpen(true);
                     }}
                     className={`
@@ -662,13 +672,12 @@ export function AdminPortalView({
             {/* FLEET LIST */}
             {activeMenu === 'fleet' &&
               filteredFleet.map((f) => {
-                const isSelected = selectedFleetId === f.id && !isCreatingNew;
+                const isSelected = selectedFleetId === f.id;
                 return (
                   <div
                     key={f.id}
                     onClick={() => {
                       setSelectedFleetId(f.id);
-                      setIsCreatingNew(false);
                       setMobileDetailOpen(true);
                     }}
                     className={`
@@ -701,13 +710,12 @@ export function AdminPortalView({
             {/* OFFICERS LIST */}
             {activeMenu === 'officers' &&
               filteredOfficers.map((o) => {
-                const isSelected = selectedOfficerId === o.id && !isCreatingNew;
+                const isSelected = selectedOfficerId === o.id;
                 return (
                   <div
                     key={o.id}
                     onClick={() => {
                       setSelectedOfficerId(o.id);
-                      setIsCreatingNew(false);
                       setMobileDetailOpen(true);
                     }}
                     className={`
@@ -738,13 +746,12 @@ export function AdminPortalView({
             {/* CATEGORIES LIST */}
             {activeMenu === 'categories' &&
               filteredCategories.map((c) => {
-                const isSelected = selectedCategoryId === c.id && !isCreatingNew;
+                const isSelected = selectedCategoryId === c.id;
                 return (
                   <div
                     key={c.id}
                     onClick={() => {
                       setSelectedCategoryId(c.id);
-                      setIsCreatingNew(false);
                       setMobileDetailOpen(true);
                     }}
                     className={`
@@ -766,13 +773,12 @@ export function AdminPortalView({
             {/* HERO SLIDES LIST */}
             {activeMenu === 'hero_slides' &&
               filteredSlides.map((s, idx) => {
-                const isSelected = selectedSlideId === s.id && !isCreatingNew;
+                const isSelected = selectedSlideId === s.id;
                 return (
                   <div
                     key={s.id}
                     onClick={() => {
                       setSelectedSlideId(s.id);
-                      setIsCreatingNew(false);
                       setMobileDetailOpen(true);
                     }}
                     className={`
@@ -827,6 +833,13 @@ export function AdminPortalView({
             >
               <ArrowLeft className="w-4 h-4" />
               <span>กลับสู่รายการ</span>
+            </button>
+            <button
+              onClick={() => handleOpenCreateDrawer(activeMenu)}
+              className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-600 text-white text-xs font-bold"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>เพิ่มใหม่</span>
             </button>
           </div>
 
@@ -914,141 +927,51 @@ export function AdminPortalView({
             )}
 
             {/* ------------------------------------------------------------- */}
-            {/* PANE 3 DETAIL: MISSIONS EDITOR */}
+            {/* PANE 3 DETAIL: MISSIONS DETAIL & EDIT */}
             {/* ------------------------------------------------------------- */}
-            {activeMenu === 'missions' && (
+            {activeMenu === 'missions' && selectedMission && (
               <div className="bg-slate-900/90 rounded-3xl border border-blue-900/60 p-6 sm:p-8 shadow-xl backdrop-blur-md space-y-6">
                 <div className="flex items-center justify-between pb-4 border-b border-blue-900/60">
-                  <h3 className="text-lg font-bold text-white font-prompt">
-                    {isCreatingNew ? '✨ เพิ่มบันทึกภารกิจปฏิบัติการใหม่' : `📝 แก้ไขภารกิจ: ${selectedMission?.title}`}
-                  </h3>
-                  {!isCreatingNew && selectedMission && (
+                  <div>
+                    <span className="text-xs font-mono font-bold text-amber-400">
+                      วันที่: {selectedMission.incident_date}
+                    </span>
+                    <h3 className="text-xl font-bold text-white font-prompt mt-0.5">{selectedMission.title}</h3>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleOpenCreateDrawer('missions')}
+                      className="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs font-prompt cursor-pointer transition-colors"
+                    >
+                      + เพิ่มภารกิจใหม่
+                    </button>
                     <button
                       onClick={() => onDeleteMission(selectedMission.id)}
-                      className="px-3 py-1.5 rounded-xl bg-red-950 hover:bg-red-900 text-red-300 border border-red-800 text-xs font-bold font-prompt"
+                      className="p-2 rounded-xl bg-red-950 hover:bg-red-900 text-red-300 border border-red-800"
                     >
-                      ลบภารกิจนี้
+                      <Trash2 className="w-4 h-4" />
                     </button>
-                  )}
+                  </div>
                 </div>
 
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const form = e.currentTarget;
-                    const title = (form.elements.namedItem('mission_title') as HTMLInputElement).value;
-                    const location = (form.elements.namedItem('mission_location') as HTMLInputElement).value;
-                    const summary = (form.elements.namedItem('mission_summary') as HTMLTextAreaElement).value;
-                    const details = (form.elements.namedItem('mission_details') as HTMLTextAreaElement).value;
-                    const cover = (form.elements.namedItem('mission_cover') as HTMLInputElement).value;
-                    const catSlug = (form.elements.namedItem('mission_cat') as HTMLSelectElement).value;
-
-                    if (isCreatingNew) {
-                      onAddMission({
-                        title,
-                        location,
-                        district: 'บรบือ',
-                        incident_date: new Date().toISOString().split('T')[0],
-                        category_slug: catSlug,
-                        summary,
-                        details,
-                        cover_image_url: cover,
-                        is_featured: true,
-                        officer_count: 4,
-                      });
-                      setIsCreatingNew(false);
-                    } else if (selectedMission) {
-                      onUpdateMission(selectedMission.id, {
-                        title,
-                        location,
-                        category_slug: catSlug,
-                        summary,
-                        details,
-                        cover_image_url: cover,
-                      });
-                    }
-                  }}
-                  className="space-y-4"
-                >
-                  <div>
-                    <label className="block text-xs font-bold text-blue-200 font-prompt mb-1">หัวข้อภารกิจ</label>
-                    <input
-                      name="mission_title"
-                      defaultValue={isCreatingNew ? '' : selectedMission?.title}
-                      required
-                      className="w-full px-4 py-2.5 bg-blue-950/60 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-prompt"
-                    />
+                <div className="relative h-64 rounded-2xl overflow-hidden bg-cover bg-center border border-blue-900" style={{ backgroundImage: `url(${selectedMission.cover_image_url})` }}>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
+                    <span className="text-xs text-white font-sarabun">{selectedMission.location}</span>
                   </div>
+                </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-bold text-blue-200 font-prompt mb-1">หมวดหมู่</label>
-                      <select
-                        name="mission_cat"
-                        defaultValue={isCreatingNew ? 'ems-accident' : selectedMission?.category_slug}
-                        className="w-full px-4 py-2.5 bg-blue-950/60 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-prompt"
-                      >
-                        {categories.map((c) => (
-                          <option key={c.slug} value={c.slug} className="bg-slate-900 text-white">
-                            {c.name_th}
-                          </option>
-                        ))}
-                      </select>
+                <div className="space-y-4">
+                  <div className="p-4 rounded-2xl bg-blue-950/40 border border-blue-900/40">
+                    <span className="text-xs font-bold text-amber-300 font-prompt mb-1 block">สรุปย่อภารกิจ</span>
+                    <p className="text-sm text-slate-200 font-sarabun leading-relaxed">{selectedMission.summary}</p>
+                  </div>
+                  {selectedMission.details && (
+                    <div className="p-4 rounded-2xl bg-blue-950/30 border border-blue-900/40">
+                      <span className="text-xs font-bold text-blue-300 font-prompt mb-1 block">รายละเอียดการปฏิบัติงาน</span>
+                      <p className="text-sm text-slate-200 font-sarabun leading-relaxed whitespace-pre-line">{selectedMission.details}</p>
                     </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-blue-200 font-prompt mb-1">สถานที่ปฏิบัติการ</label>
-                      <input
-                        name="mission_location"
-                        defaultValue={isCreatingNew ? '' : selectedMission?.location}
-                        required
-                        className="w-full px-4 py-2.5 bg-blue-950/60 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-blue-200 font-prompt mb-1">รูปภาพหน้าปก URL</label>
-                    <input
-                      name="mission_cover"
-                      defaultValue={
-                        isCreatingNew
-                          ? 'https://images.unsplash.com/photo-1587745416684-47953f16f02f?auto=format&fit=crop&w=1200&q=80'
-                          : selectedMission?.cover_image_url
-                      }
-                      required
-                      className="w-full px-4 py-2.5 bg-blue-950/60 border border-blue-800/60 rounded-xl text-white text-xs focus:border-amber-400 focus:outline-none font-mono"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-blue-200 font-prompt mb-1">สรุปย่อภารกิจ</label>
-                    <textarea
-                      name="mission_summary"
-                      rows={2}
-                      defaultValue={isCreatingNew ? '' : selectedMission?.summary}
-                      required
-                      className="w-full px-4 py-2.5 bg-blue-950/60 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-blue-200 font-prompt mb-1">รายละเอียดเชิงลึก</label>
-                    <textarea
-                      name="mission_details"
-                      rows={4}
-                      defaultValue={isCreatingNew ? '' : selectedMission?.details}
-                      className="w-full px-4 py-2.5 bg-blue-950/60 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold font-prompt text-sm shadow-md transition-all cursor-pointer"
-                  >
-                    💾 บันทึกข้อมูลภารกิจขึ้น Supabase
-                  </button>
-                </form>
+                  )}
+                </div>
               </div>
             )}
 
@@ -1159,7 +1082,7 @@ export function AdminPortalView({
             )}
 
             {/* ------------------------------------------------------------- */}
-            {/* PANE 3 DETAIL: FLEET & VEHICLE EDITOR */}
+            {/* PANE 3 DETAIL: FLEET & VEHICLE */}
             {/* ------------------------------------------------------------- */}
             {activeMenu === 'fleet' && selectedFleetItem && (
               <div className="bg-slate-900/90 rounded-3xl border border-blue-900/60 p-6 sm:p-8 shadow-xl backdrop-blur-md space-y-6">
@@ -1183,6 +1106,12 @@ export function AdminPortalView({
                       }`}
                     >
                       {selectedFleetItem.status === 'available' ? 'สลับเป็น: ออกเหตุ' : 'สลับเป็น: พร้อมออกเหตุ'}
+                    </button>
+                    <button
+                      onClick={() => handleOpenCreateDrawer('fleet')}
+                      className="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs font-prompt cursor-pointer"
+                    >
+                      + เพิ่มรถ/อุปกรณ์
                     </button>
                   </div>
                 </div>
@@ -1214,7 +1143,7 @@ export function AdminPortalView({
             )}
 
             {/* ------------------------------------------------------------- */}
-            {/* PANE 3 DETAIL: OFFICERS ROSTER EDITOR */}
+            {/* PANE 3 DETAIL: OFFICERS ROSTER */}
             {/* ------------------------------------------------------------- */}
             {activeMenu === 'officers' && selectedOfficer && (
               <div className="bg-slate-900/90 rounded-3xl border border-blue-900/60 p-6 sm:p-8 shadow-xl backdrop-blur-md space-y-6">
@@ -1224,16 +1153,24 @@ export function AdminPortalView({
                     <h3 className="text-xl font-bold text-white font-prompt mt-0.5">{selectedOfficer.full_name}</h3>
                     <p className="text-xs text-blue-300 font-sarabun">{selectedOfficer.role_title}</p>
                   </div>
-                  <button
-                    onClick={() => onToggleOfficerDuty(selectedOfficer.id)}
-                    className={`px-4 py-2 rounded-xl text-xs font-bold font-prompt cursor-pointer transition-all ${
-                      selectedOfficer.is_on_duty
-                        ? 'bg-slate-700 hover:bg-slate-600 text-slate-200'
-                        : 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                    }`}
-                  >
-                    {selectedOfficer.is_on_duty ? 'สลับเป็น: พักเวร' : 'สลับเป็น: เข้าเวรปฏิบัติการ'}
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => onToggleOfficerDuty(selectedOfficer.id)}
+                      className={`px-4 py-2 rounded-xl text-xs font-bold font-prompt cursor-pointer transition-all ${
+                        selectedOfficer.is_on_duty
+                          ? 'bg-slate-700 hover:bg-slate-600 text-slate-200'
+                          : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                      }`}
+                    >
+                      {selectedOfficer.is_on_duty ? 'สลับเป็น: พักเวร' : 'สลับเป็น: เข้าเวรปฏิบัติการ'}
+                    </button>
+                    <button
+                      onClick={() => handleOpenCreateDrawer('officers')}
+                      className="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs font-prompt cursor-pointer"
+                    >
+                      + เพิ่มจนท.
+                    </button>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1335,6 +1272,406 @@ export function AdminPortalView({
           </div>
         </main>
       </div>
+
+      {/* ========================================================================= */}
+      {/* RIGHT SLIDE-OVER DRAWER (Slide out from the right on Desktop/Tablet/Mobile) */}
+      {/* ========================================================================= */}
+      {isSlideDrawerOpen && (
+        <div className="fixed inset-0 z-50 overflow-hidden flex justify-end">
+          {/* Backdrop Blur Overlay */}
+          <div
+            onClick={() => setIsSlideDrawerOpen(false)}
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300 animate-in fade-in"
+          />
+
+          {/* Slide-over Right Sheet */}
+          <div className="relative w-full max-w-xl bg-[#081538] border-l-2 border-amber-400/60 shadow-2xl z-10 flex flex-col h-full overflow-hidden transform transition-transform duration-300 ease-out animate-in slide-in-from-right font-prompt">
+            {/* Drawer Header */}
+            <div className="p-5 border-b border-blue-900/60 flex items-center justify-between bg-[#060e24]">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-bold">
+                  <Plus className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white font-prompt">
+                    {slideDrawerModule === 'missions' && 'เพิ่มบันทึกภารกิจปฏิบัติการใหม่'}
+                    {slideDrawerModule === 'news' && 'เผยแพร่ข่าวสารประชาสัมพันธ์ใหม่'}
+                    {slideDrawerModule === 'fleet' && 'เพิ่มยานพาหนะหรืออุปกรณ์กู้ชีพใหม่'}
+                    {slideDrawerModule === 'officers' && 'เพิ่มเจ้าหน้าที่กู้ภัยใหม่'}
+                    {slideDrawerModule === 'categories' && 'เพิ่มหมวดหมู่งานกู้ภัยใหม่'}
+                    {slideDrawerModule === 'hero_slides' && 'เพิ่มสไลด์แบนเนอร์หน้าแรก'}
+                    {slideDrawerModule === 'incidents' && 'รับแจ้งเหตุฉุกเฉินด่วน (Admin Quick Dispatch)'}
+                  </h3>
+                  <span className="text-[11px] text-blue-300 font-mono">
+                    SLIDE-IN CREATION DRAWER • REALTIME SUPABASE SYNC
+                  </span>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsSlideDrawerOpen(false)}
+                className="p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                title="ปิดหน้าต่างสไลด์"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Drawer Scrollable Body Form */}
+            <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 scrollbar-thin text-slate-200">
+              {/* FORM: MISSIONS */}
+              {slideDrawerModule === 'missions' && (
+                <form
+                  id="drawer-mission-form"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const form = e.currentTarget;
+                    const title = (form.elements.namedItem('m_title') as HTMLInputElement).value;
+                    const location = (form.elements.namedItem('m_location') as HTMLInputElement).value;
+                    const catSlug = (form.elements.namedItem('m_cat') as HTMLSelectElement).value;
+                    const summary = (form.elements.namedItem('m_summary') as HTMLTextAreaElement).value;
+                    const details = (form.elements.namedItem('m_details') as HTMLTextAreaElement).value;
+                    const cover = (form.elements.namedItem('m_cover') as HTMLInputElement).value;
+
+                    onAddMission({
+                      title,
+                      location,
+                      district: 'บรบือ',
+                      incident_date: new Date().toISOString().split('T')[0],
+                      category_slug: catSlug,
+                      summary,
+                      details,
+                      cover_image_url: cover,
+                      is_featured: true,
+                      officer_count: 4,
+                    });
+                    setIsSlideDrawerOpen(false);
+                  }}
+                  className="space-y-4"
+                >
+                  <div>
+                    <label className="block text-xs font-bold text-amber-300 mb-1">หัวข้อภารกิจ</label>
+                    <input
+                      name="m_title"
+                      required
+                      placeholder="เช่น ช่วยเหลือผู้ประสบอุบัติเหตุทางถนน บริเวณแยกบรบือ"
+                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-amber-300 mb-1">หมวดหมู่</label>
+                      <select
+                        name="m_cat"
+                        className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none"
+                      >
+                        {categories.map((c) => (
+                          <option key={c.slug} value={c.slug} className="bg-slate-900 text-white">
+                            {c.name_th}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-amber-300 mb-1">สถานที่เกิดเหตุ</label>
+                      <input
+                        name="m_location"
+                        required
+                        placeholder="ต.บรบือ อ.บรบือ จ.มหาสารคาม"
+                        className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-amber-300 mb-1">รูปภาพหน้าปกภารกิจ (URL)</label>
+                    <input
+                      name="m_cover"
+                      required
+                      defaultValue="https://images.unsplash.com/photo-1587745416684-47953f16f02f?auto=format&fit=crop&w=1200&q=80"
+                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-xs font-mono focus:border-amber-400 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-amber-300 mb-1">สรุปย่อผลการปฏิบัติงาน</label>
+                    <textarea
+                      name="m_summary"
+                      rows={2}
+                      required
+                      placeholder="สรุปย่อเหตุการณ์และการให้ความช่วยเหลือ..."
+                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-amber-300 mb-1">รายละเอียดเชิงลึก</label>
+                    <textarea
+                      name="m_details"
+                      rows={4}
+                      placeholder="บันทึกขั้นตอนการใช้อุปกรณ์ตัด-ถ่าง การปฐมพยาบาล และการนำส่งโรงพยาบาล..."
+                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
+                    />
+                  </div>
+                </form>
+              )}
+
+              {/* FORM: FLEET */}
+              {slideDrawerModule === 'fleet' && (
+                <form
+                  id="drawer-fleet-form"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const form = e.currentTarget;
+                    const callSign = (form.elements.namedItem('f_callsign') as HTMLInputElement).value;
+                    const nameTh = (form.elements.namedItem('f_name') as HTMLInputElement).value;
+                    const plate = (form.elements.namedItem('f_plate') as HTMLInputElement).value;
+                    const base = (form.elements.namedItem('f_base') as HTMLInputElement).value;
+                    const specs = (form.elements.namedItem('f_specs') as HTMLTextAreaElement).value;
+
+                    if (onAddFleetItem) {
+                      onAddFleetItem({
+                        call_sign: callSign,
+                        name_th: nameTh,
+                        equipment_type: 'ambulance_ems',
+                        status: 'available',
+                        plate_number: plate,
+                        location_base: base,
+                        specifications: specs,
+                      });
+                    }
+                    setIsSlideDrawerOpen(false);
+                  }}
+                  className="space-y-4"
+                >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-amber-300 mb-1">รหัสเรียกขาน</label>
+                      <input
+                        name="f_callsign"
+                        required
+                        placeholder="เช่น ประจิม 05"
+                        className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm font-mono focus:border-amber-400 focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-amber-300 mb-1">ทะเบียนรถ</label>
+                      <input
+                        name="f_plate"
+                        placeholder="เช่น กข-1234 มค"
+                        className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm font-mono focus:border-amber-400 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-amber-300 mb-1">ขื่อยานพาหนะ/อุปกรณ์</label>
+                    <input
+                      name="f_name"
+                      required
+                      placeholder="เช่น รถพยาบาลกู้ชีพฉุกเฉินระดับสูง (Advanced ALS)"
+                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-amber-300 mb-1">จุดประจำการ</label>
+                    <input
+                      name="f_base"
+                      defaultValue="ศูนย์ใหญ่บรบือ ถนนแจ้งสนิท"
+                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-amber-300 mb-1">ข้อมูลจำเพาะและอุปกรณ์ประจำรถ</label>
+                    <textarea
+                      name="f_specs"
+                      rows={3}
+                      placeholder="เครื่องกระตุกหัวใจ AED, ชุดถังออกซิเจน 6,000L, บอร์ดดามหลัง Spinal Board..."
+                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
+                    />
+                  </div>
+                </form>
+              )}
+
+              {/* FORM: OFFICERS */}
+              {slideDrawerModule === 'officers' && (
+                <form
+                  id="drawer-officer-form"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const form = e.currentTarget;
+                    const code = (form.elements.namedItem('o_code') as HTMLInputElement).value;
+                    const name = (form.elements.namedItem('o_name') as HTMLInputElement).value;
+                    const role = (form.elements.namedItem('o_role') as HTMLInputElement).value;
+                    const phone = (form.elements.namedItem('o_phone') as HTMLInputElement).value;
+                    const station = (form.elements.namedItem('o_station') as HTMLInputElement).value;
+
+                    if (onAddOfficer) {
+                      onAddOfficer({
+                        officer_code: code,
+                        full_name: name,
+                        role_title: role,
+                        phone: phone || '061-119-3342',
+                        station_base: station,
+                        is_on_duty: true,
+                        joined_date: new Date().toISOString().split('T')[0],
+                      });
+                    }
+                    setIsSlideDrawerOpen(false);
+                  }}
+                  className="space-y-4"
+                >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-amber-300 mb-1">รหัสเจ้าหน้าที่</label>
+                      <input
+                        name="o_code"
+                        required
+                        placeholder="เช่น PCM-05"
+                        className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm font-mono focus:border-amber-400 focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-amber-300 mb-1">เบอร์โทรศัพท์</label>
+                      <input
+                        name="o_phone"
+                        defaultValue="061-119-3342"
+                        className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm font-mono focus:border-amber-400 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-amber-300 mb-1">ชื่อ-นามสกุล</label>
+                    <input
+                      name="o_name"
+                      required
+                      placeholder="เช่น นายสมชาย ใจกล้า"
+                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-amber-300 mb-1">ตำแหน่งหน้าที่</label>
+                    <input
+                      name="o_role"
+                      required
+                      placeholder="เช่น เจ้าหน้าที่กู้ชีพฉุกเฉิน (EMT-B) / ผู้ช่วยนักประดาน้ำ"
+                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-amber-300 mb-1">สถานีประจำการ</label>
+                    <input
+                      name="o_station"
+                      defaultValue="ศูนย์ใหญ่บรบือ"
+                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
+                    />
+                  </div>
+                </form>
+              )}
+
+              {/* FORM: NEWS */}
+              {slideDrawerModule === 'news' && (
+                <form
+                  id="drawer-news-form"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const form = e.currentTarget;
+                    const title = (form.elements.namedItem('n_title') as HTMLInputElement).value;
+                    const summary = (form.elements.namedItem('n_summary') as HTMLTextAreaElement).value;
+                    const content = (form.elements.namedItem('n_content') as HTMLTextAreaElement).value;
+                    const cover = (form.elements.namedItem('n_cover') as HTMLInputElement).value;
+
+                    onAddNews({
+                      title,
+                      summary,
+                      content,
+                      cover_image_url: cover,
+                      published_date: new Date().toISOString().split('T')[0],
+                      is_pinned: false,
+                      author_name: 'ศูนย์ประชาสัมพันธ์ สมาคมประจิมสารคาม',
+                    });
+                    setIsSlideDrawerOpen(false);
+                  }}
+                  className="space-y-4"
+                >
+                  <div>
+                    <label className="block text-xs font-bold text-amber-300 mb-1">หัวข้อข่าวประชาสัมพันธ์</label>
+                    <input
+                      name="n_title"
+                      required
+                      placeholder="เช่น ประกาศแจ้งเตือนสภาพอากาศ และการเฝ้าระวังอุบัติเหตุ"
+                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-amber-300 mb-1">รูปภาพข่าว (URL)</label>
+                    <input
+                      name="n_cover"
+                      required
+                      defaultValue="https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=1200&q=80"
+                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-xs font-mono focus:border-amber-400 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-amber-300 mb-1">สรุปย่อ</label>
+                    <textarea
+                      name="n_summary"
+                      rows={2}
+                      required
+                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-amber-300 mb-1">เนื้อหาข่าวฉบับเต็ม</label>
+                    <textarea
+                      name="n_content"
+                      rows={4}
+                      required
+                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
+                    />
+                  </div>
+                </form>
+              )}
+            </div>
+
+            {/* Drawer Footer Actions */}
+            <div className="p-4 border-t border-blue-900/60 bg-[#060e24] flex items-center justify-end gap-3 shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsSlideDrawerOpen(false)}
+                className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold font-prompt transition-colors cursor-pointer"
+              >
+                ยกเลิก
+              </button>
+              <button
+                type="submit"
+                form={
+                  slideDrawerModule === 'missions'
+                    ? 'drawer-mission-form'
+                    : slideDrawerModule === 'fleet'
+                    ? 'drawer-fleet-form'
+                    : slideDrawerModule === 'officers'
+                    ? 'drawer-officer-form'
+                    : 'drawer-news-form'
+                }
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-xs font-bold font-prompt shadow-lg shadow-amber-500/20 transition-all cursor-pointer hover:scale-105"
+              >
+                💾 บันทึกข้อมูลขึ้นระบบ
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
