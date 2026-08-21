@@ -503,3 +503,136 @@ export function SocialMediaBar({
     </div>
   );
 }
+
+// 13. NBTC Radio Frequency Seal (กสทช. 168.275 MHz)
+export function NbtcRadioEmblem({ className = 'w-10 h-10', size }: { className?: string; size?: number }) {
+  const style = size ? { width: `${size}px`, height: `${size}px` } : undefined;
+  return (
+    <svg
+      className={className}
+      style={style}
+      viewBox="0 0 100 100"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="กสทช. ช่องความถี่วิทยุกู้ภัย"
+    >
+      <defs>
+        <linearGradient id="nbtcPurple" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#581c87" />
+          <stop offset="100%" stopColor="#3b0764" />
+        </linearGradient>
+      </defs>
+      <circle cx="50" cy="50" r="46" fill="url(#nbtcPurple)" stroke="#c084fc" strokeWidth="3" />
+      <circle cx="50" cy="50" r="39" fill="#1e1b4b" stroke="#ffffff" strokeWidth="1" />
+      {/* Radio Waves Tower */}
+      <line x1="50" y1="26" x2="50" y2="72" stroke="#facc15" strokeWidth="3.5" strokeLinecap="round" />
+      <circle cx="50" cy="24" r="5" fill="#facc15" />
+      <path d="M 36,36 C 42,30 58,30 64,36" stroke="#c084fc" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+      <path d="M 28,46 C 38,36 62,36 72,46" stroke="#e9d5ff" strokeWidth="2" strokeLinecap="round" fill="none" />
+      <text x="50" y="86" fill="#facc15" fontSize="6.8" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">
+        168.275 MHz
+      </text>
+    </svg>
+  );
+}
+
+// 14. Department of Highways (กรมทางหลวง 1586)
+export function DohHighwayEmblem({ className = 'w-10 h-10', size }: { className?: string; size?: number }) {
+  const style = size ? { width: `${size}px`, height: `${size}px` } : undefined;
+  return (
+    <svg
+      className={className}
+      style={style}
+      viewBox="0 0 100 100"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="กรมทางหลวง 1586"
+    >
+      <defs>
+        <linearGradient id="dohBlue" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#1e3a8a" />
+          <stop offset="100%" stopColor="#172554" />
+        </linearGradient>
+      </defs>
+      <circle cx="50" cy="50" r="46" fill="url(#dohBlue)" stroke="#60a5fa" strokeWidth="3" />
+      <circle cx="50" cy="50" r="39" fill="#0f172a" stroke="#ffffff" strokeWidth="1" />
+      {/* Highway Road Perspective */}
+      <polygon points="32,74 44,32 56,32 68,74" fill="#334155" stroke="#ffffff" strokeWidth="1" />
+      {/* Center Dashed Lane */}
+      <line x1="50" y1="36" x2="50" y2="44" stroke="#facc15" strokeWidth="2.5" />
+      <line x1="50" y1="48" x2="50" y2="58" stroke="#facc15" strokeWidth="3" />
+      <line x1="50" y1="62" x2="50" y2="74" stroke="#facc15" strokeWidth="3.5" />
+      <text x="50" y="87" fill="#60a5fa" fontSize="7" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">
+        ทางหลวง 1586
+      </text>
+    </svg>
+  );
+}
+
+// 15. EMS Dispatch & Command Center (ศูนย์สั่งการ 1669)
+export function EmsDispatchCenterEmblem({ className = 'w-10 h-10', size }: { className?: string; size?: number }) {
+  const style = size ? { width: `${size}px`, height: `${size}px` } : undefined;
+  return (
+    <svg
+      className={className}
+      style={style}
+      viewBox="0 0 100 100"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="ศูนย์รับแจ้งเหตุและสั่งการ 1669"
+    >
+      <defs>
+        <linearGradient id="dispatchRed" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#991b1b" />
+          <stop offset="100%" stopColor="#450a0a" />
+        </linearGradient>
+      </defs>
+      <circle cx="50" cy="50" r="46" fill="url(#dispatchRed)" stroke="#f87171" strokeWidth="3" />
+      <circle cx="50" cy="50" r="39" fill="#1e1b4b" stroke="#ffffff" strokeWidth="1" />
+      {/* Headset & Dispatch Wave */}
+      <path d="M 30,52 C 30,34 70,34 70,52" stroke="#ffffff" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+      <rect x="24" y="46" width="10" height="16" rx="4" fill="#facc15" />
+      <rect x="66" y="46" width="10" height="16" rx="4" fill="#facc15" />
+      <path d="M 68,58 C 68,68 56,70 48,70" stroke="#facc15" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+      <circle cx="46" cy="70" r="3" fill="#ef4444" />
+      <text x="50" y="86" fill="#fca5a5" fontSize="6.8" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">
+        ศูนย์สั่งการ 24H
+      </text>
+    </svg>
+  );
+}
+
+// 16. Rescue Association Seal (สมาคมพุทธศาสตร์สงเคราะห์ / เครือข่ายสมาคมกู้ภัย)
+export function RescueAssociationSeal({ className = 'w-10 h-10', size }: { className?: string; size?: number }) {
+  const style = size ? { width: `${size}px`, height: `${size}px` } : undefined;
+  return (
+    <svg
+      className={className}
+      style={style}
+      viewBox="0 0 100 100"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-label="สมาคมประจิมสารคาม พุทธศาสตร์สงเคราะห์"
+    >
+      <defs>
+        <linearGradient id="assocGold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#1e3a8a" />
+          <stop offset="100%" stopColor="#0f172a" />
+        </linearGradient>
+      </defs>
+      <circle cx="50" cy="50" r="46" fill="url(#assocGold)" stroke="#fbbf24" strokeWidth="3" />
+      <circle cx="50" cy="50" r="39" fill="#082f49" stroke="#ffffff" strokeWidth="1" />
+      {/* Dharma Wheel & Rescue Cross */}
+      <circle cx="50" cy="46" r="18" fill="none" stroke="#fbbf24" strokeWidth="3" />
+      <line x1="50" y1="28" x2="50" y2="64" stroke="#fbbf24" strokeWidth="2.5" />
+      <line x1="32" y1="46" x2="68" y2="46" stroke="#fbbf24" strokeWidth="2.5" />
+      <line x1="37" y1="33" x2="63" y2="59" stroke="#fbbf24" strokeWidth="2" />
+      <line x1="37" y1="59" x2="63" y2="33" stroke="#fbbf24" strokeWidth="2" />
+      <circle cx="50" cy="46" r="6" fill="#dc2626" stroke="#ffffff" strokeWidth="1.5" />
+      <text x="50" y="87" fill="#fbbf24" fontSize="6.5" fontWeight="bold" textAnchor="middle" fontFamily="sans-serif">
+        พุทธศาสตร์สงเคราะห์
+      </text>
+    </svg>
+  );
+}
+

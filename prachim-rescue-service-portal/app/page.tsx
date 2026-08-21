@@ -5,6 +5,7 @@ import { TopEmergencyBar } from '@/components/shared/TopEmergencyBar';
 import { Navbar } from '@/components/shared/Navbar';
 import { HeroSlider } from '@/components/home/HeroSlider';
 import { QuickServicesStrip } from '@/components/home/QuickServicesStrip';
+import { InfiniteAffiliationsMarquee } from '@/components/home/InfiniteAffiliationsMarquee';
 import { LiveOperationsDashboard } from '@/components/home/LiveOperationsDashboard';
 import { DepartmentsGrid } from '@/components/home/DepartmentsGrid';
 import { NetworkCoverageMap } from '@/components/home/NetworkCoverageMap';
@@ -265,6 +266,9 @@ export default function HomePage() {
           }
         }}
       />
+
+      {/* 4.1 Infinite Horizontal Official Affiliations & Partner Logos Marquee */}
+      <InfiniteAffiliationsMarquee />
 
       {/* 5. Live Operations Dashboard & Real-Time Dispatch Hub */}
       <div id="section-live-dashboard">
