@@ -229,11 +229,11 @@ export function Navbar({
             </button>
           </div>
 
-          {/* Mobile & Tablet Right Controls */}
-          <div className="flex 2xl:hidden items-center gap-1.5 sm:gap-2 shrink-0">
+          {/* Mobile/Tablet Right Controls */}
+          <div className="flex lg:hidden items-center gap-1.5 sm:gap-2 shrink-0">
             <button
               onClick={onOpenReportModal}
-              className="inline-flex items-center gap-1 sm:gap-1.5 bg-red-600 hover:bg-red-700 active:scale-95 text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-full shadow-sm whitespace-nowrap min-h-[34px] transition-all cursor-pointer"
+              className="inline-flex items-center gap-1 sm:gap-1.5 bg-red-600 hover:bg-red-700 active:scale-95 text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-full shadow-sm whitespace-nowrap min-h-[32px] sm:min-h-[34px] transition-all cursor-pointer whitespace-nowrap"
             >
               <BadgeAlert className="w-3.5 h-3.5 shrink-0 animate-pulse" />
               <span className="whitespace-nowrap">แจ้งเหตุ</span>
@@ -242,44 +242,28 @@ export function Navbar({
             <button
               onClick={onOpenAdminModal}
               title="ระบบแอดมิน"
-              className="inline-flex items-center gap-1 bg-slate-900 hover:bg-[#16377e] active:scale-95 text-amber-300 border border-amber-400/60 text-[11px] sm:text-xs font-semibold px-2.5 py-1.5 rounded-full shadow-xs whitespace-nowrap min-h-[34px] transition-all cursor-pointer"
+              className="inline-flex items-center gap-1 bg-slate-900 hover:bg-[#16377e] active:scale-95 text-amber-300 border border-amber-400/60 text-[11px] sm:text-xs font-semibold px-2.5 py-1.5 rounded-full shadow-xs whitespace-nowrap min-h-[32px] sm:min-h-[34px] transition-all cursor-pointer whitespace-nowrap"
             >
               <Lock className="w-3 h-3 text-amber-300 shrink-0" />
               <span className="whitespace-nowrap">แอดมิน</span>
             </button>
 
-            {/* Sandwich / Hamburger Menu Button with 3 Animated Bars */}
             <button
               id="mobile-menu-toggle-btn"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl border border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100 flex flex-col justify-center items-center gap-1 transition-all cursor-pointer shadow-xs ml-0.5"
-              aria-label="เมนูแซนวิช"
-              title={isMobileMenuOpen ? "ปิดเมนู" : "เปิดเมนู"}
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none transition-colors cursor-pointer"
+              aria-label="เมนูหลัก"
             >
-              <span
-                className={`h-0.5 bg-slate-800 rounded-full transition-all duration-300 origin-center ${
-                  isMobileMenuOpen ? 'w-5 rotate-45 translate-y-1.5 bg-red-600' : 'w-5'
-                }`}
-              />
-              <span
-                className={`h-0.5 bg-slate-800 rounded-full transition-all duration-200 ${
-                  isMobileMenuOpen ? 'opacity-0 w-0' : 'w-4'
-                }`}
-              />
-              <span
-                className={`h-0.5 bg-slate-800 rounded-full transition-all duration-300 origin-center ${
-                  isMobileMenuOpen ? 'w-5 -rotate-45 -translate-y-1.5 bg-red-600' : 'w-5'
-                }`}
-              />
+              {isMobileMenuOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" />}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile & Tablet Slide-Down Sandwich Menu Drawer */}
+      {/* Mobile Drawer Menu */}
       {isMobileMenuOpen && (
-        <div className="2xl:hidden bg-white/98 backdrop-blur-lg border-b border-slate-200 px-4 sm:px-6 pt-4 pb-6 space-y-4 shadow-2xl transition-all animate-in slide-in-from-top duration-200">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 pb-3 border-b border-slate-200">
+        <div className="xl:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-6 space-y-3 shadow-xl">
+          <div className="grid grid-cols-2 gap-2 pb-3 border-b border-slate-200">
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isActive = activeTab === link.id;
@@ -287,67 +271,65 @@ export function Navbar({
                 <button
                   key={link.id}
                   onClick={() => handleNavClick(link.id)}
-                  className={`inline-flex items-center gap-2.5 p-3 rounded-2xl text-xs sm:text-sm text-left transition-all cursor-pointer font-prompt whitespace-nowrap min-h-[46px] ${
+                  className={`inline-flex items-center gap-2 p-3 rounded-xl text-xs sm:text-sm text-left transition-colors cursor-pointer font-prompt whitespace-nowrap min-h-[44px] ${
                     isActive
-                      ? 'bg-[#16377e] text-white font-bold border border-amber-400/50 shadow-md'
-                      : 'text-slate-700 bg-slate-50 hover:bg-blue-50 hover:text-[#16377e] border border-slate-200/80'
+                      ? 'bg-[#16377e] text-white font-bold border border-amber-400/50 shadow-sm'
+                      : 'text-slate-700 hover:bg-blue-50/80 hover:text-[#16377e]'
                   }`}
                 >
-                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${isActive ? 'bg-white/10 text-amber-300' : 'bg-white text-slate-600 shadow-xs'}`}>
-                    <Icon className="w-4 h-4" />
-                  </div>
-                  <span className="whitespace-nowrap font-bold">{link.label}</span>
+                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-amber-300' : 'text-slate-500'}`} />
+                  <span className="whitespace-nowrap truncate">{link.label}</span>
                 </button>
               );
             })}
           </div>
 
-          {/* Social Media & Fast Dispatch */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 bg-slate-50 rounded-2xl border border-slate-200">
-            <span className="text-xs font-bold text-slate-700 font-prompt">ช่องทางโซเชียลมีเดียหน่วยกู้ภัย:</span>
+          {/* Mobile Social Links */}
+          <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between gap-2">
+            <span className="text-xs font-bold text-slate-700 font-prompt">ช่องทางโซเชียลมีเดีย:</span>
             <div className="flex items-center gap-2">
               <a
                 href="https://www.facebook.com/search/top?q=หน่วยกู้ภัยประจิม+บรบือ"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 rounded-full flex items-center justify-center bg-[#1877F2] text-white shadow-xs hover:scale-110 transition-transform"
+                className="w-8 h-8 rounded-full flex items-center justify-center bg-[#1877F2] text-white shadow-xs"
               >
-                <FacebookIcon size={14} />
+                <FacebookIcon size={16} />
               </a>
               <a
                 href="https://line.me/R/ti/p/@prachimrescue"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 rounded-full flex items-center justify-center bg-[#06C755] text-white shadow-xs hover:scale-110 transition-transform"
+                className="w-8 h-8 rounded-full flex items-center justify-center bg-[#06C755] text-white shadow-xs"
               >
-                <LineIcon size={14} />
+                <LineIcon size={16} />
               </a>
               <a
                 href="https://www.tiktok.com/@prachimrescue"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 rounded-full flex items-center justify-center bg-black text-white shadow-xs hover:scale-110 transition-transform"
+                className="w-8 h-8 rounded-full flex items-center justify-center bg-black text-white shadow-xs"
               >
-                <TikTokIcon size={14} />
+                <TikTokIcon size={16} />
               </a>
               <a
                 href="https://www.youtube.com/results?search_query=หน่วยกู้ภัยประจิม+บรบือ"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 rounded-full flex items-center justify-center bg-[#FF0000] text-white shadow-xs hover:scale-110 transition-transform"
+                className="w-8 h-8 rounded-full flex items-center justify-center bg-[#FF0000] text-white shadow-xs"
               >
-                <YouTubeIcon size={14} />
+                <YouTubeIcon size={16} />
               </a>
             </div>
           </div>
 
-          <div className="pt-1 flex flex-col sm:flex-row gap-2.5">
+          <div className="pt-1 flex flex-col gap-2.5">
             <a
               href="tel:0611193342"
-              className="flex-1 inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold py-3 px-4 rounded-2xl shadow-md text-xs sm:text-sm whitespace-nowrap min-h-[46px]"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold py-3 rounded-full shadow text-xs sm:text-sm whitespace-nowrap min-h-[44px] whitespace-nowrap"
             >
               <PhoneCall className="w-4 h-4 shrink-0 animate-pulse" />
-              <span>สายด่วนกู้ภัยประจิม: 061-119-3342</span>
+              <span className="whitespace-nowrap">โทรด่วนกู้ภัยประจิม 061-119-3342</span>
             </a>
 
             <button
@@ -355,10 +337,10 @@ export function Navbar({
                 setIsMobileMenuOpen(false);
                 onOpenAdminModal();
               }}
-              className="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-[#16377e] text-amber-300 hover:text-white py-3 px-4 rounded-2xl text-xs sm:text-sm border border-amber-400/50 font-bold whitespace-nowrap min-h-[46px] transition-colors"
+              className="inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 py-3 rounded-full text-xs sm:text-sm border border-slate-300 font-semibold whitespace-nowrap min-h-[44px] whitespace-nowrap"
             >
-              <Lock className="w-4 h-4 text-amber-300 shrink-0" />
-              <span>ระบบศูนย์สั่งการ (Admin)</span>
+              <Lock className="w-4 h-4 text-slate-600 shrink-0" />
+              <span className="whitespace-nowrap">ระบบศูนย์สั่งการเจ้าหน้าที่ (Admin Portal)</span>
             </button>
           </div>
         </div>
