@@ -175,11 +175,11 @@ export function EmergencyReportView({
           <div className="flex items-center gap-2 text-xs font-sarabun text-blue-200">
             <span className="hidden sm:inline">ศูนย์สั่งการกู้ภัยประจิม 24 ชั่วโมง</span>
             <a
-              href="tel:0929253839"
+              href="tel:0611193342"
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs font-prompt transition-colors shrink-0"
             >
               <PhoneCall className="w-3.5 h-3.5 shrink-0" />
-              <span>092-925-3839</span>
+              <span>061-119-3342</span>
             </a>
           </div>
         </div>
@@ -267,11 +267,11 @@ export function EmergencyReportView({
             {/* Actions */}
             <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
               <a
-                href="tel:0929253839"
+                href="tel:0611193342"
                 className="inline-flex items-center justify-center gap-2 bg-[#16377e] hover:bg-[#0f2452] text-white font-bold px-6 py-3.5 rounded-full text-sm font-prompt transition-colors border border-amber-400/40 shadow-md min-h-[44px]"
               >
                 <PhoneCall className="w-4 h-4 text-amber-300 shrink-0" />
-                <span>โทรยืนยันกับศูนย์สั่งการ 092-925-3839</span>
+                <span>โทรยืนยันกับศูนย์สั่งการ 061-119-3342</span>
               </a>
 
               <button
@@ -549,11 +549,11 @@ export function EmergencyReportView({
 
                 <div className="space-y-2.5">
                   <a
-                    href="tel:0929253839"
+                    href="tel:0611193342"
                     className="flex items-center justify-center gap-2 w-full py-3 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold text-sm font-prompt transition-all shadow-md"
                   >
                     <PhoneCall className="w-4 h-4 text-slate-950 shrink-0" />
-                    <span>โทร 092-925-3839 (กู้ภัยประจิม)</span>
+                    <span>โทร 061-119-3342 (กู้ภัยประจิม)</span>
                   </a>
 
                   <a

@@ -38,7 +38,7 @@ export function EmergencyHotlineBanner({ onOpenReportModal }: EmergencyHotlineBa
             {/* Direct Dial Callout */}
             <a
               id="banner-hotline-dial-btn"
-              href="tel:0929253839"
+              href="tel:0611193342"
               className="inline-flex items-center justify-center gap-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 px-7 py-3.5 rounded-full shadow-xl shadow-blue-950/50 transition-all transform hover:scale-105 group w-full sm:w-auto min-h-[52px] shrink-0 whitespace-nowrap"
             >
               <div className="w-10 h-10 rounded-full bg-slate-950/10 flex items-center justify-center text-slate-950 group-hover:scale-110 transition-transform shrink-0 aspect-square">
@@ -49,7 +49,7 @@ export function EmergencyHotlineBanner({ onOpenReportModal }: EmergencyHotlineBa
                   สายด่วนฉุกเฉิน 24 ชม.
                 </span>
                 <span className="text-xl sm:text-2xl font-black font-prompt text-slate-950 whitespace-nowrap tabular-nums">
-                  092-925-3839
+                  061-119-3342
                 </span>
               </div>
             </a>

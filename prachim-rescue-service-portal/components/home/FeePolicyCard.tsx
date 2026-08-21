@@ -116,9 +116,9 @@ export function FeePolicyCard() {
                 {/* Footer Assurance */}
                 <div className="mt-6 pt-4 border-t border-slate-200/80 flex items-center justify-between text-xs text-slate-500 font-sarabun">
                   <span className="whitespace-nowrap">หน่วยกู้ภัยประจิม อ.บรบือ จ.มหาสารคาม</span>
-                  <a href="tel:0929253839" className="text-[#16377e] hover:text-blue-900 font-bold font-prompt inline-flex items-center gap-1.5 px-3 py-1 rounded-full hover:bg-blue-50 transition-colors whitespace-nowrap">
+                  <a href="tel:0611193342" className="text-[#16377e] hover:text-blue-900 font-bold font-prompt inline-flex items-center gap-1.5 px-3 py-1 rounded-full hover:bg-blue-50 transition-colors whitespace-nowrap">
                     <PhoneCall className="w-3 h-3 text-amber-600 shrink-0" />
-                    <span className="whitespace-nowrap tabular-nums">สอบถาม 092-925-3839</span>
+                    <span className="whitespace-nowrap tabular-nums">สอบถาม 061-119-3342</span>
                   </a>
                 </div>
               </div>
@@ -132,7 +132,7 @@ export function FeePolicyCard() {
             <AlertCircle className="w-5 h-5 shrink-0" />
           </div>
           <div className="text-xs sm:text-sm font-sarabun text-slate-700 leading-relaxed">
-            <strong className="text-slate-900 font-prompt">ข้อแนะนำกรณีเกิดเหตุฉุกเฉิน:</strong> หากท่านหรือบุคคลใกล้ชิดประสบอุบัติเหตุหรือเจ็บป่วยวิกฤต สามารถโทรแจ้ง <strong className="text-[#16377e] font-bold whitespace-nowrap">1669</strong> หรือสายตรงกู้ภัยประจิม <strong className="text-amber-700 font-bold whitespace-nowrap">092-925-3839</strong> ได้ทันที โดยไม่ต้องกังวลเรื่องค่าใช้จ่าย
+            <strong className="text-slate-900 font-prompt">ข้อแนะนำกรณีเกิดเหตุฉุกเฉิน:</strong> หากท่านหรือบุคคลใกล้ชิดประสบอุบัติเหตุหรือเจ็บป่วยวิกฤต สามารถโทรแจ้ง <strong className="text-[#16377e] font-bold whitespace-nowrap">1669</strong> หรือสายตรงกู้ภัยประจิม <strong className="text-amber-700 font-bold whitespace-nowrap">061-119-3342</strong> ได้ทันที โดยไม่ต้องกังวลเรื่องค่าใช้จ่าย
           </div>
         </div>
       </div>

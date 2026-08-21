@@ -63,8 +63,8 @@ export function HeroSlider({ onOpenReportModal, onExploreMissions }: HeroSliderP
       stat3_lbl: 'ปฏิบัติการต่อเนื่อง',
       primary_btn_text: 'แจ้งเหตุด่วนฉุกเฉิน',
       primary_btn_action: 'report' as const,
-      secondary_btn_text: `โทร ${siteConfig?.hotline_primary || '092-925-3839'}`,
-      secondary_btn_url: `tel:${siteConfig?.hotline_primary?.replace(/-/g, '') || '0929253839'}`,
+      secondary_btn_text: `โทร ${siteConfig?.hotline_primary || '061-119-3342'}`,
+      secondary_btn_url: `tel:${siteConfig?.hotline_primary?.replace(/-/g, '') || '0611193342'}`,
       is_active: true,
       sort_order: 1,
     },
@@ -164,14 +164,14 @@ export function HeroSlider({ onOpenReportModal, onExploreMissions }: HeroSliderP
 
               <a
                 id="hero-secondary-action-btn"
-                href={activeSlide.secondary_btn_url || `tel:${siteConfig?.hotline_primary?.replace(/-/g, '') || '0929253839'}`}
+                href={activeSlide.secondary_btn_url || `tel:${siteConfig?.hotline_primary?.replace(/-/g, '') || '0611193342'}`}
                 className="inline-flex items-center justify-center gap-2.5 bg-[#16377e]/90 hover:bg-[#1f489e] text-white font-bold px-6 py-3.5 rounded-full border border-amber-400/50 shadow-md text-sm sm:text-base transition-all font-prompt whitespace-nowrap shrink-0 min-h-[48px]"
               >
                 <div className="w-5 h-5 rounded-full bg-amber-400/20 flex items-center justify-center shrink-0">
                   <PhoneCall className="w-3.5 h-3.5 text-amber-300" />
                 </div>
                 <span className="whitespace-nowrap tabular-nums">
-                  {activeSlide.secondary_btn_text || `โทร ${siteConfig?.hotline_primary || '092-925-3839'}`}
+                  {activeSlide.secondary_btn_text || `โทร ${siteConfig?.hotline_primary || '061-119-3342'}`}
                 </span>
               </a>
             </div>

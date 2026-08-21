@@ -47,13 +47,13 @@ export function TopEmergencyBar({
           {/* Hotline Button */}
           <a
             id="emergency-top-hotline"
-            href="tel:0929253839"
+            href="tel:0611193342"
             className="inline-flex items-center justify-center gap-1.5 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded-full shadow-sm hover:shadow-md hover:brightness-105 transition-all font-prompt text-xs sm:text-sm border border-amber-300 whitespace-nowrap shrink-0 min-h-[32px]"
           >
             <div className="w-4 h-4 rounded-full bg-slate-950/15 flex items-center justify-center shrink-0">
               <PhoneCall className="w-2.5 h-2.5 text-slate-950 animate-pulse" />
             </div>
-            <span className="tabular-nums font-bold tracking-tight">092-925-3839</span>
+            <span className="tabular-nums font-bold tracking-tight">061-119-3342</span>
           </a>
 
           {/* Online Report Button */}

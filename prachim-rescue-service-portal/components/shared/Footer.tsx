@@ -275,8 +275,8 @@ export function Footer({ onOpenReportModal, onOpenAdminModal, onNavigateSection 
                 <PhoneCall className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                 <div>
                   <span className="block text-blue-300/70 text-xs whitespace-nowrap">สายตรงกู้ภัยประจิม (บรบือ):</span>
-                  <a href="tel:0929253839" className="text-amber-300 font-bold font-prompt text-base hover:text-amber-200 whitespace-nowrap tabular-nums">
-                    092-925-3839
+                  <a href="tel:0611193342" className="text-amber-300 font-bold font-prompt text-base hover:text-amber-200 whitespace-nowrap tabular-nums">
+                    061-119-3342
                   </a>
                 </div>
               </div>

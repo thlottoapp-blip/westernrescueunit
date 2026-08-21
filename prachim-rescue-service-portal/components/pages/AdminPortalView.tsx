@@ -1239,7 +1239,7 @@ export function AdminPortalView({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-4 rounded-2xl bg-blue-950/40 border border-blue-900/40">
                     <span className="text-xs font-bold text-blue-300 font-prompt">เบอร์โทรศัพท์ติดต่อ</span>
-                    <p className="text-base font-mono font-bold text-white mt-1">{selectedOfficer.phone || '092-925-3839'}</p>
+                    <p className="text-base font-mono font-bold text-white mt-1">{selectedOfficer.phone || '061-119-3342'}</p>
                   </div>
                   <div className="p-4 rounded-2xl bg-blue-950/40 border border-blue-900/40">
                     <span className="text-xs font-bold text-blue-300 font-prompt">สถานีประจำการ</span>

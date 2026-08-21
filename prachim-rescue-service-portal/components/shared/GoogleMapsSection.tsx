@@ -217,15 +217,15 @@ export function GoogleMapsFooter({ onOpenReportModal }: GoogleMapsFooterProps) {
                       สายตรงกู้ภัยประจิม (บรบือ 24 ชม.)
                     </span>
                     <a
-                      href="tel:0929253839"
+                      href="tel:0611193342"
                       className="text-base font-black font-prompt text-amber-300 hover:text-amber-200 whitespace-nowrap tabular-nums"
                     >
-                      092-925-3839
+                      061-119-3342
                     </a>
                   </div>
                 </div>
                 <a
-                  href="tel:0929253839"
+                  href="tel:0611193342"
                   className="px-4 py-1.5 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold font-prompt transition-colors whitespace-nowrap shrink-0"
                 >
                   โทรด่วน

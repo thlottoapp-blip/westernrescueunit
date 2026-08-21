@@ -127,12 +127,12 @@ export function Navbar({
 
             {/* Quick Hotline Call Button */}
             <a
-              href="tel:0929253839"
+              href="tel:0611193342"
               className="inline-flex items-center gap-1 sm:gap-1.5 text-amber-300 hover:text-amber-200 font-prompt font-bold text-[11px] sm:text-xs transition-colors whitespace-nowrap"
             >
               <PhoneCall className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400 animate-pulse shrink-0" />
               <span className="hidden xs:inline">สายด่วน:</span>
-              <span className="font-mono tabular-nums">092-925-3839</span>
+              <span className="font-mono tabular-nums">061-119-3342</span>
             </a>
           </div>
         </div>
@@ -317,11 +317,11 @@ export function Navbar({
 
           <div className="pt-1 flex flex-col gap-2.5">
             <a
-              href="tel:0929253839"
+              href="tel:0611193342"
               className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold py-3 rounded-full shadow text-xs sm:text-sm whitespace-nowrap min-h-[44px]"
             >
               <PhoneCall className="w-4 h-4 shrink-0 animate-pulse" />
-              <span className="whitespace-nowrap">โทรด่วนกู้ภัยประจิม 092-925-3839</span>
+              <span className="whitespace-nowrap">โทรด่วนกู้ภัยประจิม 061-119-3342</span>
             </a>
 
             <button

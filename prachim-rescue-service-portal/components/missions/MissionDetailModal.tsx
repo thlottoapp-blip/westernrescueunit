@@ -119,11 +119,11 @@ export function MissionDetailModal({ mission, onClose }: MissionDetailModalProps
             </div>
 
             <a
-              href="tel:0929253839"
+              href="tel:0611193342"
               className="inline-flex items-center justify-center gap-2 bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-xs px-5 py-2.5 rounded-full font-prompt transition-all whitespace-nowrap shadow-xs border border-amber-400/40 shrink-0 min-h-[40px]"
             >
               <PhoneCall className="w-3.5 h-3.5 text-amber-300 shrink-0" />
-              <span className="whitespace-nowrap">ติดต่อสอบถาม 092-925-3839</span>
+              <span className="whitespace-nowrap">ติดต่อสอบถาม 061-119-3342</span>
             </a>
           </div>
         </div>

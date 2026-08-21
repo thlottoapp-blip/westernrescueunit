@@ -78,11 +78,11 @@ export function MissionDetailView({
             </button>
 
             <a
-              href="tel:0929253839"
+              href="tel:0611193342"
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs font-prompt transition-colors shrink-0"
             >
               <PhoneCall className="w-3.5 h-3.5 shrink-0" />
-              <span>092-925-3839</span>
+              <span>061-119-3342</span>
             </a>
           </div>
         </div>
@@ -204,11 +204,11 @@ export function MissionDetailView({
 
               <div className="flex flex-wrap items-center gap-3">
                 <a
-                  href="tel:0929253839"
+                  href="tel:0611193342"
                   className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs sm:text-sm font-prompt transition-colors shadow-md shrink-0"
                 >
                   <PhoneCall className="w-4 h-4 text-slate-950 shrink-0" />
-                  <span>โทร 092-925-3839</span>
+                  <span>โทร 061-119-3342</span>
                 </a>
 
                 <button

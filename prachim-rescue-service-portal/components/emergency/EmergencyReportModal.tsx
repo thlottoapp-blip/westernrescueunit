@@ -226,11 +226,11 @@ export function EmergencyReportModal({
 
               <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
                 <a
-                  href="tel:0929253839"
+                  href="tel:0611193342"
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#16377e] hover:bg-[#0f2452] text-white font-bold px-6 py-3 rounded-full font-prompt text-sm shadow-md border border-amber-400/40 whitespace-nowrap shrink-0 min-h-[44px]"
                 >
                   <Phone className="w-4 h-4 text-amber-300 shrink-0" />
-                  <span className="whitespace-nowrap">โทรยืนยันสายตรง 092-925-3839</span>
+                  <span className="whitespace-nowrap">โทรยืนยันสายตรง 061-119-3342</span>
                 </a>
                 <button
                   onClick={handleResetAndClose}

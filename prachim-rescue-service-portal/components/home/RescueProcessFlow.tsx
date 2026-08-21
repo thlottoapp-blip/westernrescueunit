@@ -13,7 +13,7 @@ export function RescueProcessFlow({ onOpenReportModal }: RescueProcessFlowProps)
       stepNumber: '01',
       titleTh: 'โทรแจ้งเหตุหรือแจ้งออนไลน์',
       titleEn: 'CALL OR ARRIVE',
-      desc: 'ติดต่อศูนย์สั่งการกู้ภัยประจิม โทร 092-925-3839 หรือ 1669 ตลอด 24 ชั่วโมง หรือส่งพิกัดผ่านระบบแจ้งเหตุ',
+      desc: 'ติดต่อศูนย์สั่งการกู้ภัยประจิม โทร 061-119-3342 หรือ 1669 ตลอด 24 ชั่วโมง หรือส่งพิกัดผ่านระบบแจ้งเหตุ',
       icon: PhoneCall,
     },
     {
@@ -117,11 +117,11 @@ export function RescueProcessFlow({ onOpenReportModal }: RescueProcessFlowProps)
 
           <div className="flex flex-wrap items-center justify-center gap-3 relative z-10">
             <a
-              href="tel:0929253839"
+              href="tel:0611193342"
               className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold px-6 py-3 rounded-full shadow-lg text-xs sm:text-sm font-prompt transition-all whitespace-nowrap shrink-0 min-h-[44px]"
             >
               <PhoneCall className="w-4 h-4 text-slate-950 shrink-0" />
-              <span className="whitespace-nowrap tabular-nums">092-925-3839</span>
+              <span className="whitespace-nowrap tabular-nums">061-119-3342</span>
             </a>
             <button
               onClick={onOpenReportModal}

@@ -13,7 +13,7 @@ const promptFont = Prompt({
 export const metadata: Metadata = {
   metadataBase: new URL('https://westernrescueunit.vercel.app'),
   title: 'หน่วยกู้ภัยประจิม (สมาคมประจิมสารคาม พุทธศาสตร์สงเคราะห์) | 24 Hours Emergency Rescue',
-  description: 'ศูนย์ปฏิบัติการการแพทย์ฉุกเฉิน กู้ภัยทางน้ำ ดำน้ำค้นหา และบรรเทาสาธารณภัย อำเภอบรบือ จังหวัดมหาสารคาม โทร 092-925-3839 / 1669',
+  description: 'ศูนย์ปฏิบัติการการแพทย์ฉุกเฉิน กู้ภัยทางน้ำ ดำน้ำค้นหา และบรรเทาสาธารณภัย อำเภอบรบือ จังหวัดมหาสารคาม โทร 061-119-3342 / 1669',
   icons: {
     icon: '/prachim-logo.png',
     apple: '/prachim-logo.png',

@@ -113,10 +113,10 @@ export function AboutSacredSection({ onOpenReportModal }: AboutSacredSectionProp
             {/* Emergency Action Buttons */}
             <div className="flex flex-wrap items-center gap-3 sm:gap-4">
               <a
-                href="tel:0929253839"
+                href="tel:0611193342"
                 className="inline-flex items-center justify-center gap-2 bg-[#16377e] hover:bg-[#1f489e] text-white font-bold px-6 py-3 rounded-full shadow-md shadow-blue-950/20 text-xs sm:text-sm font-prompt transition-all border border-amber-400/50 whitespace-nowrap shrink-0 min-h-[44px]"
               >
-                <span className="whitespace-nowrap">โทรติดต่อศูนย์กู้ภัย 092-925-3839</span>
+                <span className="whitespace-nowrap">โทรติดต่อศูนย์กู้ภัย 061-119-3342</span>
               </a>
               <button
                 onClick={onOpenReportModal}

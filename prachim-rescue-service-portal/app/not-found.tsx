@@ -22,11 +22,11 @@ export default function NotFound() {
           กลับสู่หน้าหลัก
         </Link>
         <a
-          href="tel:0929253839"
+          href="tel:0611193342"
           className="inline-flex items-center gap-2 px-6 py-3 bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 font-bold rounded-xl transition"
         >
           <PhoneCall className="w-5 h-5" />
-          สายด่วนกู้ภัย 092-925-3839
+          สายด่วนกู้ภัย 061-119-3342
         </a>
       </div>
     </div>
