@@ -1636,8 +1636,25 @@ export function AdminPortalView({
                     >
                       + เพิ่มรถ/อุปกรณ์
                     </button>
+                    {onDeleteFleetItem && (
+                      <button
+                        onClick={() => onDeleteFleetItem(selectedFleetItem.id)}
+                        className="p-2 rounded-xl bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 min-h-[38px] cursor-pointer"
+                        title="ลบยานพาหนะ/อุปกรณ์"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
+
+                {selectedFleetItem.image_url && (
+                  <div className="relative h-56 sm:h-64 rounded-2xl overflow-hidden bg-cover bg-center border border-slate-200" style={{ backgroundImage: `url(${selectedFleetItem.image_url})` }}>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
+                      <span className="text-xs text-white font-mono font-bold">{selectedFleetItem.call_sign} • {selectedFleetItem.plate_number}</span>
+                    </div>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className={`p-4 rounded-2xl border ${cardSubBg}`}>
@@ -1669,11 +1686,25 @@ export function AdminPortalView({
             {activeMenu === 'officers' && selectedOfficer && (
               <div className={`rounded-3xl border p-6 sm:p-8 space-y-6 ${cardBg}`}>
                 <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b ${isLight ? 'border-slate-200' : 'border-blue-900/60'}`}>
-                  <div>
-                    <span className="text-xs font-mono font-bold text-blue-700">{selectedOfficer.officer_code}</span>
-                    <h3 className={`text-xl font-bold mt-0.5 ${isLight ? 'text-slate-900' : 'text-white'}`}>{selectedOfficer.full_name}</h3>
-                    <p className={`text-xs font-sarabun ${isLight ? 'text-slate-600' : 'text-blue-300'}`}>{selectedOfficer.role_title}</p>
+                  <div className="flex items-center gap-4">
+                    {selectedOfficer.photo_url ? (
+                      <img
+                        src={selectedOfficer.photo_url}
+                        alt={selectedOfficer.full_name}
+                        className="w-16 h-16 rounded-2xl object-cover border-2 border-amber-400 shadow-md shrink-0"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#16377e] to-[#0f2452] text-amber-300 border-2 border-amber-400 flex items-center justify-center font-bold text-xl font-mono shadow-md shrink-0">
+                        {selectedOfficer.officer_code.slice(-2)}
+                      </div>
+                    )}
+                    <div>
+                      <span className="text-xs font-mono font-bold text-blue-700">{selectedOfficer.officer_code}</span>
+                      <h3 className={`text-xl font-bold mt-0.5 ${isLight ? 'text-slate-900' : 'text-white'}`}>{selectedOfficer.full_name}</h3>
+                      <p className={`text-xs font-sarabun ${isLight ? 'text-slate-600' : 'text-blue-300'}`}>{selectedOfficer.role_title}</p>
+                    </div>
                   </div>
+
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => onToggleOfficerDuty(selectedOfficer.id)}
@@ -1691,6 +1722,15 @@ export function AdminPortalView({
                     >
                       + เพิ่มจนท.
                     </button>
+                    {onDeleteOfficer && (
+                      <button
+                        onClick={() => onDeleteOfficer(selectedOfficer.id)}
+                        className="p-2 rounded-xl bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 min-h-[38px] cursor-pointer"
+                        title="ลบเจ้าหน้าที่"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -2253,6 +2293,14 @@ export function AdminPortalView({
                   </div>
 
                   <div>
+                    <ImageUploadField
+                      label="รูปภาพยานพาหนะ/อุปกรณ์ (อัปโหลดจากเครื่อง)"
+                      value={drawerFleetImage}
+                      onChange={setDrawerFleetImage}
+                    />
+                  </div>
+
+                  <div>
                     <label className="block text-xs font-bold text-slate-700 mb-1">จุดประจำการ</label>
                     <input
                       name="f_base"
@@ -2295,6 +2343,7 @@ export function AdminPortalView({
                         station_base: station,
                         is_on_duty: true,
                         joined_date: new Date().toISOString().split('T')[0],
+                        photo_url: drawerOfficerImage || '',
                       });
                     }
                     setIsSlideDrawerOpen(false);
@@ -2328,6 +2377,14 @@ export function AdminPortalView({
                       required
                       placeholder="เช่น นายสมชาย ใจกล้า"
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <ImageUploadField
+                      label="รูปภาพโปรไฟล์เจ้าหน้าที่ (อัปโหลดจากเครื่อง)"
+                      value={drawerOfficerImage}
+                      onChange={setDrawerOfficerImage}
                     />
                   </div>
 

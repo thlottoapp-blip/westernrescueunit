@@ -97,6 +97,7 @@ export interface EquipmentFleet {
   status: 'available' | 'dispatched' | 'maintenance';
   location_base: string;
   specifications: string;
+  image_url?: string;
   created_at: string;
 }
 
@@ -109,6 +110,7 @@ export interface OfficerRoster {
   station_base: string;
   is_on_duty: boolean;
   joined_date: string;
+  photo_url?: string;
   created_at: string;
 }
 

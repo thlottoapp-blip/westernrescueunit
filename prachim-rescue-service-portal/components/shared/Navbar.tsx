@@ -146,34 +146,34 @@ export function Navbar({
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20 gap-2">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 sm:h-20 gap-3">
           {/* Logo and Org Name */}
           <div
-            className="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink min-w-0"
+            className="flex items-center gap-3 sm:gap-4 cursor-pointer group shrink min-w-0"
             onClick={() => handleNavClick('home')}
           >
             {/* Official Rescue Logo Badge */}
             <div className="relative group-hover:scale-105 transition-transform shrink-0">
-              <OfficialLogo size={44} withGlow={true} />
+              <OfficialLogo size={46} withGlow={false} />
               <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-emerald-500 border-2 border-white shadow-sm" title="ศูนย์สั่งการออนไลน์ 24 ชม."></div>
             </div>
 
             {/* Typography */}
             <div className="flex flex-col min-w-0 justify-center">
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="text-base xs:text-lg sm:text-2xl font-bold tracking-tight text-slate-900 font-prompt leading-tight group-hover:text-blue-900 transition-colors whitespace-nowrap truncate">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-base sm:text-xl md:text-2xl font-black tracking-tight text-slate-900 font-prompt leading-tight group-hover:text-blue-900 transition-colors whitespace-nowrap">
                   หน่วยกู้ภัยประจิม
                 </span>
-                <span className="hidden sm:inline-block bg-amber-100 text-amber-900 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-amber-300 font-prompt whitespace-nowrap shrink-0">
+                <span className="inline-block bg-amber-400 text-slate-950 text-[10px] sm:text-[11px] font-black uppercase tracking-wide px-2.5 py-0.5 rounded-md border border-amber-500 font-prompt whitespace-nowrap shrink-0 shadow-xs">
                   สมาคมประจิมสารคาม
                 </span>
               </div>
-              <span className="text-xs text-slate-600 font-sarabun hidden sm:block font-medium truncate max-w-[260px] md:max-w-md lg:max-w-none">
+              <span className="text-xs text-slate-600 font-sarabun hidden sm:block font-medium truncate max-w-[260px] md:max-w-md lg:max-w-none mt-0.5">
                 สมาคมประจิมสารคาม พุทธศาสตร์สงเคราะห์ • อ.บรบือ จ.มหาสารคาม
               </span>
-              <span className="text-[10px] text-slate-500 font-sarabun block sm:hidden font-medium leading-none truncate max-w-[140px] xs:max-w-[190px] mt-0.5">
-                สมาคมประจิมสารคาม • บรบือ
+              <span className="text-[10px] text-slate-500 font-sarabun block sm:hidden font-medium leading-tight truncate max-w-[170px] xs:max-w-[220px] mt-0.5">
+                พุทธศาสตร์สงเคราะห์ • บรบือ
               </span>
             </div>
           </div>

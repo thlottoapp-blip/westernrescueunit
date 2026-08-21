@@ -304,6 +304,7 @@ export const INITIAL_FLEET: EquipmentFleet[] = [
     status: 'dispatched',
     location_base: 'ศูนย์ใหญ่ ถนนแจ้งสนิท อ.บรบือ',
     specifications: 'อุปกรณ์ช่วยชีวิตขั้นสูง, เครื่อง Defibrillator/AED, ออกซิเจนแรงดันสูง, เปลตัก Scooper, ชุด Splint ดามกระดูก',
+    image_url: 'https://images.unsplash.com/photo-1587745416684-47953f16f02f?auto=format&fit=crop&w=1200&q=80',
     created_at: '2026-01-01T00:00:00Z',
   },
   {
@@ -315,6 +316,7 @@ export const INITIAL_FLEET: EquipmentFleet[] = [
     status: 'available',
     location_base: 'ศูนย์ใหญ่ ถนนแจ้งสนิท อ.บรบือ',
     specifications: 'ชุดเครื่องมือตัด-ถ่างไฮดรอลิก Holmatro, สปอตไลท์ส่องสว่างสนาม, รอกสลิงลากจูง, เลื่อยยนต์',
+    image_url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=80',
     created_at: '2026-01-01T00:00:00Z',
   },
   {
@@ -326,6 +328,7 @@ export const INITIAL_FLEET: EquipmentFleet[] = [
     status: 'available',
     location_base: 'หน่วยปฏิบัติการทางน้ำ อ.บรบือ',
     specifications: 'เรืออลูมิเนียมกู้ภัยท้องแบน, เครื่องยนต์เรือ 40HP, ถังอากาศ Scuba 6 ชุด, เสื้อ BCD, เข็มทิศและไฟฉายใต้น้ำ',
+    image_url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=80',
     created_at: '2026-01-01T00:00:00Z',
   },
   {
@@ -337,6 +340,7 @@ export const INITIAL_FLEET: EquipmentFleet[] = [
     status: 'available',
     location_base: 'จุดบริการวาปีปทุม - นาดูน',
     specifications: 'คีมจับงู safety, กล่องเก็บสัตว์มีพิษ, ถังดับเพลิงเคมี, เครื่องสูบน้ำไดโว่, อุปกรณ์พ่วงแบตเตอรี่',
+    image_url: 'https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=1200&q=80',
     created_at: '2026-01-01T00:00:00Z',
   },
 ];
@@ -351,6 +355,7 @@ export const INITIAL_OFFICERS: OfficerRoster[] = [
     station_base: 'ศูนย์ใหญ่บรบือ',
     is_on_duty: true,
     joined_date: '2015-06-01',
+    photo_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
     created_at: '2026-01-01T00:00:00Z',
   },
   {
@@ -362,6 +367,7 @@ export const INITIAL_OFFICERS: OfficerRoster[] = [
     station_base: 'ศูนย์ใหญ่บรบือ',
     is_on_duty: true,
     joined_date: '2018-03-15',
+    photo_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80',
     created_at: '2026-01-01T00:00:00Z',
   },
   {
@@ -373,6 +379,7 @@ export const INITIAL_OFFICERS: OfficerRoster[] = [
     station_base: 'หน่วยทางน้ำบรบือ',
     is_on_duty: true,
     joined_date: '2019-11-20',
+    photo_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80',
     created_at: '2026-01-01T00:00:00Z',
   },
   {
@@ -384,6 +391,7 @@ export const INITIAL_OFFICERS: OfficerRoster[] = [
     station_base: 'จุดบริการวาปีปทุม',
     is_on_duty: true,
     joined_date: '2021-04-10',
+    photo_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=600&q=80',
     created_at: '2026-01-01T00:00:00Z',
   },
 ];
