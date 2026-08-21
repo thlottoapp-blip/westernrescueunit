@@ -293,8 +293,25 @@ export function usePrachimStore() {
     return true;
   };
 
-  // Sound Notification
+  // Sound Notification (Emergency Siren Sound Effect - DRAGON-STUDIO Pixabay 397963 Style)
   const playEmergencyAlertSound = () => {
+    try {
+      // 1. Try playing high-fidelity emergency siren audio file
+      const audio = new Audio('/sounds/emergency-siren.mp3');
+      audio.volume = 0.8;
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // 2. Synthesizer fallback for restricted audio policies
+          playSynthesizedRescueSiren();
+        });
+      }
+    } catch {
+      playSynthesizedRescueSiren();
+    }
+  };
+
+  const playSynthesizedRescueSiren = () => {
     try {
       const AudioCtx =
         window.AudioContext ||
@@ -306,20 +323,22 @@ export function usePrachimStore() {
       const gain = ctx.createGain();
 
       osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(800, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(1200, ctx.currentTime + 0.25);
-      osc.frequency.exponentialRampToValueAtTime(750, ctx.currentTime + 0.5);
+      osc.frequency.setValueAtTime(600, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1350, ctx.currentTime + 0.35);
+      osc.frequency.exponentialRampToValueAtTime(650, ctx.currentTime + 0.7);
+      osc.frequency.exponentialRampToValueAtTime(1300, ctx.currentTime + 1.05);
+      osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 1.4);
 
-      gain.gain.setValueAtTime(0.3, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.6);
+      gain.gain.setValueAtTime(0.4, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.5);
 
       osc.connect(gain);
       gain.connect(ctx.destination);
 
       osc.start();
-      osc.stop(ctx.currentTime + 0.6);
+      osc.stop(ctx.currentTime + 1.5);
     } catch {
-      // Audio playback fallback
+      // Ignore audio policy restrictions
     }
   };
 
