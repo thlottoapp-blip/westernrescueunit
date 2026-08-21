@@ -18,12 +18,32 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
     word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  p, span.description {
+    text-wrap: pretty;
+    word-break: normal;
     overflow-wrap: break-word;
   }
 
   h1, h2, h3, h4, h5, h6, p, span, a, button, input, select, textarea, label, table, th, td, badge {
     font-family: var(--font-prompt) !important;
+  }
+}
+
+/* Strict Mobile / Tablet / PC Viewport Protection */
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Touch Friendly Mobile & Tablet Tap Targets */
+@media (max-width: 1024px) {
+  button, a, input, select, textarea {
+    touch-action: manipulation;
   }
 }
 

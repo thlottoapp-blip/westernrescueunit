@@ -179,7 +179,7 @@ export function Navbar({
           </div>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden 2xl:flex items-center space-x-1 shrink-0">
+          <nav className="hidden xl:flex items-center space-x-1 shrink-0">
             {navLinks.map((link) => {
               const Icon = link.icon;
               const isActive = activeTab === link.id;
@@ -230,7 +230,7 @@ export function Navbar({
           </div>
 
           {/* Mobile/Tablet Right Controls */}
-          <div className="flex lg:hidden items-center gap-1.5 sm:gap-2 shrink-0">
+          <div className="flex xl:hidden items-center gap-1.5 sm:gap-2 shrink-0">
             <button
               onClick={onOpenReportModal}
               className="inline-flex items-center gap-1 sm:gap-1.5 bg-red-600 hover:bg-red-700 active:scale-95 text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-full shadow-sm whitespace-nowrap min-h-[32px] sm:min-h-[34px] transition-all cursor-pointer whitespace-nowrap"
@@ -252,7 +252,7 @@ export function Navbar({
               id="mobile-menu-toggle-btn"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none transition-colors cursor-pointer"
-              aria-label="เมนูหลัก"
+              aria-label="เมนูหลักแบบแซนวิช"
             >
               {isMobileMenuOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" />}
             </button>
@@ -260,7 +260,7 @@ export function Navbar({
         </div>
       </div>
 
-      {/* Mobile Drawer Menu */}
+      {/* Mobile & Tablet Sandwich Drawer Menu */}
       {isMobileMenuOpen && (
         <div className="xl:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-6 space-y-3 shadow-xl">
           <div className="grid grid-cols-2 gap-2 pb-3 border-b border-slate-200">
