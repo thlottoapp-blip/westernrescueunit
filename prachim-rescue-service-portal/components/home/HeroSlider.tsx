@@ -131,20 +131,20 @@ export function HeroSlider({ onOpenReportModal, onExploreMissions }: HeroSliderP
             </div>
 
             {/* Slide Headings */}
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.2] mb-4 font-prompt">
-              <span className="block text-white drop-shadow-md whitespace-normal">{activeSlide.title_line1}</span>
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-200 drop-shadow-md whitespace-normal">
+            <h1 className="text-2xl xs:text-3xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-tight mb-3 font-prompt [text-wrap:balance]">
+              <span className="block text-white drop-shadow-md">{activeSlide.title_line1}</span>
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-200 drop-shadow-md">
                 {activeSlide.title_line2}
               </span>
             </h1>
 
             {/* Slide Subtitle */}
-            <p className="text-blue-100 text-sm sm:text-base lg:text-lg font-sarabun leading-relaxed mb-8 max-w-2xl drop-shadow">
+            <p className="text-blue-100 text-xs sm:text-base lg:text-lg font-sarabun leading-relaxed mb-6 max-w-2xl drop-shadow [text-wrap:pretty]">
               {activeSlide.subtitle}
             </p>
 
             {/* Quick Action Buttons */}
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-10">
+            <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2.5 sm:gap-4 mb-8">
               <button
                 id="hero-primary-action-btn"
                 onClick={() => {
@@ -154,10 +154,10 @@ export function HeroSlider({ onOpenReportModal, onExploreMissions }: HeroSliderP
                     onOpenReportModal();
                   }
                 }}
-                className="inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-red-600 via-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold px-7 py-3.5 rounded-full shadow-xl shadow-red-950/60 border border-red-400/40 text-sm sm:text-base transition-all transform hover:-translate-y-0.5 cursor-pointer font-prompt whitespace-nowrap shrink-0 min-h-[48px]"
+                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 via-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold px-6 py-3 rounded-full shadow-xl shadow-red-950/60 border border-red-400/40 text-xs sm:text-base transition-all transform hover:-translate-y-0.5 cursor-pointer font-prompt whitespace-nowrap min-h-[44px] sm:min-h-[48px]"
               >
-                <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center shrink-0">
-                  <BadgeAlert className="w-4 h-4 animate-pulse text-white" />
+                <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                  <BadgeAlert className="w-3.5 h-3.5 animate-pulse text-white" />
                 </div>
                 <span className="whitespace-nowrap">{activeSlide.primary_btn_text}</span>
               </button>
@@ -165,10 +165,10 @@ export function HeroSlider({ onOpenReportModal, onExploreMissions }: HeroSliderP
               <a
                 id="hero-secondary-action-btn"
                 href={activeSlide.secondary_btn_url || `tel:${siteConfig?.hotline_primary?.replace(/-/g, '') || '0611193342'}`}
-                className="inline-flex items-center justify-center gap-2.5 bg-[#16377e]/90 hover:bg-[#1f489e] text-white font-bold px-6 py-3.5 rounded-full border border-amber-400/50 shadow-md text-sm sm:text-base transition-all font-prompt whitespace-nowrap shrink-0 min-h-[48px]"
+                className="inline-flex items-center justify-center gap-2 bg-[#16377e]/90 hover:bg-[#1f489e] text-white font-bold px-5 py-3 rounded-full border border-amber-400/50 shadow-md text-xs sm:text-base transition-all font-prompt whitespace-nowrap min-h-[44px] sm:min-h-[48px]"
               >
-                <div className="w-5 h-5 rounded-full bg-amber-400/20 flex items-center justify-center shrink-0">
-                  <PhoneCall className="w-3.5 h-3.5 text-amber-300" />
+                <div className="w-4.5 h-4.5 rounded-full bg-amber-400/20 flex items-center justify-center shrink-0">
+                  <PhoneCall className="w-3 h-3 text-amber-300" />
                 </div>
                 <span className="whitespace-nowrap tabular-nums">
                   {activeSlide.secondary_btn_text || `โทร ${siteConfig?.hotline_primary || '061-119-3342'}`}
@@ -177,28 +177,28 @@ export function HeroSlider({ onOpenReportModal, onExploreMissions }: HeroSliderP
             </div>
 
             {/* Slide Key Metrics Strip */}
-            <div className="grid grid-cols-3 gap-3 sm:gap-4 pt-6 border-t border-blue-800/60 max-w-xl">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4 pt-5 border-t border-blue-800/60 max-w-xl">
               <div className="flex flex-col">
-                <span className="text-base sm:text-xl font-bold text-amber-300 font-prompt whitespace-nowrap tabular-nums">
+                <span className="text-sm sm:text-xl font-bold text-amber-300 font-prompt whitespace-nowrap tabular-nums">
                   {activeSlide.stat1_val}
                 </span>
-                <span className="text-[11px] sm:text-xs text-blue-200 font-sarabun whitespace-nowrap">
+                <span className="text-[10px] sm:text-xs text-blue-200 font-sarabun whitespace-nowrap truncate">
                   {activeSlide.stat1_lbl}
                 </span>
               </div>
               <div className="flex flex-col">
-                <span className="text-base sm:text-xl font-bold text-amber-300 font-prompt whitespace-nowrap tabular-nums">
+                <span className="text-sm sm:text-xl font-bold text-amber-300 font-prompt whitespace-nowrap tabular-nums">
                   {activeSlide.stat2_val}
                 </span>
-                <span className="text-[11px] sm:text-xs text-blue-200 font-sarabun whitespace-nowrap">
+                <span className="text-[10px] sm:text-xs text-blue-200 font-sarabun whitespace-nowrap truncate">
                   {activeSlide.stat2_lbl}
                 </span>
               </div>
               <div className="flex flex-col">
-                <span className="text-base sm:text-xl font-bold text-amber-300 font-prompt whitespace-nowrap tabular-nums">
+                <span className="text-sm sm:text-xl font-bold text-amber-300 font-prompt whitespace-nowrap tabular-nums">
                   {activeSlide.stat3_val}
                 </span>
-                <span className="text-[11px] sm:text-xs text-blue-200 font-sarabun whitespace-nowrap">
+                <span className="text-[10px] sm:text-xs text-blue-200 font-sarabun whitespace-nowrap truncate">
                   {activeSlide.stat3_lbl}
                 </span>
               </div>
@@ -206,16 +206,16 @@ export function HeroSlider({ onOpenReportModal, onExploreMissions }: HeroSliderP
           </div>
         </div>
 
-        {/* Carousel Navigation Arrows */}
+        {/* Carousel Navigation Arrows (Desktop & Tablet only to avoid text overlap on mobile) */}
         {displaySlides.length > 1 && (
           <>
             <button
               id="hero-slider-prev-btn"
               onClick={prevSlide}
-              className="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 w-12 h-12 rounded-full bg-[#0a193b]/75 hover:bg-[#16377e] text-white border border-amber-400/40 flex items-center justify-center backdrop-blur-sm transition-all cursor-pointer shadow-lg shrink-0 aspect-square"
+              className="hidden sm:flex absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 rounded-full bg-[#0a193b]/85 hover:bg-[#16377e] text-white border border-amber-400/40 items-center justify-center backdrop-blur-sm transition-all cursor-pointer shadow-lg shrink-0 aspect-square"
               aria-label="สไลด์ก่อนหน้า"
             >
-              <ChevronLeft className="w-6 h-6 shrink-0" />
+              <ChevronLeft className="w-5 h-5 shrink-0" />
             </button>
 
             <button

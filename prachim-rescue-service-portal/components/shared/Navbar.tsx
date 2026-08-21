@@ -77,7 +77,7 @@ export function Navbar({
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
       {/* Top Official Utility Strip with Social Media & Hotline */}
-      <div className="bg-[#08132b] text-slate-200 border-b border-blue-900/60 text-xs py-1.5 px-3 sm:px-6 lg:px-8">
+      <div className="hidden sm:block bg-[#08132b] text-slate-200 border-b border-blue-900/60 text-xs py-1.5 px-3 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
           {/* Left: Station Status & Address */}
           <div className="flex items-center gap-2 sm:gap-3 text-[11px] sm:text-xs min-w-0">
@@ -148,32 +148,27 @@ export function Navbar({
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4">
-          {/* Logo and Org Name */}
+          {/* Mobile/Tablet Brand Logo */}
           <div
-            className="flex items-center gap-2.5 sm:gap-3.5 cursor-pointer group shrink-0"
+            className="flex items-center gap-2 cursor-pointer group shrink-0 min-w-0"
             onClick={() => handleNavClick('home')}
           >
-            {/* Official Rescue Logo Badge */}
-            <div className="relative group-hover:scale-105 transition-transform shrink-0">
-              <OfficialLogo size={46} withGlow={false} />
-              <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-emerald-500 border-2 border-white shadow-sm" title="ศูนย์สั่งการออนไลน์ 24 ชม."></div>
+            <div className="relative shrink-0">
+              <OfficialLogo size={40} withGlow={false} />
+              <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border border-white" title="ศูนย์สั่งการออนไลน์ 24 ชม."></div>
             </div>
 
-            {/* Typography */}
-            <div className="flex flex-col justify-center shrink-0">
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <span className="text-base sm:text-lg md:text-xl xl:text-2xl font-black tracking-tight text-slate-900 font-prompt leading-none group-hover:text-blue-900 transition-colors whitespace-nowrap">
+            <div className="flex flex-col justify-center min-w-0">
+              <div className="flex items-center gap-1 min-w-0">
+                <span className="text-sm sm:text-base md:text-lg font-black tracking-tight text-slate-900 font-prompt leading-tight truncate">
                   หน่วยกู้ภัยประจิม
                 </span>
-                <span className="inline-block bg-amber-400 text-slate-950 text-[10px] sm:text-[11px] font-black uppercase tracking-wide px-2 py-0.5 rounded-md border border-amber-500 font-prompt whitespace-nowrap shrink-0 shadow-xs">
-                  สมาคมประจิมสารคาม
+                <span className="inline-block bg-amber-400 text-slate-950 text-[9px] sm:text-[10px] font-black uppercase px-1.5 py-0.5 rounded border border-amber-500 font-prompt shrink-0">
+                  บรบือ
                 </span>
               </div>
-              <span className="text-[11px] sm:text-xs text-slate-600 font-sarabun hidden sm:block font-medium whitespace-nowrap mt-1">
-                สมาคมประจิมสารคาม พุทธศาสตร์สงเคราะห์ • อ.บรบือ จ.มหาสารคาม
-              </span>
-              <span className="text-[10px] text-slate-500 font-sarabun block sm:hidden font-medium leading-tight whitespace-nowrap mt-0.5">
-                พุทธศาสตร์สงเคราะห์ • บรบือ
+              <span className="text-[10px] sm:text-xs text-slate-600 font-sarabun truncate hidden xs:block">
+                สมาคมประจิมสารคาม พุทธศาสตร์สงเคราะห์
               </span>
             </div>
           </div>
@@ -230,31 +225,22 @@ export function Navbar({
           </div>
 
           {/* Mobile/Tablet Right Controls */}
-          <div className="flex xl:hidden items-center gap-1.5 sm:gap-2 shrink-0">
+          <div className="flex xl:hidden items-center gap-1.5 shrink-0">
             <button
               onClick={onOpenReportModal}
-              className="inline-flex items-center gap-1 sm:gap-1.5 bg-red-600 hover:bg-red-700 active:scale-95 text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-full shadow-sm whitespace-nowrap min-h-[32px] sm:min-h-[34px] transition-all cursor-pointer whitespace-nowrap"
+              className="inline-flex items-center gap-1 bg-red-600 hover:bg-red-700 active:scale-95 text-white text-[11px] font-bold px-2.5 py-1.5 rounded-full shadow-xs whitespace-nowrap min-h-[32px] transition-all cursor-pointer shrink-0"
             >
               <BadgeAlert className="w-3.5 h-3.5 shrink-0 animate-pulse" />
               <span className="whitespace-nowrap">แจ้งเหตุ</span>
             </button>
 
             <button
-              onClick={onOpenAdminModal}
-              title="ระบบแอดมิน"
-              className="inline-flex items-center gap-1 bg-slate-900 hover:bg-[#16377e] active:scale-95 text-amber-300 border border-amber-400/60 text-[11px] sm:text-xs font-semibold px-2.5 py-1.5 rounded-full shadow-xs whitespace-nowrap min-h-[32px] sm:min-h-[34px] transition-all cursor-pointer whitespace-nowrap"
-            >
-              <Lock className="w-3 h-3 text-amber-300 shrink-0" />
-              <span className="whitespace-nowrap">แอดมิน</span>
-            </button>
-
-            <button
               id="mobile-menu-toggle-btn"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none transition-colors cursor-pointer"
+              className="w-8.5 h-8.5 rounded-full flex items-center justify-center text-slate-800 bg-slate-100 hover:bg-slate-200 focus:outline-none transition-colors cursor-pointer shrink-0 border border-slate-300"
               aria-label="เมนูหลักแบบแซนวิช"
             >
-              {isMobileMenuOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" />}
+              {isMobileMenuOpen ? <X className="w-5 h-5 shrink-0" /> : <Menu className="w-5 h-5 shrink-0" />}
             </button>
           </div>
         </div>
