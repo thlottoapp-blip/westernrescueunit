@@ -48,7 +48,7 @@ export function TopEmergencyBar({
           <a
             id="emergency-top-hotline"
             href="tel:0611193342"
-            className="inline-flex items-center justify-center gap-1.5 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded-full shadow-sm hover:shadow-md hover:brightness-105 transition-all font-prompt text-xs sm:text-sm border border-amber-300 whitespace-nowrap shrink-0 min-h-[32px]"
+            className="inline-flex items-center justify-center gap-1.5 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-300 hover:to-amber-500 text-slate-950 font-bold px-3 py-1.5 rounded-full shadow-sm hover:shadow-md hover:brightness-105 transition-all font-prompt text-xs sm:text-sm border border-amber-300 whitespace-nowrap shrink-0 min-h-[32px] whitespace-nowrap"
           >
             <div className="w-4 h-4 rounded-full bg-slate-950/15 flex items-center justify-center shrink-0">
               <PhoneCall className="w-2.5 h-2.5 text-slate-950 animate-pulse" />
@@ -61,7 +61,7 @@ export function TopEmergencyBar({
             <button
               id="emergency-top-report-btn"
               onClick={onOpenReportModal}
-              className="inline-flex items-center justify-center gap-1.5 bg-red-600 hover:bg-red-500 active:bg-red-700 text-white font-semibold px-3 py-1.5 rounded-full shadow-sm hover:shadow-md transition-all cursor-pointer font-prompt text-xs border border-red-400 whitespace-nowrap shrink-0 min-h-[32px]"
+              className="inline-flex items-center justify-center gap-1.5 bg-red-600 hover:bg-red-500 active:bg-red-700 text-white font-semibold px-3 py-1.5 rounded-full shadow-sm hover:shadow-md transition-all cursor-pointer font-prompt text-xs border border-red-400 whitespace-nowrap shrink-0 min-h-[32px] whitespace-nowrap"
             >
               <AlertTriangle className="w-3.5 h-3.5 text-white shrink-0 animate-pulse" />
               <span className="whitespace-nowrap">แจ้งเหตุด่วน</span>

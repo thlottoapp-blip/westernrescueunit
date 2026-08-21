@@ -501,7 +501,7 @@ export function AdminPortalView({
           {/* Quick Add Button */}
           <button
             onClick={() => handleOpenCreateDrawer(activeMenu)}
-            className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-xs transition-all cursor-pointer min-h-[36px]"
+            className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-xs transition-all cursor-pointer min-h-[36px] whitespace-nowrap"
           >
             <Plus className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">เพิ่มรายการใหม่</span>
@@ -532,7 +532,7 @@ export function AdminPortalView({
           {/* Logout Button */}
           <button
             onClick={onLogout}
-            className="inline-flex items-center px-3 py-1.5 rounded-full bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-colors cursor-pointer min-h-[36px]"
+            className="inline-flex items-center px-3 py-1.5 rounded-full bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-colors cursor-pointer min-h-[36px] whitespace-nowrap"
           >
             <span>ออกจากระบบ</span>
           </button>
@@ -649,7 +649,7 @@ export function AdminPortalView({
               {['incidents', 'missions', 'news', 'fleet', 'officers', 'categories', 'hero_slides'].includes(activeMenu) && (
                 <button
                   onClick={() => handleOpenCreateDrawer(activeMenu)}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-xs transition-all cursor-pointer min-h-[34px]"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-xs transition-all cursor-pointer min-h-[34px] whitespace-nowrap"
                   title="เปิดสไลด์เพิ่มรายการใหม่จากฝั่งขวา"
                 >
                   <Plus className="w-3.5 h-3.5" />
@@ -782,12 +782,12 @@ export function AdminPortalView({
                         {inc.incident_number}
                       </span>
                       <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
                           inc.status === 'pending'
-                            ? 'bg-red-100 text-red-800 border border-red-300 font-black'
+                            ? isLight ? 'bg-red-600 text-white border border-red-700' : 'bg-red-500 text-white border border-red-400'
                             : inc.status === 'resolved'
-                            ? 'bg-emerald-100 text-emerald-900 border border-emerald-300 font-black'
-                            : 'bg-amber-100 text-amber-900 border border-amber-300 font-black'
+                            ? isLight ? 'bg-emerald-700 text-white border border-emerald-800' : 'bg-emerald-500 text-white border border-emerald-400'
+                            : isLight ? 'bg-amber-600 text-white border border-amber-700' : 'bg-amber-500 text-white border border-amber-400'
                         }`}
                       >
                         {inc.status === 'pending'
@@ -905,10 +905,10 @@ export function AdminPortalView({
                       <p className={`text-[11px] font-sarabun font-semibold ${isLight ? 'text-slate-800' : 'text-blue-100'}`}>{f.plate_number || 'ประจำศูนย์'}</p>
                     </div>
                     <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
                         f.status === 'available'
-                          ? 'bg-emerald-100 text-emerald-900 font-bold border border-emerald-300'
-                          : 'bg-red-100 text-red-900 font-bold border border-red-300'
+                          ? isLight ? 'bg-emerald-700 text-white border border-emerald-800' : 'bg-emerald-500 text-white border border-emerald-400'
+                          : isLight ? 'bg-red-600 text-white border border-red-700' : 'bg-red-500 text-white border border-red-400'
                       }`}
                     >
                       {f.status === 'available' ? 'พร้อมออกเหตุ' : 'ออกเหตุ'}
@@ -948,7 +948,7 @@ export function AdminPortalView({
                     </div>
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        o.is_on_duty ? 'bg-emerald-100 text-emerald-900 font-bold border border-emerald-300' : 'bg-slate-200 text-slate-800 border border-slate-300'
+                        o.is_on_duty ? (isLight ? 'bg-emerald-700 text-white border border-emerald-800' : 'bg-emerald-500 text-white border border-emerald-400') : (isLight ? 'bg-slate-600 text-white border border-slate-700' : 'bg-slate-500 text-white border border-slate-400')
                       }`}
                     >
                       {o.is_on_duty ? 'เข้าเวร' : 'พักเวร'}
@@ -1052,14 +1052,14 @@ export function AdminPortalView({
           <div className={`lg:hidden p-3 border-b flex items-center justify-between ${bgHeader}`}>
             <button
               onClick={() => setMobileDetailOpen(false)}
-              className="inline-flex items-center gap-1.5 text-xs text-[#16377e] font-bold font-prompt"
+              className="inline-flex items-center gap-1.5 text-xs text-[#16377e] font-bold font-prompt whitespace-nowrap"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>กลับสู่รายการ</span>
             </button>
             <button
               onClick={() => handleOpenCreateDrawer(activeMenu)}
-              className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-600 text-white text-xs font-bold"
+              className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-600 text-white text-xs font-bold whitespace-nowrap"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>เพิ่มใหม่</span>
@@ -1079,11 +1079,11 @@ export function AdminPortalView({
                   <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 text-xs font-bold font-mono border border-blue-300 dark:border-blue-800">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 text-xs font-bold font-mono border border-blue-300 dark:border-blue-800 whitespace-nowrap">
                           <Radio className="w-3.5 h-3.5 text-blue-600 animate-pulse" />
                           <span>168.275 MHz (ช่องกู้ภัยประจิม)</span>
                         </span>
-                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-300">
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-300 whitespace-nowrap">
                           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                           <span>ศูนย์สั่งการ 1669 ออนไลน์</span>
                         </span>
@@ -1533,7 +1533,7 @@ export function AdminPortalView({
                             <button
                               type="button"
                               onClick={() => setInPlatformNavMode(inPlatformNavMode === 'directions' ? 'satellite' : 'directions')}
-                              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white text-xs font-bold shadow-sm transition-all cursor-pointer min-h-[38px]"
+                              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white text-xs font-bold shadow-sm transition-all cursor-pointer min-h-[38px] whitespace-nowrap"
                             >
                               <Navigation className="w-4 h-4 text-amber-400" />
                               <span>
@@ -2162,7 +2162,7 @@ export function AdminPortalView({
 
                   <button
                     type="submit"
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-sm shadow-md transition-all cursor-pointer min-h-[44px]"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-sm shadow-md transition-all cursor-pointer min-h-[44px] whitespace-nowrap"
                   >
                     <Save className="w-4 h-4" />
                     <span>บันทึกการตั้งค่าองค์กรขึ้น Supabase</span>
@@ -2256,7 +2256,7 @@ export function AdminPortalView({
                         onResetToDefault();
                       }
                     }}
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-300 text-xs font-bold cursor-pointer transition-colors min-h-[40px]"
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-300 text-xs font-bold cursor-pointer transition-colors min-h-[40px] whitespace-nowrap"
                   >
                     <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
                     <span>รีเซ็ตข้อมูลทั้งหมดเป็นค่าเริ่มต้น</span>
@@ -3043,7 +3043,7 @@ export function AdminPortalView({
                     ? 'drawer-slide-form'
                     : 'drawer-news-form'
                 }
-                className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white text-xs font-bold shadow-md transition-all cursor-pointer min-h-[40px]"
+                className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white text-xs font-bold shadow-md transition-all cursor-pointer min-h-[40px] whitespace-nowrap"
               >
                 <Save className="w-4 h-4" />
                 <span>บันทึกข้อมูลขึ้นระบบ</span>

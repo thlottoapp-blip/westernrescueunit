@@ -81,7 +81,7 @@ export function Navbar({
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
           {/* Left: Station Status & Address */}
           <div className="flex items-center gap-2 sm:gap-3 text-[11px] sm:text-xs min-w-0">
-            <span className="inline-flex items-center gap-1.5 bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full font-mono font-bold whitespace-nowrap text-[10px] sm:text-xs shrink-0">
+            <span className="inline-flex items-center gap-1.5 bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full font-mono font-bold whitespace-nowrap text-[10px] sm:text-xs shrink-0 whitespace-nowrap">
               <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-ping shrink-0" />
               <span>DISPATCH 24/7</span>
             </span>
@@ -136,7 +136,7 @@ export function Navbar({
             {/* Quick Hotline Call Button */}
             <a
               href="tel:0611193342"
-              className="inline-flex items-center gap-1 sm:gap-1.5 text-amber-300 hover:text-amber-200 font-prompt font-bold text-[11px] sm:text-xs transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1 sm:gap-1.5 text-amber-300 hover:text-amber-200 font-prompt font-bold text-[11px] sm:text-xs transition-colors whitespace-nowrap whitespace-nowrap"
             >
               <PhoneCall className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400 animate-pulse shrink-0" />
               <span className="hidden xs:inline">สายด่วน:</span>
@@ -206,7 +206,7 @@ export function Navbar({
             <button
               id="navbar-open-report-btn"
               onClick={onOpenReportModal}
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 via-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-xs px-4.5 py-2.5 rounded-full shadow-md shadow-red-600/25 hover:shadow-red-600/40 border border-red-500 transition-all cursor-pointer transform hover:-translate-y-0.5 font-prompt whitespace-nowrap shrink-0 min-h-[40px]"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 via-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-xs px-4.5 py-2.5 rounded-full shadow-md shadow-red-600/25 hover:shadow-red-600/40 border border-red-500 transition-all cursor-pointer transform hover:-translate-y-0.5 font-prompt whitespace-nowrap shrink-0 min-h-[40px] whitespace-nowrap"
             >
               <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center shrink-0">
                 <BadgeAlert className="w-3.5 h-3.5 animate-pulse text-white" />
@@ -218,7 +218,7 @@ export function Navbar({
               id="navbar-open-admin-btn"
               onClick={onOpenAdminModal}
               title="เข้าสู่ระบบจัดการศูนย์สั่งการ (Admin)"
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full text-xs font-bold border transition-all cursor-pointer font-prompt bg-slate-900 hover:bg-[#16377e] text-amber-300 hover:text-white border-amber-400/60 shadow-md shadow-blue-950/20 whitespace-nowrap shrink-0 min-h-[40px]"
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full text-xs font-bold border transition-all cursor-pointer font-prompt bg-slate-900 hover:bg-[#16377e] text-amber-300 hover:text-white border-amber-400/60 shadow-md shadow-blue-950/20 whitespace-nowrap shrink-0 min-h-[40px] whitespace-nowrap"
             >
               <div className="w-4 h-4 rounded-full bg-amber-400/20 flex items-center justify-center shrink-0">
                 <Lock className="w-2.5 h-2.5 text-amber-300" />
@@ -233,7 +233,7 @@ export function Navbar({
           <div className="flex xl:hidden items-center gap-1.5 sm:gap-2 shrink-0">
             <button
               onClick={onOpenReportModal}
-              className="inline-flex items-center gap-1 sm:gap-1.5 bg-red-600 hover:bg-red-700 active:scale-95 text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-full shadow-sm whitespace-nowrap min-h-[32px] sm:min-h-[34px] transition-all cursor-pointer"
+              className="inline-flex items-center gap-1 sm:gap-1.5 bg-red-600 hover:bg-red-700 active:scale-95 text-white text-[11px] sm:text-xs font-bold px-2.5 sm:px-3 py-1.5 rounded-full shadow-sm whitespace-nowrap min-h-[32px] sm:min-h-[34px] transition-all cursor-pointer whitespace-nowrap"
             >
               <BadgeAlert className="w-3.5 h-3.5 shrink-0 animate-pulse" />
               <span className="whitespace-nowrap">แจ้งเหตุ</span>
@@ -242,7 +242,7 @@ export function Navbar({
             <button
               onClick={onOpenAdminModal}
               title="ระบบแอดมิน"
-              className="inline-flex items-center gap-1 bg-slate-900 hover:bg-[#16377e] active:scale-95 text-amber-300 border border-amber-400/60 text-[11px] sm:text-xs font-semibold px-2.5 py-1.5 rounded-full shadow-xs whitespace-nowrap min-h-[32px] sm:min-h-[34px] transition-all cursor-pointer"
+              className="inline-flex items-center gap-1 bg-slate-900 hover:bg-[#16377e] active:scale-95 text-amber-300 border border-amber-400/60 text-[11px] sm:text-xs font-semibold px-2.5 py-1.5 rounded-full shadow-xs whitespace-nowrap min-h-[32px] sm:min-h-[34px] transition-all cursor-pointer whitespace-nowrap"
             >
               <Lock className="w-3 h-3 text-amber-300 shrink-0" />
               <span className="whitespace-nowrap">แอดมิน</span>
@@ -326,7 +326,7 @@ export function Navbar({
           <div className="pt-1 flex flex-col gap-2.5">
             <a
               href="tel:0611193342"
-              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold py-3 rounded-full shadow text-xs sm:text-sm whitespace-nowrap min-h-[44px]"
+              className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold py-3 rounded-full shadow text-xs sm:text-sm whitespace-nowrap min-h-[44px] whitespace-nowrap"
             >
               <PhoneCall className="w-4 h-4 shrink-0 animate-pulse" />
               <span className="whitespace-nowrap">โทรด่วนกู้ภัยประจิม 061-119-3342</span>
@@ -337,7 +337,7 @@ export function Navbar({
                 setIsMobileMenuOpen(false);
                 onOpenAdminModal();
               }}
-              className="inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 py-3 rounded-full text-xs sm:text-sm border border-slate-300 font-semibold whitespace-nowrap min-h-[44px]"
+              className="inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 py-3 rounded-full text-xs sm:text-sm border border-slate-300 font-semibold whitespace-nowrap min-h-[44px] whitespace-nowrap"
             >
               <Lock className="w-4 h-4 text-slate-600 shrink-0" />
               <span className="whitespace-nowrap">ระบบศูนย์สั่งการเจ้าหน้าที่ (Admin Portal)</span>
