@@ -1457,18 +1457,36 @@ export function AdminPortalView({
                   <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs font-mono">
                     <div>
                       <span className="text-[10px] text-slate-400 block font-sans">ละติจูด (Latitude)</span>
-                      <span className="font-bold text-slate-800 dark:text-slate-200">{selectedIncident.latitude ? selectedIncident.latitude.toFixed(6) : '16.037500 (ศูนย์ใหญ่)'}</span>
+                      <span className="font-bold text-slate-800 dark:text-slate-200">{selectedIncident.latitude ? selectedIncident.latitude.toFixed(6) : '16.037500'}</span>
                     </div>
                     <div>
                       <span className="text-[10px] text-slate-400 block font-sans">ลองจิจูด (Longitude)</span>
-                      <span className="font-bold text-slate-800 dark:text-slate-200">{selectedIncident.longitude ? selectedIncident.longitude.toFixed(6) : '103.118600 (ศูนย์ใหญ่)'}</span>
+                      <span className="font-bold text-slate-800 dark:text-slate-200">{selectedIncident.longitude ? selectedIncident.longitude.toFixed(6) : '103.118600'}</span>
                     </div>
                     <div className="col-span-2 sm:col-span-1">
-                      <span className="text-[10px] text-slate-400 block font-sans">สถานะระบบบันทึก</span>
+                      <span className="text-[10px] text-slate-400 block font-sans">สถานะตำแหน่ง</span>
                       <span className="inline-flex items-center gap-1 text-[11px] text-emerald-600 font-sans font-bold">
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>บันทึกพิกัดจริงอัตโนมัติ</span>
+                        <span>พิกัดดาวเทียมเรียลไทม์</span>
                       </span>
+                    </div>
+                  </div>
+
+                  {/* Interactive Satellite Map View of the Exact Incident Pinpoint */}
+                  <div className="rounded-2xl overflow-hidden border border-slate-300 dark:border-slate-700 shadow-md relative h-64 sm:h-80 w-full bg-slate-950 mt-3">
+                    <iframe
+                      title="ภาพถ่ายดาวเทียมจุดเกิดเหตุ"
+                      width="100%"
+                      height="100%"
+                      className="border-0 w-full h-full"
+                      loading="lazy"
+                      allowFullScreen
+                      referrerPolicy="no-referrer-when-downgrade"
+                      src={`https://maps.google.com/maps?q=${selectedIncident.latitude || 16.0375},${selectedIncident.longitude || 103.1186}&t=k&z=17&ie=UTF8&iwloc=&output=embed`}
+                    />
+                    <div className="absolute top-3 left-3 bg-black/80 backdrop-blur-md text-amber-300 px-3 py-1.5 rounded-full text-xs font-mono font-bold flex items-center gap-2 border border-amber-400/50 shadow-md pointer-events-none">
+                      <span className="w-2 h-2 rounded-full bg-red-500 animate-ping shrink-0" />
+                      <span>🛰️ แผนที่ภาพถ่ายดาวเทียมจุดเกิดเหตุจริง (Live Satellite Pinpoint)</span>
                     </div>
                   </div>
                 </div>

@@ -19,7 +19,6 @@ import {
   Send,
 } from 'lucide-react';
 import { IncidentType, UrgencyLevel, EmergencyIncident } from '@/types/database';
-import { ImageUploadField } from '@/components/shared/ImageUploadField';
 
 interface EmergencyReportModalProps {
   isOpen: boolean;
@@ -380,22 +379,11 @@ export function EmergencyReportModal({
                 </div>
               </div>
 
-              {/* 4. Incident Location & GPS Button */}
+              {/* 4. Incident Location */}
               <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-bold text-slate-700 font-prompt whitespace-nowrap">
-                    สถานที่เกิดเหตุ / จุดสังเกต *
-                  </label>
-                  <button
-                    type="button"
-                    onClick={handleGetCurrentLocation}
-                    disabled={isGettingLocation}
-                    className="inline-flex items-center gap-1.5 text-xs text-[#16377e] hover:text-blue-900 font-bold font-prompt cursor-pointer whitespace-nowrap"
-                  >
-                    <Locate className={`w-3.5 h-3.5 text-amber-600 shrink-0 ${isGettingLocation ? 'animate-spin' : ''}`} />
-                    <span className="whitespace-nowrap">{isGettingLocation ? 'กำลังดึงพิกัด...' : 'ดึงพิกัด GPS อัตโนมัติ'}</span>
-                  </button>
-                </div>
+                <label className="block text-xs font-bold text-slate-700 font-prompt mb-1.5 whitespace-nowrap">
+                  สถานที่เกิดเหตุ / จุดสังเกต *
+                </label>
                 <div className="relative">
                   <MapPin className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
                   <textarea
@@ -407,12 +395,6 @@ export function EmergencyReportModal({
                     className="w-full pl-10 pr-4 py-2 bg-white border border-slate-300 rounded-2xl text-sm text-slate-900 focus:outline-none focus:border-[#16377e] focus:ring-1 focus:ring-blue-400 font-sarabun resize-none"
                   />
                 </div>
-                {latitude && longitude && (
-                  <p className="text-[11px] text-emerald-600 font-mono mt-1 font-semibold whitespace-nowrap tabular-nums flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>บันทึกพิกัด: {latitude.toFixed(6)}, {longitude.toFixed(6)}</span>
-                  </p>
-                )}
               </div>
 
               {/* 5. Additional Details & Victims */}
@@ -460,16 +442,6 @@ export function EmergencyReportModal({
                   value={details}
                   onChange={(e) => setDetails(e.target.value)}
                   className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-2xl text-sm text-slate-900 focus:outline-none focus:border-[#16377e] font-sarabun resize-none"
-                />
-              </div>
-
-              {/* Incident Photo Upload from Device */}
-              <div>
-                <ImageUploadField
-                  label="รูปภาพประกอบเหตุการณ์ (อัปโหลดจากเครื่อง)"
-                  value={imageUrl}
-                  onChange={setImageUrl}
-                  helpText="ถ่ายภาพหรือเลือกไฟล์รูปภาพจากโทรศัพท์หรือคอมพิวเตอร์ (ไม่บังคับ)"
                 />
               </div>
 

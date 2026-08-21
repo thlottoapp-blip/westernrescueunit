@@ -26,7 +26,6 @@ import {
 } from 'lucide-react';
 import { IncidentType, UrgencyLevel, EmergencyIncident } from '@/types/database';
 import { OfficialLogo } from '@/components/shared/OfficialLogo';
-import { ImageUploadField } from '@/components/shared/ImageUploadField';
 
 interface EmergencyReportViewProps {
   onBackToHome: () => void;
@@ -424,22 +423,11 @@ export function EmergencyReportView({
                   </div>
                 </div>
 
-                {/* 3. Location & GPS */}
+                {/* 3. Location */}
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between gap-2 flex-wrap">
-                    <label className="text-sm font-bold text-slate-900">
-                      3. สถานที่เกิดเหตุ & พิกัด GPS <span className="text-red-500">*</span>
-                    </label>
-                    <button
-                      type="button"
-                      onClick={handleGetCurrentLocation}
-                      disabled={isGettingLocation}
-                      className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-blue-50 hover:bg-blue-100 text-[#16377e] text-xs font-semibold border border-blue-200 transition-colors cursor-pointer shrink-0"
-                    >
-                      <Locate className="w-3.5 h-3.5 text-blue-700 shrink-0" />
-                      <span>{isGettingLocation ? 'กำลังค้นหาพิกัด...' : 'แตะเพื่อดึงพิกัด GPS ปัจจุบัน'}</span>
-                    </button>
-                  </div>
+                  <label className="block text-sm font-bold text-slate-900">
+                    3. สถานที่เกิดเหตุ / จุดสังเกต <span className="text-red-500">*</span>
+                  </label>
 
                   <div className="relative">
                     <MapPin className="w-5 h-5 text-slate-400 absolute left-3.5 top-3.5 shrink-0" />
@@ -452,16 +440,6 @@ export function EmergencyReportView({
                       className="w-full pl-11 pr-4 py-3 bg-slate-50 border border-slate-300 rounded-2xl text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#16377e] focus:bg-white font-sarabun transition-all"
                     />
                   </div>
-
-                  {latitude && longitude && (
-                    <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-mono flex items-center justify-between">
-                      <span className="flex items-center gap-1">
-                        <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                        <span>GPS ล็อกพิกัดแล้ว: {latitude.toFixed(6)}, {longitude.toFixed(6)}</span>
-                      </span>
-                      <span className="text-[11px] font-sarabun text-emerald-700">พร้อมส่งศูนย์สั่งการ</span>
-                    </div>
-                  )}
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     <div>
@@ -538,16 +516,6 @@ export function EmergencyReportView({
                     onChange={(e) => setDetails(e.target.value)}
                     placeholder="เช่น รถกระบะชนกับจักรยานยนต์ ผู้บาดเจ็บเป็นชาย 1 ราย มีแผลที่ศีรษะ รถติดภายใน..."
                     className="w-full p-3.5 bg-slate-50 border border-slate-300 rounded-2xl text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#16377e] focus:bg-white font-sarabun leading-relaxed"
-                  />
-                </div>
-
-                {/* 6. Incident Image Upload from Device */}
-                <div>
-                  <ImageUploadField
-                    label="6. รูปภาพที่เกิดเหตุ / สภาพผู้บาดเจ็บ (อัปโหลดจากเครื่อง)"
-                    value={imageUrl}
-                    onChange={setImageUrl}
-                    helpText="ถ่ายภาพหรือเลือกไฟล์รูปภาพจากโทรศัพท์หรือคอมพิวเตอร์ (ไม่บังคับ)"
                   />
                 </div>
 
