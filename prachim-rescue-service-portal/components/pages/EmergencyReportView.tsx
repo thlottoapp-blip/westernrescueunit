@@ -26,6 +26,7 @@ import {
 } from 'lucide-react';
 import { IncidentType, UrgencyLevel, EmergencyIncident } from '@/types/database';
 import { OfficialLogo } from '@/components/shared/OfficialLogo';
+import { ImageUploadField } from '@/components/shared/ImageUploadField';
 
 interface EmergencyReportViewProps {
   onBackToHome: () => void;
@@ -57,6 +58,7 @@ export function EmergencyReportView({
   const [district, setDistrict] = useState('อำเภอบรบือ');
   const [victimCount, setVictimCount] = useState<number>(1);
   const [details, setDetails] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [latitude, setLatitude] = useState<number | undefined>(undefined);
   const [longitude, setLongitude] = useState<number | undefined>(undefined);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
@@ -143,6 +145,7 @@ export function EmergencyReportView({
       longitude,
       victim_count: Number(victimCount) || 0,
       details: details.trim(),
+      image_url: imageUrl,
     });
 
     setSubmittedIncident(created);
@@ -155,6 +158,7 @@ export function EmergencyReportView({
     setCallerPhone('');
     setLocationName('');
     setDetails('');
+    setImageUrl('');
     setLatitude(undefined);
     setLongitude(undefined);
   };
@@ -421,8 +425,9 @@ export function EmergencyReportView({
 
                   {latitude && longitude && (
                     <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-mono flex items-center justify-between">
-                      <span>
-                        📍 GPS ล็อกพิกัดแล้ว: {latitude.toFixed(6)}, {longitude.toFixed(6)}
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <span>GPS ล็อกพิกัดแล้ว: {latitude.toFixed(6)}, {longitude.toFixed(6)}</span>
                       </span>
                       <span className="text-[11px] font-sarabun text-emerald-700">พร้อมส่งศูนย์สั่งการ</span>
                     </div>
@@ -503,6 +508,16 @@ export function EmergencyReportView({
                     onChange={(e) => setDetails(e.target.value)}
                     placeholder="เช่น รถกระบะชนกับจักรยานยนต์ ผู้บาดเจ็บเป็นชาย 1 ราย มีแผลที่ศีรษะ รถติดภายใน..."
                     className="w-full p-3.5 bg-slate-50 border border-slate-300 rounded-2xl text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-[#16377e] focus:bg-white font-sarabun leading-relaxed"
+                  />
+                </div>
+
+                {/* 6. Incident Image Upload from Device */}
+                <div>
+                  <ImageUploadField
+                    label="6. รูปภาพที่เกิดเหตุ / สภาพผู้บาดเจ็บ (อัปโหลดจากเครื่อง)"
+                    value={imageUrl}
+                    onChange={setImageUrl}
+                    helpText="ถ่ายภาพหรือเลือกไฟล์รูปภาพจากโทรศัพท์หรือคอมพิวเตอร์ (ไม่บังคับ)"
                   />
                 </div>
 

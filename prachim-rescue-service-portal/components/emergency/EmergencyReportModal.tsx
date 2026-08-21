@@ -19,6 +19,7 @@ import {
   Send,
 } from 'lucide-react';
 import { IncidentType, UrgencyLevel, EmergencyIncident } from '@/types/database';
+import { ImageUploadField } from '@/components/shared/ImageUploadField';
 
 interface EmergencyReportModalProps {
   isOpen: boolean;
@@ -52,6 +53,7 @@ export function EmergencyReportModal({
   const [district, setDistrict] = useState('อำเภอบรบือ');
   const [victimCount, setVictimCount] = useState<number>(1);
   const [details, setDetails] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
   const [latitude, setLatitude] = useState<number | undefined>(undefined);
   const [longitude, setLongitude] = useState<number | undefined>(undefined);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
@@ -141,6 +143,7 @@ export function EmergencyReportModal({
       longitude,
       victim_count: Number(victimCount) || 0,
       details: details.trim(),
+      image_url: imageUrl,
     });
 
     setSubmittedIncident(created);
@@ -152,6 +155,7 @@ export function EmergencyReportModal({
     setCallerPhone('');
     setLocationName('');
     setDetails('');
+    setImageUrl('');
     onClose();
   };
 
@@ -381,8 +385,9 @@ export function EmergencyReportModal({
                   />
                 </div>
                 {latitude && longitude && (
-                  <p className="text-[11px] text-emerald-600 font-mono mt-1 font-semibold whitespace-nowrap tabular-nums">
-                    ✓ บันทึกพิกัด: {latitude.toFixed(6)}, {longitude.toFixed(6)}
+                  <p className="text-[11px] text-emerald-600 font-mono mt-1 font-semibold whitespace-nowrap tabular-nums flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>บันทึกพิกัด: {latitude.toFixed(6)}, {longitude.toFixed(6)}</span>
                   </p>
                 )}
               </div>
@@ -432,6 +437,16 @@ export function EmergencyReportModal({
                   value={details}
                   onChange={(e) => setDetails(e.target.value)}
                   className="w-full px-4 py-2.5 bg-white border border-slate-300 rounded-2xl text-sm text-slate-900 focus:outline-none focus:border-[#16377e] font-sarabun resize-none"
+                />
+              </div>
+
+              {/* Incident Photo Upload from Device */}
+              <div>
+                <ImageUploadField
+                  label="รูปภาพประกอบเหตุการณ์ (อัปโหลดจากเครื่อง)"
+                  value={imageUrl}
+                  onChange={setImageUrl}
+                  helpText="ถ่ายภาพหรือเลือกไฟล์รูปภาพจากโทรศัพท์หรือคอมพิวเตอร์ (ไม่บังคับ)"
                 />
               </div>
 

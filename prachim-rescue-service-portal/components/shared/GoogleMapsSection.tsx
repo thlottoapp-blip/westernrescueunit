@@ -187,8 +187,8 @@ export function GoogleMapsFooter({ onOpenReportModal }: GoogleMapsFooterProps) {
                     ถนนแจ้งสนิท ตำบลบรบือ อำเภอบรบือ จังหวัดมหาสารคาม 44130
                   </p>
                   <p className="text-xs text-amber-300/90 mt-2 flex items-center gap-1.5 font-medium whitespace-nowrap">
-                    <span>📌 จุดสังเกต:</span>
-                    <span className="whitespace-nowrap">ติดทางหลวงหมายเลข 23 (ถนนแจ้งสนิท)</span>
+                    <MapPin className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                    <span>จุดสังเกต: ติดทางหลวงหมายเลข 23 (ถนนแจ้งสนิท)</span>
                   </p>
                 </div>
               </div>

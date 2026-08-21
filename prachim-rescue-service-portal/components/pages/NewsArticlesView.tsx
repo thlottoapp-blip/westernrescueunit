@@ -18,6 +18,7 @@ import {
   PhoneCall,
   Flame,
   ShieldAlert,
+  X,
 } from 'lucide-react';
 import { NewsArticle } from '@/types/database';
 import { OfficialLogo } from '@/components/shared/OfficialLogo';
@@ -184,15 +185,15 @@ export function NewsArticlesView({
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar w-full md:w-auto pb-1 md:pb-0">
             {[
               { id: 'all', label: 'ทั้งหมด' },
-              { id: 'announcement', label: '📢 ประกาศทางการ' },
-              { id: 'rescue', label: '🚑 ข่าวกู้ภัย & อุบัติเหตุ' },
-              { id: 'activity', label: '🙏 กิจกรรมสมาคม & พ่อปู่' },
+              { id: 'announcement', label: 'ประกาศทางการ' },
+              { id: 'rescue', label: 'ข่าวกู้ภัย & อุบัติเหตุ' },
+              { id: 'activity', label: 'กิจกรรมสมาคม & พ่อปู่จูมคำ' },
             ].map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id as typeof selectedCategory)}
                 className={`
-                  px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer
+                  px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer min-h-[38px]
                   ${
                     selectedCategory === cat.id
                       ? 'bg-[#16377e] text-white shadow-md'
@@ -296,9 +297,9 @@ export function NewsArticlesView({
               </div>
               <button
                 onClick={() => setSelectedArticle(null)}
-                className="p-1.5 rounded-full hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition-colors"
+                className="p-1.5 rounded-full hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition-colors cursor-pointer"
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
             </div>
 

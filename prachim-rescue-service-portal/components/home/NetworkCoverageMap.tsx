@@ -173,7 +173,7 @@ export function NetworkCoverageMap({ siteConfig, onOpenReportModal }: NetworkCov
             {/* Coverage Area */}
             <div className="p-3.5 rounded-2xl bg-blue-950/40 border border-blue-900/40">
               <span className="text-xs font-bold text-amber-300 font-prompt block mb-1">
-                📍 พื้นที่รับผิดชอบหลัก (Primary Service Area):
+                พื้นที่รับผิดชอบหลัก (Primary Service Area):
               </span>
               <p className="text-xs sm:text-sm text-slate-200 font-sarabun leading-relaxed">
                 {currentStation.coverage}
@@ -183,7 +183,7 @@ export function NetworkCoverageMap({ siteConfig, onOpenReportModal }: NetworkCov
             {/* Capabilities */}
             <div>
               <span className="text-xs font-bold text-blue-200 font-prompt block mb-2">
-                🚑 ศักยภาพและอุปกรณ์ประจำจุดบริการ:
+                ศักยภาพและอุปกรณ์ประจำจุดบริการ:
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {currentStation.capabilities.map((cap, idx) => (
@@ -201,7 +201,7 @@ export function NetworkCoverageMap({ siteConfig, onOpenReportModal }: NetworkCov
             {/* Response Time Indicator Grid */}
             <div className="pt-3 border-t border-blue-900/60">
               <span className="text-xs font-bold text-slate-300 font-prompt block mb-2">
-                ⏱️ เกณฑ์มาตรฐานเวลาเดินทางฉุกเฉิน (Emergency Response Isochrones):
+                เกณฑ์มาตรฐานเวลาเดินทางฉุกเฉิน (Emergency Response Isochrones):
               </span>
               <div className="grid grid-cols-3 gap-2 text-center text-[11px] font-prompt">
                 <div className="p-2.5 rounded-xl bg-emerald-950/50 border border-emerald-500/40 text-emerald-300">

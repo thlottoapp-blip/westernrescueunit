@@ -59,6 +59,7 @@ import {
   UrgencyLevel,
 } from '@/types/database';
 import { OfficialLogo } from '@/components/shared/OfficialLogo';
+import { ImageUploadField } from '@/components/shared/ImageUploadField';
 
 interface AdminPortalViewProps {
   onBackToHome: () => void;
@@ -191,6 +192,10 @@ export function AdminPortalView({
   const [currentPassInput, setCurrentPassInput] = useState('');
   const [newPassInput, setNewPassInput] = useState('');
   const [confirmPassInput, setConfirmPassInput] = useState('');
+
+  // Image Upload States for Drawer Forms
+  const [missionCoverImage, setMissionCoverImage] = useState('https://images.unsplash.com/photo-1587745416684-47953f16f02f?auto=format&fit=crop&w=1200&q=80');
+  const [newsCoverImage, setNewsCoverImage] = useState('https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=1200&q=80');
 
   // Site Config Edit State
   const [configForm, setConfigForm] = useState<SiteConfig>(siteConfig);
@@ -1227,8 +1232,9 @@ export function AdminPortalView({
             {activeMenu === 'site_config' && (
               <div className={`rounded-3xl border p-6 sm:p-8 space-y-6 ${cardBg}`}>
                 <div className={`pb-4 border-b ${isLight ? 'border-slate-200' : 'border-blue-900/60'}`}>
-                  <h3 className={`text-xl font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
-                    🌐 จัดการข้อมูลองค์กร ช่องวิทยุสื่อสาร & โซเชียลมีเดีย
+                  <h3 className={`text-xl font-bold flex items-center gap-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                    <Globe className="w-5 h-5 text-blue-600 shrink-0" />
+                    <span>จัดการข้อมูลองค์กร ช่องวิทยุสื่อสาร & โซเชียลมีเดีย</span>
                   </h3>
                   <p className={`text-xs font-sarabun mt-1 ${isLight ? 'text-slate-600' : 'text-blue-300'}`}>
                     ปรับแก้เบอร์โทรศัพท์สายด่วน ความถี่วิทยุ บัญชีรับบริจาค และข้อมูลองค์พ่อปู่จูมคำ
@@ -1333,9 +1339,10 @@ export function AdminPortalView({
 
                   <button
                     type="submit"
-                    className="px-6 py-3 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-sm shadow-md transition-all cursor-pointer min-h-[44px]"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-sm shadow-md transition-all cursor-pointer min-h-[44px]"
                   >
-                    💾 บันทึกการตั้งค่าองค์กรขึ้น Supabase
+                    <Save className="w-4 h-4" />
+                    <span>บันทึกการตั้งค่าองค์กรขึ้น Supabase</span>
                   </button>
                 </form>
               </div>
@@ -1347,7 +1354,10 @@ export function AdminPortalView({
             {activeMenu === 'settings' && (
               <div className={`rounded-3xl border p-6 sm:p-8 space-y-6 ${cardBg}`}>
                 <div className={`pb-4 border-b ${isLight ? 'border-slate-200' : 'border-blue-900/60'}`}>
-                  <h3 className={`text-xl font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>⚙️ ความปลอดภัยและการสำรองข้อมูล</h3>
+                  <h3 className={`text-xl font-bold flex items-center gap-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                    <Settings className="w-5 h-5 text-blue-600" />
+                    <span>ความปลอดภัยและการสำรองข้อมูล</span>
+                  </h3>
                 </div>
 
                 <form
@@ -1423,9 +1433,10 @@ export function AdminPortalView({
                         onResetToDefault();
                       }
                     }}
-                    className="px-4 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-300 text-xs font-bold cursor-pointer transition-colors min-h-[40px]"
+                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-300 text-xs font-bold cursor-pointer transition-colors min-h-[40px]"
                   >
-                    ⚠️ รีเซ็ตข้อมูลทั้งหมดเป็นค่าเริ่มต้น
+                    <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
+                    <span>รีเซ็ตข้อมูลทั้งหมดเป็นค่าเริ่มต้น</span>
                   </button>
                 </div>
               </div>
@@ -1492,7 +1503,6 @@ export function AdminPortalView({
                     const catSlug = (form.elements.namedItem('m_cat') as HTMLSelectElement).value;
                     const summary = (form.elements.namedItem('m_summary') as HTMLTextAreaElement).value;
                     const details = (form.elements.namedItem('m_details') as HTMLTextAreaElement).value;
-                    const cover = (form.elements.namedItem('m_cover') as HTMLInputElement).value;
 
                     onAddMission({
                       title,
@@ -1502,7 +1512,7 @@ export function AdminPortalView({
                       category_slug: catSlug,
                       summary,
                       details,
-                      cover_image_url: cover,
+                      cover_image_url: missionCoverImage,
                       is_featured: true,
                       officer_count: 4,
                     });
@@ -1547,12 +1557,11 @@ export function AdminPortalView({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">รูปภาพหน้าปกภารกิจ (URL)</label>
-                    <input
-                      name="m_cover"
+                    <ImageUploadField
+                      label="รูปภาพหน้าปกภารกิจ (อัปโหลดจากเครื่อง)"
+                      value={missionCoverImage}
+                      onChange={setMissionCoverImage}
                       required
-                      defaultValue="https://images.unsplash.com/photo-1587745416684-47953f16f02f?auto=format&fit=crop&w=1200&q=80"
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs font-mono focus:border-[#16377e] focus:outline-none"
                     />
                   </div>
 
@@ -1628,7 +1637,7 @@ export function AdminPortalView({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">ขื่อยานพาหนะ/อุปกรณ์</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">ชื่อยานพาหนะ/อุปกรณ์</label>
                     <input
                       name="f_name"
                       required
@@ -1641,17 +1650,17 @@ export function AdminPortalView({
                     <label className="block text-xs font-bold text-slate-700 mb-1">จุดประจำการ</label>
                     <input
                       name="f_base"
-                      defaultValue="ศูนย์ใหญ่บรบือ ถนนแจ้งสนิท"
+                      defaultValue="ศูนย์ใหญ่บรบือ"
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">ข้อมูลจำเพาะและอุปกรณ์ประจำรถ</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">สเปกและอุปกรณ์ภายใน</label>
                     <textarea
                       name="f_specs"
                       rows={3}
-                      placeholder="เครื่องกระตุกหัวใจ AED, ชุดถังออกซิเจน 6,000L, บอร์ดดามหลัง Spinal Board..."
+                      placeholder="เครื่องกระตุกหัวใจ AED, เครื่องช่วยหายใจ, เปลตัก..."
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
                     />
                   </div>
@@ -1688,11 +1697,11 @@ export function AdminPortalView({
                 >
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">รหัสเจ้าหน้าที่</label>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">รหัสประจำตัว</label>
                       <input
                         name="o_code"
                         required
-                        placeholder="เช่น PCM-05"
+                        placeholder="เช่น PJ-009"
                         className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm font-mono focus:border-[#16377e] focus:outline-none"
                       />
                     </div>
@@ -1747,13 +1756,12 @@ export function AdminPortalView({
                     const title = (form.elements.namedItem('n_title') as HTMLInputElement).value;
                     const summary = (form.elements.namedItem('n_summary') as HTMLTextAreaElement).value;
                     const content = (form.elements.namedItem('n_content') as HTMLTextAreaElement).value;
-                    const cover = (form.elements.namedItem('n_cover') as HTMLInputElement).value;
 
                     onAddNews({
                       title,
                       summary,
                       content,
-                      cover_image_url: cover,
+                      cover_image_url: newsCoverImage,
                       published_date: new Date().toISOString().split('T')[0],
                       is_pinned: false,
                       author_name: 'ศูนย์ประชาสัมพันธ์ สมาคมประจิมสารคาม',
@@ -1773,12 +1781,11 @@ export function AdminPortalView({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">รูปภาพข่าว (URL)</label>
-                    <input
-                      name="n_cover"
+                    <ImageUploadField
+                      label="รูปภาพข่าวประชาสัมพันธ์ (อัปโหลดจากเครื่อง)"
+                      value={newsCoverImage}
+                      onChange={setNewsCoverImage}
                       required
-                      defaultValue="https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=1200&q=80"
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs font-mono focus:border-[#16377e] focus:outline-none"
                     />
                   </div>
 
@@ -1825,9 +1832,10 @@ export function AdminPortalView({
                     ? 'drawer-officer-form'
                     : 'drawer-news-form'
                 }
-                className="px-6 py-2.5 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white text-xs font-bold shadow-md transition-all cursor-pointer min-h-[40px]"
+                className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white text-xs font-bold shadow-md transition-all cursor-pointer min-h-[40px]"
               >
-                💾 บันทึกข้อมูลขึ้นระบบ
+                <Save className="w-4 h-4" />
+                <span>บันทึกข้อมูลขึ้นระบบ</span>
               </button>
             </div>
           </div>
