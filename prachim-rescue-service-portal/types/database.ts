@@ -148,6 +148,17 @@ export interface SiteConfig {
   donation_notice: string;
   sacred_patron_title: string;
   sacred_patron_story: string;
+  fee_policy_title?: string;
+  fee_policy_desc?: string;
+  rescue_process_step1_title?: string;
+  rescue_process_step1_desc?: string;
+  rescue_process_step2_title?: string;
+  rescue_process_step2_desc?: string;
+  rescue_process_step3_title?: string;
+  rescue_process_step3_desc?: string;
+  rescue_process_step4_title?: string;
+  rescue_process_step4_desc?: string;
+  affiliations_marquee_text?: string;
 }
 
 export interface HeroSlideItem {

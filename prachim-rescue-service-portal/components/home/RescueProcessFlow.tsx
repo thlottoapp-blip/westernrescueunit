@@ -2,39 +2,42 @@
 
 import React from 'react';
 import { PhoneCall, Activity, HeartPulse, Hospital, ArrowRight, Ambulance } from 'lucide-react';
+import { usePrachimStore } from '@/lib/store';
 
 interface RescueProcessFlowProps {
   onOpenReportModal: () => void;
 }
 
 export function RescueProcessFlow({ onOpenReportModal }: RescueProcessFlowProps) {
+  const { siteConfig } = usePrachimStore();
+
   const steps = [
     {
       stepNumber: '01',
-      titleTh: 'โทรแจ้งเหตุหรือแจ้งออนไลน์',
+      titleTh: siteConfig?.rescue_process_step1_title || 'โทรแจ้งเหตุหรือแจ้งออนไลน์',
       titleEn: 'CALL OR ARRIVE',
-      desc: 'ติดต่อศูนย์สั่งการกู้ภัยประจิม โทร 061-119-3342 หรือ 1669 ตลอด 24 ชั่วโมง หรือส่งพิกัดผ่านระบบแจ้งเหตุ',
+      desc: siteConfig?.rescue_process_step1_desc || 'ติดต่อศูนย์สั่งการกู้ภัยประจิม โทร 061-119-3342 หรือ 1669 ตลอด 24 ชั่วโมง หรือส่งพิกัดผ่านระบบแจ้งเหตุ',
       icon: PhoneCall,
     },
     {
       stepNumber: '02',
-      titleTh: 'ประเมินและสั่งการด่วน',
+      titleTh: siteConfig?.rescue_process_step2_title || 'ประเมินและสั่งการด่วน',
       titleEn: 'RAPID ASSESSMENT',
-      desc: 'ศูนย์สั่งการประเมินระดับความรุนแรง (Triage) และสั่งการรถพยาบาล/ชุดตัด-ถ่าง/ชุดประดาน้ำออกปฏิบัติการทันที',
+      desc: siteConfig?.rescue_process_step2_desc || 'ศูนย์สั่งการประเมินระดับความรุนแรง (Triage) และสั่งการรถพยาบาล/ชุดตัด-ถ่าง/ชุดประดาน้ำออกปฏิบัติการทันที',
       icon: Activity,
     },
     {
       stepNumber: '03',
-      titleTh: 'ปฐมพยาบาล & ตัด-ถ่างช่วยชีวิต',
+      titleTh: siteConfig?.rescue_process_step3_title || 'ปฐมพยาบาล & ตัด-ถ่างช่วยชีวิต',
       titleEn: 'STABILIZE & TREAT',
-      desc: 'เจ้าหน้าที่ EMT เข้าถึงที่เกิดเหตุ ให้การปฐมพยาบาลขั้นสูง ตัด-ถ่างนำผู้บาดเจ็บออกจากซากรถอย่างปลอดภัย',
+      desc: siteConfig?.rescue_process_step3_desc || 'เจ้าหน้าที่ EMT เข้าถึงที่เกิดเหตุ ให้การปฐมพยาบาลขั้นสูง ตัด-ถ่างนำผู้บาดเจ็บออกจากซากรถอย่างปลอดภัย',
       icon: HeartPulse,
     },
     {
       stepNumber: '04',
-      titleTh: 'นำส่งโรงพยาบาลบรบือ',
+      titleTh: siteConfig?.rescue_process_step4_title || 'นำส่งโรงพยาบาลบรบือ',
       titleEn: 'CONTINUE CARE',
-      desc: 'เคลื่อนย้ายและนำส่งห้องฉุกเฉิน รพ.บรบือ หรือโรงพยาบาลแม่ข่าย พร้อมรายงานสัญญาณชีพให้แพทย์เวรรับช่วงต่อ',
+      desc: siteConfig?.rescue_process_step4_desc || 'เคลื่อนย้ายและนำส่งห้องฉุกเฉิน รพ.บรบือ หรือโรงพยาบาลแม่ข่าย พร้อมรายงานสัญญาณชีพให้แพทย์เวรรับช่วงต่อ',
       icon: Hospital,
     },
   ];

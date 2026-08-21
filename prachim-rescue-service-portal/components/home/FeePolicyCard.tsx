@@ -12,8 +12,11 @@ import {
   FileText,
   PhoneCall,
 } from 'lucide-react';
+import { usePrachimStore } from '@/lib/store';
 
 export function FeePolicyCard() {
+  const { siteConfig } = usePrachimStore();
+
   const policies = [
     {
       id: 'ems',
@@ -67,10 +70,11 @@ export function FeePolicyCard() {
             <span className="text-amber-700">TRANSPARENCY & SERVICE FEES</span>
           </div>
           <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight font-prompt">
-            เกณฑ์ค่าบริการและการช่วยเหลือประชาชน
+            {siteConfig?.fee_policy_title || 'เกณฑ์ค่าบริการและการช่วยเหลือประชาชน'}
           </h2>
           <p className="text-slate-600 text-sm sm:text-base font-sarabun mt-2">
-            สมาคมประจิมสารคาม พุทธศาสตร์สงเคราะห์ ยึดมั่นความโปร่งใส ชี้แจงเกณฑ์ค่าบริการชัดเจน เพื่อให้ประชาชนอุ่นใจเมื่อติดต่อขอความช่วยเหลือ
+            {siteConfig?.fee_policy_desc ||
+              'สมาคมประจิมสารคาม พุทธศาสตร์สงเคราะห์ ยึดมั่นความโปร่งใส ชี้แจงเกณฑ์ค่าบริการชัดเจน เพื่อให้ประชาชนอุ่นใจเมื่อติดต่อขอความช่วยเหลือ'}
           </p>
         </div>
 

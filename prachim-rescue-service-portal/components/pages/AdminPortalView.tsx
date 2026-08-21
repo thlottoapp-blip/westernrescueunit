@@ -204,9 +204,10 @@ export function AdminPortalView({
   const [incidentFilter, setIncidentFilter] = useState<'all' | 'pending' | 'dispatched' | 'en_route' | 'on_scene' | 'resolved'>('all');
   const [inPlatformNavMode, setInPlatformNavMode] = useState<'satellite' | 'directions'>('satellite');
 
-  // Mobile Views
+  // Mobile Views & Collapsible Sidebar
   const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Right Slide-Over Creation / Edit Drawer State
   const [isSlideDrawerOpen, setIsSlideDrawerOpen] = useState(false);
@@ -242,6 +243,12 @@ export function AdminPortalView({
 
   // Site Config Edit State
   const [configForm, setConfigForm] = useState<SiteConfig>(siteConfig);
+
+  useEffect(() => {
+    if (siteConfig) {
+      setConfigForm(siteConfig);
+    }
+  }, [siteConfig]);
 
   // Toggle Theme
   const toggleTheme = () => {
@@ -546,33 +553,47 @@ export function AdminPortalView({
         {/* ========================================================================= */}
         <aside
           className={`
-            fixed lg:static inset-y-0 left-0 z-40 w-64 border-r flex flex-col shrink-0 transition-transform duration-300 ease-in-out
+            fixed lg:static inset-y-0 left-0 z-40 ${isSidebarCollapsed ? 'w-20' : 'w-64'} border-r flex flex-col shrink-0 transition-all duration-300 ease-in-out
             ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
             ${bgSidebar}
           `}
         >
-          <div className={`p-4 border-b flex items-center justify-between ${isLight ? 'border-slate-200' : 'border-blue-900/50'}`}>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-              <span className="text-xs font-bold text-emerald-600 font-mono">
-                SUPABASE CONNECTED
-              </span>
+          <div className={`p-3.5 border-b flex items-center justify-between ${isLight ? 'border-slate-200' : 'border-blue-900/50'}`}>
+            {!isSidebarCollapsed ? (
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" />
+                <span className="text-xs font-bold text-emerald-600 font-mono whitespace-nowrap">
+                  SUPABASE ONLINE
+                </span>
+              </div>
+            ) : (
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping mx-auto" title="Supabase Connected" />
+            )}
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                title={isSidebarCollapsed ? 'ขยายแถบเมนู (Expand)' : 'พับเก็บแถบเมนู (Collapse)'}
+                className="hidden lg:inline-flex p-1.5 rounded-xl hover:bg-slate-200 dark:hover:bg-blue-900/60 text-slate-600 dark:text-slate-300 transition-colors cursor-pointer"
+              >
+                <Menu className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setMobileSidebarOpen(false)}
+                className="lg:hidden text-slate-400 hover:text-slate-700 p-1"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
-            <button
-              onClick={() => setMobileSidebarOpen(false)}
-              className="lg:hidden text-slate-400 hover:text-slate-700 p-1"
-            >
-              <X className="w-5 h-5" />
-            </button>
           </div>
 
-          <nav className="flex-1 overflow-y-auto p-3 space-y-1 scrollbar-thin">
+          <nav className="flex-1 overflow-y-auto p-2 sm:p-3 space-y-1 scrollbar-thin">
             {menuList.map((item) => {
               const Icon = item.icon;
               const isActive = activeMenu === item.id;
               return (
                 <button
                   key={item.id}
+                  title={isSidebarCollapsed ? item.label : undefined}
                   onClick={() => {
                     setActiveMenu(item.id as typeof activeMenu);
                     setSearchTerm('');
@@ -580,7 +601,7 @@ export function AdminPortalView({
                     setMobileSidebarOpen(false);
                   }}
                   className={`
-                    w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs font-semibold transition-all cursor-pointer
+                    w-full flex items-center ${isSidebarCollapsed ? 'justify-center px-2 py-3' : 'justify-between px-3.5 py-3'} rounded-2xl text-xs font-semibold transition-all cursor-pointer relative group
                     ${
                       isActive
                         ? isLight
@@ -592,14 +613,14 @@ export function AdminPortalView({
                     }
                   `}
                 >
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className={`flex items-center ${isSidebarCollapsed ? 'justify-center' : 'gap-3 min-w-0'}`}>
                     <Icon className={`w-4 h-4 shrink-0 ${isActive ? (isLight ? 'text-white' : 'text-slate-950') : 'text-blue-500'}`} />
-                    <span className="truncate">{item.label}</span>
+                    {!isSidebarCollapsed && <span className="truncate">{item.label}</span>}
                   </div>
-                  {item.count !== undefined && (
+                  {!isSidebarCollapsed && item.count !== undefined && (
                     <span
                       className={`
-                        text-[10px] font-mono px-2 py-0.5 rounded-full font-bold
+                        text-[10px] font-mono px-2 py-0.5 rounded-full font-bold shrink-0
                         ${
                           item.isAlert
                             ? 'bg-red-600 text-white animate-pulse'
@@ -612,15 +633,19 @@ export function AdminPortalView({
                       {item.count}
                     </span>
                   )}
+                  {isSidebarCollapsed && item.count !== undefined && item.count > 0 && (
+                    <span className="absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse border border-white" />
+                  )}
                 </button>
               );
             })}
           </nav>
 
-          <div className={`p-3 border-t space-y-2 ${isLight ? 'border-slate-200 bg-white' : 'border-blue-900/50 bg-black/20'}`}>
+          <div className={`p-2.5 sm:p-3 border-t space-y-2 ${isLight ? 'border-slate-200 bg-white' : 'border-blue-900/50 bg-black/20'}`}>
             <button
               onClick={onExportData}
-              className={`w-full py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 border transition-colors cursor-pointer min-h-[40px] ${
+              title="สำรองข้อมูล JSON ทั้งหมด"
+              className={`w-full py-2 px-2.5 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 border transition-colors cursor-pointer min-h-[38px] ${
                 isLight ? 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300' : 'bg-blue-950/80 hover:bg-blue-900 text-blue-200 border-blue-800'
               }`}
             >
@@ -2050,18 +2075,29 @@ export function AdminPortalView({
             )}
 
             {/* ------------------------------------------------------------- */}
-            {/* PANE 3: SITE CONFIG & HOTLINES */}
+            {/* PANE 3: SITE CONFIG & ALL PUBLIC WEBSITE CONTENT (100% EDITABLE) */}
             {/* ------------------------------------------------------------- */}
             {activeMenu === 'site_config' && (
-              <div className={`rounded-3xl border p-6 sm:p-8 space-y-6 ${cardBg}`}>
-                <div className={`pb-4 border-b ${isLight ? 'border-slate-200' : 'border-blue-900/60'}`}>
-                  <h3 className={`text-xl font-bold flex items-center gap-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>
-                    <Globe className="w-5 h-5 text-blue-600 shrink-0" />
-                    <span>จัดการข้อมูลองค์กร ช่องวิทยุสื่อสาร & โซเชียลมีเดีย</span>
-                  </h3>
-                  <p className={`text-xs font-sarabun mt-1 ${isLight ? 'text-slate-600' : 'text-blue-300'}`}>
-                    ปรับแก้เบอร์โทรศัพท์สายด่วน ความถี่วิทยุ บัญชีรับบริจาค และข้อมูลองค์พ่อปู่จูมคำ
-                  </p>
+              <div className="space-y-6">
+                <div className={`p-6 rounded-3xl border shadow-sm ${cardBg}`}>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <h3 className={`text-xl font-bold flex items-center gap-2 ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                        <Globe className="w-5 h-5 text-blue-600 shrink-0" />
+                        <span>จัดการข้อมูลเว็บไซต์สาธารณะ & การตั้งค่าองค์กรทั้งหมด</span>
+                      </h3>
+                      <p className={`text-xs font-sarabun mt-1 ${isLight ? 'text-slate-600' : 'text-blue-300'}`}>
+                        แก้ไขข้อมูลทุกส่วนที่แสดงในหน้าเว็บหลัก: ข้อมูลองค์กร, สายด่วน, ประวัติ, เกณฑ์ค่าบริการ, 4 ขั้นตอนกู้ชีพ และบัญชีรับบริจาค
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => onUpdateSiteConfig(configForm)}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-all cursor-pointer whitespace-nowrap shrink-0 min-h-[40px]"
+                    >
+                      <Save className="w-4 h-4" />
+                      <span>บันทึกข้อมูลทั้งหมด</span>
+                    </button>
+                  </div>
                 </div>
 
                 <form
@@ -2069,104 +2105,310 @@ export function AdminPortalView({
                     e.preventDefault();
                     onUpdateSiteConfig(configForm);
                   }}
-                  className="space-y-4"
+                  className="space-y-6"
                 >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
-                        เบอร์โทรสายด่วนฉุกเฉิน (Primary Hotline)
-                      </label>
-                      <input
-                        value={configForm.hotline_primary}
-                        onChange={(e) => setConfigForm({ ...configForm, hotline_primary: e.target.value })}
-                        className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none font-mono font-bold ${
-                          isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
-                        }`}
-                      />
+                  {/* Card 1: Basic Org Info & Hotlines */}
+                  <div className={`p-6 rounded-3xl border space-y-4 ${cardBg}`}>
+                    <h4 className="text-sm font-black text-blue-700 dark:text-amber-400 flex items-center gap-2">
+                      <PhoneCall className="w-4 h-4" />
+                      <span>1. ข้อมูลองค์กรและสายด่วนฉุกเฉิน (Organization & Hotlines)</span>
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
+                          สายด่วนหลัก (Primary Hotline)
+                        </label>
+                        <input
+                          value={configForm.hotline_primary || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, hotline_primary: e.target.value })}
+                          className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono font-bold ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                          }`}
+                        />
+                      </div>
+                      <div>
+                        <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
+                          สายด่วนรอง (Secondary)
+                        </label>
+                        <input
+                          value={configForm.hotline_secondary || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, hotline_secondary: e.target.value })}
+                          className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                          }`}
+                        />
+                      </div>
+                      <div>
+                        <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
+                          ช่องความถี่วิทยุสื่อสาร
+                        </label>
+                        <input
+                          value={configForm.radio_frequency || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, radio_frequency: e.target.value })}
+                          className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                          }`}
+                        />
+                      </div>
                     </div>
 
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
+                          ชื่อสมาคมทางการ
+                        </label>
+                        <input
+                          value={configForm.association_name || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, association_name: e.target.value })}
+                          className={`w-full px-4 py-2.5 border rounded-xl text-sm ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                          }`}
+                        />
+                      </div>
+                      <div>
+                        <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
+                          คำขวัญ/วิสัยทัศน์
+                        </label>
+                        <input
+                          value={configForm.slogan || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, slogan: e.target.value })}
+                          className={`w-full px-4 py-2.5 border rounded-xl text-sm font-sarabun ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card 2: Donation Accounts & Finance */}
+                  <div className={`p-6 rounded-3xl border space-y-4 ${cardBg}`}>
+                    <h4 className="text-sm font-black text-blue-700 dark:text-amber-400 flex items-center gap-2">
+                      <CreditCard className="w-4 h-4" />
+                      <span>2. ข้อมูลบัญชีรับบริจาค (Donation & Bank Accounts)</span>
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>ธนาคารรับบริจาค</label>
+                        <input
+                          value={configForm.bank_name || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, bank_name: e.target.value })}
+                          className={`w-full px-4 py-2.5 border rounded-xl text-sm ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                          }`}
+                        />
+                      </div>
+                      <div>
+                        <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>เลขที่บัญชีธนาคาร</label>
+                        <input
+                          value={configForm.bank_account_number || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, bank_account_number: e.target.value })}
+                          className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                          }`}
+                        />
+                      </div>
+                      <div>
+                        <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>พร้อมเพย์ (PromptPay)</label>
+                        <input
+                          value={configForm.promptpay_id || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, promptpay_id: e.target.value })}
+                          className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                          }`}
+                        />
+                      </div>
+                    </div>
                     <div>
-                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
-                        ช่องความถี่วิทยุสื่อสาร
-                      </label>
-                      <input
-                        value={configForm.radio_frequency}
-                        onChange={(e) => setConfigForm({ ...configForm, radio_frequency: e.target.value })}
-                        className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none font-mono ${
+                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>ข้อความประกาศการรับบริจาค</label>
+                      <textarea
+                        rows={2}
+                        value={configForm.donation_notice || ''}
+                        onChange={(e) => setConfigForm({ ...configForm, donation_notice: e.target.value })}
+                        className={`w-full px-4 py-2.5 border rounded-xl text-sm font-sarabun ${
                           isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
                         }`}
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Card 3: Sacred Patron & History */}
+                  <div className={`p-6 rounded-3xl border space-y-4 ${cardBg}`}>
+                    <h4 className="text-sm font-black text-blue-700 dark:text-amber-400 flex items-center gap-2">
+                      <Shield className="w-4 h-4" />
+                      <span>3. ประวัติความเป็นมา & องค์พ่อปู่จูมคำ (Sacred History & Story)</span>
+                    </h4>
                     <div>
-                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
-                        ชื่อสมาคมทางการ
-                      </label>
+                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>หัวข้อสิ่งศักดิ์สิทธิ์ประจำหน่วย</label>
                       <input
-                        value={configForm.association_name}
-                        onChange={(e) => setConfigForm({ ...configForm, association_name: e.target.value })}
-                        className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none ${
-                          isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
-                        }`}
-                      />
-                    </div>
-
-                    <div>
-                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
-                        คำขวัญ/วิสัยทัศน์
-                      </label>
-                      <input
-                        value={configForm.slogan}
-                        onChange={(e) => setConfigForm({ ...configForm, slogan: e.target.value })}
-                        className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none font-sarabun ${
-                          isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
-                        }`}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>ธนาคารรับบริจาค</label>
-                      <input
-                        value={configForm.bank_name}
-                        onChange={(e) => setConfigForm({ ...configForm, bank_name: e.target.value })}
-                        className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none ${
+                        value={configForm.sacred_patron_title || ''}
+                        onChange={(e) => setConfigForm({ ...configForm, sacred_patron_title: e.target.value })}
+                        className={`w-full px-4 py-2.5 border rounded-xl text-sm ${
                           isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
                         }`}
                       />
                     </div>
                     <div>
-                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>เลขที่บัญชี</label>
-                      <input
-                        value={configForm.bank_account_number}
-                        onChange={(e) => setConfigForm({ ...configForm, bank_account_number: e.target.value })}
-                        className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono focus:outline-none ${
-                          isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
-                        }`}
-                      />
-                    </div>
-                    <div>
-                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>พร้อมเพย์</label>
-                      <input
-                        value={configForm.promptpay_id}
-                        onChange={(e) => setConfigForm({ ...configForm, promptpay_id: e.target.value })}
-                        className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono focus:outline-none ${
+                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>เรื่องราวความเป็นมา / วัตถุประสงค์องค์กร</label>
+                      <textarea
+                        rows={3}
+                        value={configForm.sacred_patron_story || ''}
+                        onChange={(e) => setConfigForm({ ...configForm, sacred_patron_story: e.target.value })}
+                        className={`w-full px-4 py-2.5 border rounded-xl text-sm font-sarabun leading-relaxed ${
                           isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
                         }`}
                       />
                     </div>
                   </div>
 
-                  <button
-                    type="submit"
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-sm shadow-md transition-all cursor-pointer min-h-[44px] whitespace-nowrap"
-                  >
-                    <Save className="w-4 h-4" />
-                    <span>บันทึกการตั้งค่าองค์กรขึ้น Supabase</span>
-                  </button>
+                  {/* Card 4: Fee Policy & Free Service Standards */}
+                  <div className={`p-6 rounded-3xl border space-y-4 ${cardBg}`}>
+                    <h4 className="text-sm font-black text-blue-700 dark:text-amber-400 flex items-center gap-2">
+                      <FileText className="w-4 h-4" />
+                      <span>4. เกณฑ์ค่าบริการ & นโยบายช่วยเหลือฉุกเฉิน ฟรี 100% (Service Fee Policy)</span>
+                    </h4>
+                    <div>
+                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>หัวข้อนโยบายค่าบริการ</label>
+                      <input
+                        value={configForm.fee_policy_title || ''}
+                        onChange={(e) => setConfigForm({ ...configForm, fee_policy_title: e.target.value })}
+                        className={`w-full px-4 py-2.5 border rounded-xl text-sm ${
+                          isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                        }`}
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>คำอธิบายเกณฑ์ความโปร่งใสและเงื่อนไขฟรี</label>
+                      <textarea
+                        rows={3}
+                        value={configForm.fee_policy_desc || ''}
+                        onChange={(e) => setConfigForm({ ...configForm, fee_policy_desc: e.target.value })}
+                        className={`w-full px-4 py-2.5 border rounded-xl text-sm font-sarabun leading-relaxed ${
+                          isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Card 5: 4-Step Rescue Process Flow */}
+                  <div className={`p-6 rounded-3xl border space-y-4 ${cardBg}`}>
+                    <h4 className="text-sm font-black text-blue-700 dark:text-amber-400 flex items-center gap-2">
+                      <Activity className="w-4 h-4" />
+                      <span>5. ขั้นตอนการปฏิบัติการฉุกเฉิน 4 ขั้นตอน (Rescue Response Process)</span>
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className={`p-3.5 rounded-2xl border ${cardSubBg} space-y-2`}>
+                        <label className="text-xs font-black text-[#16377e] dark:text-amber-400 block">ขั้นตอนที่ 1</label>
+                        <input
+                          value={configForm.rescue_process_step1_title || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, rescue_process_step1_title: e.target.value })}
+                          placeholder="หัวข้อขั้นตอน 1"
+                          className={`w-full px-3 py-2 border rounded-xl text-xs font-bold ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900' : 'bg-blue-950/60 border-blue-800 text-white'
+                          }`}
+                        />
+                        <textarea
+                          rows={2}
+                          value={configForm.rescue_process_step1_desc || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, rescue_process_step1_desc: e.target.value })}
+                          placeholder="คำอธิบายขั้นตอน 1"
+                          className={`w-full px-3 py-2 border rounded-xl text-xs font-sarabun ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900' : 'bg-blue-950/60 border-blue-800 text-white'
+                          }`}
+                        />
+                      </div>
+
+                      <div className={`p-3.5 rounded-2xl border ${cardSubBg} space-y-2`}>
+                        <label className="text-xs font-black text-[#16377e] dark:text-amber-400 block">ขั้นตอนที่ 2</label>
+                        <input
+                          value={configForm.rescue_process_step2_title || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, rescue_process_step2_title: e.target.value })}
+                          placeholder="หัวข้อขั้นตอน 2"
+                          className={`w-full px-3 py-2 border rounded-xl text-xs font-bold ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900' : 'bg-blue-950/60 border-blue-800 text-white'
+                          }`}
+                        />
+                        <textarea
+                          rows={2}
+                          value={configForm.rescue_process_step2_desc || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, rescue_process_step2_desc: e.target.value })}
+                          placeholder="คำอธิบายขั้นตอน 2"
+                          className={`w-full px-3 py-2 border rounded-xl text-xs font-sarabun ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900' : 'bg-blue-950/60 border-blue-800 text-white'
+                          }`}
+                        />
+                      </div>
+
+                      <div className={`p-3.5 rounded-2xl border ${cardSubBg} space-y-2`}>
+                        <label className="text-xs font-black text-[#16377e] dark:text-amber-400 block">ขั้นตอนที่ 3</label>
+                        <input
+                          value={configForm.rescue_process_step3_title || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, rescue_process_step3_title: e.target.value })}
+                          placeholder="หัวข้อขั้นตอน 3"
+                          className={`w-full px-3 py-2 border rounded-xl text-xs font-bold ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900' : 'bg-blue-950/60 border-blue-800 text-white'
+                          }`}
+                        />
+                        <textarea
+                          rows={2}
+                          value={configForm.rescue_process_step3_desc || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, rescue_process_step3_desc: e.target.value })}
+                          placeholder="คำอธิบายขั้นตอน 3"
+                          className={`w-full px-3 py-2 border rounded-xl text-xs font-sarabun ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900' : 'bg-blue-950/60 border-blue-800 text-white'
+                          }`}
+                        />
+                      </div>
+
+                      <div className={`p-3.5 rounded-2xl border ${cardSubBg} space-y-2`}>
+                        <label className="text-xs font-black text-[#16377e] dark:text-amber-400 block">ขั้นตอนที่ 4</label>
+                        <input
+                          value={configForm.rescue_process_step4_title || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, rescue_process_step4_title: e.target.value })}
+                          placeholder="หัวข้อขั้นตอน 4"
+                          className={`w-full px-3 py-2 border rounded-xl text-xs font-bold ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900' : 'bg-blue-950/60 border-blue-800 text-white'
+                          }`}
+                        />
+                        <textarea
+                          rows={2}
+                          value={configForm.rescue_process_step4_desc || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, rescue_process_step4_desc: e.target.value })}
+                          placeholder="คำอธิบายขั้นตอน 4"
+                          className={`w-full px-3 py-2 border rounded-xl text-xs font-sarabun ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900' : 'bg-blue-950/60 border-blue-800 text-white'
+                          }`}
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card 6: Affiliations & Network Marquee Text */}
+                  <div className={`p-6 rounded-3xl border space-y-4 ${cardBg}`}>
+                    <h4 className="text-sm font-black text-blue-700 dark:text-amber-400 flex items-center gap-2">
+                      <Globe className="w-4 h-4" />
+                      <span>6. เครือข่ายความร่วมมือ & หน่วยงานพันธมิตร (Affiliations & Network)</span>
+                    </h4>
+                    <div>
+                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>ข้อความตัววิ่งเครือข่ายความร่วมมือ (Marquee Text)</label>
+                      <input
+                        value={configForm.affiliations_marquee_text || ''}
+                        onChange={(e) => setConfigForm({ ...configForm, affiliations_marquee_text: e.target.value })}
+                        className={`w-full px-4 py-2.5 border rounded-xl text-sm font-sarabun ${
+                          isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                        }`}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-2">
+                    <button
+                      type="submit"
+                      className="inline-flex items-center gap-2 px-8 py-3.5 rounded-2xl bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-sm shadow-lg transition-all cursor-pointer min-h-[46px] whitespace-nowrap"
+                    >
+                      <Save className="w-5 h-5" />
+                      <span>บันทึกการตั้งค่าข้อมูลทั้งหมดขึ้นฐานข้อมูล</span>
+                    </button>
+                  </div>
                 </form>
               </div>
             )}
