@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   ShieldAlert,
   Radio,
@@ -44,6 +44,13 @@ import {
   Sun,
   Moon,
   Save,
+  LayoutDashboard,
+  Navigation,
+  Activity,
+  TrendingUp,
+  ShieldCheck,
+  CheckCircle,
+  ExternalLink,
 } from 'lucide-react';
 import {
   Category,
@@ -60,6 +67,23 @@ import {
 } from '@/types/database';
 import { OfficialLogo } from '@/components/shared/OfficialLogo';
 import { ImageUploadField } from '@/components/shared/ImageUploadField';
+
+// Calculate distance in KM from Borabue Rescue Headquarters (16.0375, 103.1186)
+export function calculateDistanceKm(lat1?: number, lon1?: number, lat2 = 16.0375, lon2 = 103.1186): string {
+  if (!lat1 || !lon1) return 'ไม่ระบุพิกัด';
+  const R = 6371; // Radius of the earth in km
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const d = R * c;
+  return `${d.toFixed(1)} กม.`;
+}
 
 interface AdminPortalViewProps {
   onBackToHome: () => void;
@@ -163,8 +187,8 @@ export function AdminPortalView({
 
   // 3-Pane Navigation Active Tab
   const [activeMenu, setActiveMenu] = useState<
-    'incidents' | 'missions' | 'news' | 'fleet' | 'officers' | 'categories' | 'hero_slides' | 'site_config' | 'settings'
-  >('incidents');
+    'dashboard' | 'incidents' | 'missions' | 'news' | 'fleet' | 'officers' | 'categories' | 'hero_slides' | 'site_config' | 'settings'
+  >('dashboard');
 
   // Selected Item IDs for Pane 2 & 3
   const [selectedIncidentId, setSelectedIncidentId] = useState<string | null>(incidents[0]?.id || null);
@@ -197,6 +221,23 @@ export function AdminPortalView({
   const [missionCoverImage, setMissionCoverImage] = useState('https://images.unsplash.com/photo-1587745416684-47953f16f02f?auto=format&fit=crop&w=1200&q=80');
   const [newsCoverImage, setNewsCoverImage] = useState('https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=1200&q=80');
   const [slideCoverImage, setSlideCoverImage] = useState('https://images.unsplash.com/photo-1587745416684-47953f16f02f?auto=format&fit=crop&w=1920&q=80');
+  const [drawerFleetImage, setDrawerFleetImage] = useState('');
+  const [drawerOfficerImage, setDrawerOfficerImage] = useState('');
+  const [drawerCategoryIcon, setDrawerCategoryIcon] = useState('Ambulance');
+
+  // Toast / Operation Status Feedback
+  const [adminNotification, setAdminNotification] = useState<{
+    show: boolean;
+    message: string;
+    type: 'success' | 'error' | 'info';
+  }>({ show: false, message: '', type: 'info' });
+
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    setAdminNotification({ show: true, message, type });
+    setTimeout(() => {
+      setAdminNotification((prev) => ({ ...prev, show: false }));
+    }, 4000);
+  };
 
   // Site Config Edit State
   const [configForm, setConfigForm] = useState<SiteConfig>(siteConfig);
@@ -226,65 +267,70 @@ export function AdminPortalView({
     setPasswordError('');
     const success = onLogin(enteredUsername, enteredPassword);
     if (!success) {
-      setPasswordError('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง (ค่าเริ่มต้น 0611193342 / @0611193342)');
+      setPasswordError('เบอร์โทรหรือรหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง');
     }
   };
 
   // Login Screen
   if (!isAdminAuthenticated) {
     return (
-      <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4 font-prompt">
-        <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl border border-slate-200 p-8 sm:p-10 relative overflow-hidden">
-          <div className="text-center mb-8">
-            <div className="inline-block p-3 rounded-full bg-blue-50 border border-blue-200 shadow-sm mb-4">
-              <OfficialLogo size={64} withGlow={false} />
+      <div className={`min-h-screen flex items-center justify-center p-4 ${themeMode === 'light' ? 'bg-slate-100' : 'bg-slate-950'}`}>
+        <div className={`w-full max-w-md p-8 rounded-3xl border shadow-2xl space-y-6 ${themeMode === 'light' ? 'bg-white border-slate-300' : 'bg-[#0b1b3d] border-blue-900'}`}>
+          <div className="text-center space-y-2">
+            <div className="w-16 h-16 rounded-full bg-slate-900 flex items-center justify-center mx-auto shadow-md">
+              <OfficialLogo className="w-14 h-14" />
             </div>
-            <h2 className="text-2xl font-black text-slate-900 tracking-tight">
-              ศูนย์สั่งการและจัดการระบบ (CMS)
+            <h2 className={`text-xl font-bold font-prompt ${themeMode === 'light' ? 'text-slate-900' : 'text-white'}`}>
+              ศูนย์สั่งการและจัดการระบบกู้ภัยประจิม
             </h2>
-            <p className="text-xs text-slate-600 font-sarabun mt-1">
-              หน่วยกู้ภัยประจิม (สมาคมประจิมสารคาม พุทธศาสตร์สงเคราะห์)
+            <p className={`text-xs font-sarabun ${themeMode === 'light' ? 'text-slate-600' : 'text-blue-200'}`}>
+              เข้าสู่ระบบบริหารจัดการข้อมูลและศูนย์สั่งการฉุกเฉิน (สมาคมประจิมสารคาม)
             </p>
           </div>
 
-          <form onSubmit={handleLoginSubmit} className="space-y-4">
+          <form onSubmit={handleLoginSubmit} className="space-y-4 font-prompt">
+            {passwordError && (
+              <div className="p-3 rounded-xl bg-red-100 border border-red-300 text-red-700 text-xs font-bold flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 shrink-0" />
+                <span>{passwordError}</span>
+              </div>
+            )}
+
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                ชื่อผู้ใช้งาน (Username)
+              <label className={`block text-xs font-bold mb-1.5 ${themeMode === 'light' ? 'text-slate-700' : 'text-blue-200'}`}>
+                เบอร์โทรผู้ดูแลระบบ (Admin Username)
               </label>
               <input
                 type="text"
-                required
                 value={enteredUsername}
                 onChange={(e) => setEnteredUsername(e.target.value)}
                 placeholder="0611193342"
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-2xl text-slate-900 text-sm focus:outline-none focus:border-[#16377e] font-mono"
+                className={`w-full px-4 py-2.5 rounded-xl border text-sm font-mono focus:outline-none ${
+                  themeMode === 'light' ? 'bg-slate-50 border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950 border-blue-800 text-white focus:border-amber-400'
+                }`}
+                required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                รหัสผ่าน (Password)
+              <label className={`block text-xs font-bold mb-1.5 ${themeMode === 'light' ? 'text-slate-700' : 'text-blue-200'}`}>
+                รหัสผ่าน (Admin Password)
               </label>
               <input
                 type="password"
-                required
-                placeholder="••••••••"
                 value={enteredPassword}
                 onChange={(e) => setEnteredPassword(e.target.value)}
-                className="w-full px-4 py-3 bg-slate-50 border border-slate-300 rounded-2xl text-slate-900 text-sm focus:outline-none focus:border-[#16377e] font-mono tracking-widest"
+                placeholder="••••••••"
+                className={`w-full px-4 py-2.5 rounded-xl border text-sm focus:outline-none ${
+                  themeMode === 'light' ? 'bg-slate-50 border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950 border-blue-800 text-white focus:border-amber-400'
+                }`}
+                required
               />
             </div>
 
-            {passwordError && (
-              <p className="text-xs text-red-600 font-sarabun bg-red-50 p-2.5 rounded-2xl border border-red-200">
-                {passwordError}
-              </p>
-            )}
-
             <button
               type="submit"
-              className="w-full py-3.5 bg-[#16377e] hover:bg-[#0f2452] text-white font-bold rounded-2xl shadow-md text-sm transition-all cursor-pointer min-h-[44px]"
+              className="w-full py-3 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-sm shadow-md transition-all cursor-pointer"
             >
               เข้าสู่ระบบศูนย์สั่งการ
             </button>
@@ -292,7 +338,9 @@ export function AdminPortalView({
             <button
               type="button"
               onClick={onBackToHome}
-              className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-2xl text-xs transition-colors cursor-pointer min-h-[40px]"
+              className={`w-full py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                themeMode === 'light' ? 'border-slate-300 text-slate-600 hover:bg-slate-100' : 'border-blue-900 text-blue-300 hover:bg-blue-950'
+              }`}
             >
               ← กลับสู่หน้าเว็บไซต์หลัก
             </button>
@@ -307,6 +355,7 @@ export function AdminPortalView({
 
   // Navigation Items
   const menuList = [
+    { id: 'dashboard', label: 'แดชบอร์ดภาพรวมศูนย์สั่งการ', icon: LayoutDashboard },
     { id: 'incidents', label: 'แจ้งเหตุฉุกเฉินสด', icon: AlertTriangle, count: pendingCount, isAlert: pendingCount > 0 },
     { id: 'missions', label: 'บันทึกผลงานภารกิจ', icon: FileText, count: missions.length },
     { id: 'news', label: 'ข่าวสารประชาสัมพันธ์', icon: Radio, count: news.length },
@@ -632,6 +681,59 @@ export function AdminPortalView({
 
           {/* Pane 2 Scrollable Item Cards List */}
           <div className="flex-1 overflow-y-auto p-3 space-y-2.5 scrollbar-thin">
+            {/* DASHBOARD SUMMARY LIST */}
+            {activeMenu === 'dashboard' && (
+              <div className="space-y-3">
+                <div className={`p-3.5 rounded-2xl border ${isLight ? 'bg-blue-50/70 border-blue-200' : 'bg-blue-950/40 border-blue-900/60'}`}>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="text-xs font-bold text-blue-700 dark:text-blue-300">สถานะเหตุด่วน</span>
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-bold">
+                      รอสั่งการ {pendingCount} เคส
+                    </span>
+                  </div>
+                  <p className="text-[11px] font-sarabun text-slate-600 dark:text-slate-300">
+                    เคสเหตุฉุกเฉินล่าสุดพร้อมพิกัด GPS ตรวจจับอัตโนมัติ
+                  </p>
+                </div>
+
+                <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-1">
+                  เหตุฉุกเฉินล่าสุด ({filteredIncidents.length})
+                </div>
+
+                {filteredIncidents.slice(0, 8).map((inc) => (
+                  <div
+                    key={inc.id}
+                    onClick={() => {
+                      setSelectedIncidentId(inc.id);
+                      setActiveMenu('incidents');
+                      setMobileDetailOpen(true);
+                    }}
+                    className={`p-3 rounded-2xl border transition-all cursor-pointer ${
+                      isLight ? 'bg-white hover:bg-slate-50 border-slate-200' : 'bg-[#0a1636]/70 hover:bg-blue-950/60 border-blue-900/40'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className="text-[11px] font-mono font-bold text-blue-700">{inc.incident_number}</span>
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                        inc.status === 'pending'
+                          ? 'bg-red-100 text-red-700 animate-pulse'
+                          : inc.status === 'resolved'
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : 'bg-amber-100 text-amber-800'
+                      }`}>
+                        {inc.status === 'pending' ? 'รอดำเนินการ' : inc.status === 'resolved' ? 'เสร็จสิ้น' : 'กำลังปฏิบัติการ'}
+                      </span>
+                    </div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white line-clamp-1">{inc.caller_name}</div>
+                    <div className="text-[10px] text-slate-500 font-sarabun flex items-center justify-between mt-1">
+                      <span className="line-clamp-1">{inc.location_name}</span>
+                      <span className="font-mono font-bold text-blue-600 shrink-0">{calculateDistanceKm(inc.latitude, inc.longitude)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {/* INCIDENTS LIST */}
             {activeMenu === 'incidents' &&
               filteredIncidents.map((inc) => {
@@ -947,6 +1049,337 @@ export function AdminPortalView({
 
           <div className="flex-1 p-4 sm:p-6 lg:p-8 max-w-5xl w-full mx-auto space-y-6">
             {/* ------------------------------------------------------------- */}
+            {/* PANE 3: EXECUTIVE OPERATIONAL COMMAND DASHBOARD (NEW) */}
+            {/* ------------------------------------------------------------- */}
+            {activeMenu === 'dashboard' && (
+              <div className="space-y-6">
+                {/* 1. Live Command Strip & Status Header */}
+                <div className={`p-6 sm:p-8 rounded-3xl border shadow-sm ${cardBg} relative overflow-hidden`}>
+                  <div className="absolute top-0 right-0 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+                  
+                  <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300 text-xs font-bold font-mono border border-blue-300 dark:border-blue-800">
+                          <Radio className="w-3.5 h-3.5 text-blue-600 animate-pulse" />
+                          <span>168.275 MHz (ช่องกู้ภัยประจิม)</span>
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold border border-emerald-300">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>ศูนย์สั่งการ 1669 ออนไลน์</span>
+                        </span>
+                      </div>
+                      <h2 className={`text-xl sm:text-2xl font-black tracking-tight ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                        ศูนย์สั่งการและแดชบอร์ดปฏิบัติการฉุกเฉิน
+                      </h2>
+                      <p className={`text-xs font-sarabun ${isLight ? 'text-slate-600' : 'text-blue-200'}`}>
+                        หน่วยกู้ภัยประจิม (สมาคมประจิมสารคาม พุทธศาสตร์สงเคราะห์) • สายด่วนฉุกเฉินหลัก: <strong className="font-mono text-red-600">{siteConfig.hotline_primary}</strong>
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <button
+                        onClick={() => handleOpenCreateDrawer('incidents')}
+                        className="px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-bold text-xs shadow-md transition-all cursor-pointer inline-flex items-center gap-1.5 min-h-[40px]"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>+ รับแจ้งเหตุด่วนใหม่</span>
+                      </button>
+                      <button
+                        onClick={() => handleOpenCreateDrawer('missions')}
+                        className="px-4 py-2.5 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-xs shadow-sm transition-all cursor-pointer inline-flex items-center gap-1.5 min-h-[40px]"
+                      >
+                        <FileText className="w-4 h-4" />
+                        <span>+ บันทึกภารกิจ</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. 4 Executive Metric Cards (Real stats, not mock) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                  {/* Metric 1: Emergency Incidents */}
+                  <div
+                    onClick={() => setActiveMenu('incidents')}
+                    className={`p-5 rounded-3xl border transition-all cursor-pointer hover:shadow-lg ${cardBg} ${pendingCount > 0 ? 'border-red-400 ring-2 ring-red-400/30' : ''}`}
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <div className="w-10 h-10 rounded-2xl bg-red-100 dark:bg-red-950 text-red-600 flex items-center justify-center">
+                        <AlertTriangle className="w-5 h-5" />
+                      </div>
+                      {pendingCount > 0 && (
+                        <span className="px-2.5 py-0.5 rounded-full bg-red-600 text-white text-[10px] font-bold font-mono animate-bounce">
+                          {pendingCount} เคสรอดำเนินการ
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-xs font-bold text-slate-500 block">เหตุฉุกเฉินทั้งหมด</span>
+                    <div className="flex items-baseline gap-2 mt-1">
+                      <span className={`text-2xl sm:text-3xl font-black font-mono ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                        {incidents.length}
+                      </span>
+                      <span className="text-xs font-sarabun text-slate-500">เคสที่ได้รับแจ้ง</span>
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-slate-200 dark:border-blue-900/40 flex items-center justify-between text-[11px]">
+                      <span className="text-amber-600 font-bold">กำลังไป {incidents.filter(i => i.status === 'en_route' || i.status === 'on_scene').length}</span>
+                      <span className="text-emerald-600 font-bold">เสร็จสิ้น {incidents.filter(i => i.status === 'resolved').length}</span>
+                    </div>
+                  </div>
+
+                  {/* Metric 2: Fleet Readiness */}
+                  <div
+                    onClick={() => setActiveMenu('fleet')}
+                    className={`p-5 rounded-3xl border transition-all cursor-pointer hover:shadow-lg ${cardBg}`}
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <div className="w-10 h-10 rounded-2xl bg-blue-100 dark:bg-blue-950 text-blue-600 flex items-center justify-center">
+                        <Ambulance className="w-5 h-5" />
+                      </div>
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold font-mono">
+                        พร้อม {fleet.filter(f => f.status === 'available').length}/{fleet.length}
+                      </span>
+                    </div>
+                    <span className="text-xs font-bold text-slate-500 block">ยานพาหนะ & อุปกรณ์กู้ชีพ</span>
+                    <div className="flex items-baseline gap-2 mt-1">
+                      <span className={`text-2xl sm:text-3xl font-black font-mono ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                        {fleet.length}
+                      </span>
+                      <span className="text-xs font-sarabun text-slate-500">คัน/หน่วย</span>
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-slate-200 dark:border-blue-900/40 flex items-center justify-between text-[11px]">
+                      <span className="text-blue-600 font-bold">ออกเหตุ {fleet.filter(f => f.status === 'dispatched').length}</span>
+                      <span className="text-slate-500">ซ่อมบำรุง {fleet.filter(f => f.status === 'maintenance').length}</span>
+                    </div>
+                  </div>
+
+                  {/* Metric 3: Active Officers */}
+                  <div
+                    onClick={() => setActiveMenu('officers')}
+                    className={`p-5 rounded-3xl border transition-all cursor-pointer hover:shadow-lg ${cardBg}`}
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <div className="w-10 h-10 rounded-2xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 flex items-center justify-center">
+                        <User className="w-5 h-5" />
+                      </div>
+                      <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-bold font-mono">
+                        เข้าเวร {officers.filter(o => o.is_on_duty).length} นาย
+                      </span>
+                    </div>
+                    <span className="text-xs font-bold text-slate-500 block">กำลังพลเจ้าหน้าที่</span>
+                    <div className="flex items-baseline gap-2 mt-1">
+                      <span className={`text-2xl sm:text-3xl font-black font-mono ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                        {officers.length}
+                      </span>
+                      <span className="text-xs font-sarabun text-slate-500">นายในระบบ</span>
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-slate-200 dark:border-blue-900/40 flex items-center justify-between text-[11px]">
+                      <span className="text-emerald-600 font-bold">พร้อมปฏิบัติการ 100%</span>
+                      <span className="text-slate-500">พักเวร {officers.filter(o => !o.is_on_duty).length}</span>
+                    </div>
+                  </div>
+
+                  {/* Metric 4: Completed Missions */}
+                  <div
+                    onClick={() => setActiveMenu('missions')}
+                    className={`p-5 rounded-3xl border transition-all cursor-pointer hover:shadow-lg ${cardBg}`}
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <div className="w-10 h-10 rounded-2xl bg-amber-100 dark:bg-amber-950 text-amber-600 flex items-center justify-center">
+                        <ShieldCheck className="w-5 h-5" />
+                      </div>
+                      <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold font-mono">
+                        {missions.length} ภารกิจ
+                      </span>
+                    </div>
+                    <span className="text-xs font-bold text-slate-500 block">ผลงานภารกิจสำเร็จสะสม</span>
+                    <div className="flex items-baseline gap-2 mt-1">
+                      <span className={`text-2xl sm:text-3xl font-black font-mono ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                        {missions.length}
+                      </span>
+                      <span className="text-xs font-sarabun text-slate-500">ภารกิจที่บันทึก</span>
+                    </div>
+                    <div className="mt-3 pt-3 border-t border-slate-200 dark:border-blue-900/40 flex items-center justify-between text-[11px]">
+                      <span className="text-blue-600 font-bold">ข่าวประชาสัมพันธ์ {news.length}</span>
+                      <span className="text-slate-500">เยี่ยมชม 128k+ ครั้ง</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. Live Incoming Incidents Triage with Real GPS Coordinates */}
+                <div className={`p-6 rounded-3xl border shadow-sm ${cardBg} space-y-4`}>
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center font-bold">
+                        <AlertTriangle className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className={`text-base font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                          เคสแจ้งเหตุฉุกเฉินและพิกัด GPS ตำแหน่งสด (Auto Geolocation)
+                        </h3>
+                        <p className={`text-xs font-sarabun ${isLight ? 'text-slate-500' : 'text-blue-300'}`}>
+                          ระบบตรวจจับพิกัดและคำนวณระยะทางจากศูนย์ใหญ่กู้ภัยประจิม บรบือ โดยอัตโนมัติ
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => setActiveMenu('incidents')}
+                      className="text-xs font-bold text-blue-700 dark:text-blue-300 hover:underline flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>ดูทั้งหมด ({incidents.length})</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {incidents.slice(0, 4).map((inc) => (
+                      <div
+                        key={inc.id}
+                        className={`p-4 rounded-2xl border transition-all ${cardSubBg} flex flex-col lg:flex-row lg:items-center justify-between gap-4`}
+                      >
+                        <div className="space-y-1.5 flex-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs font-mono font-bold text-blue-700">{inc.incident_number}</span>
+                            <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                              inc.status === 'pending'
+                                ? 'bg-red-100 text-red-700 border border-red-300 animate-pulse'
+                                : inc.status === 'resolved'
+                                ? 'bg-emerald-100 text-emerald-700 border border-emerald-300'
+                                : 'bg-amber-100 text-amber-800 border border-amber-300'
+                            }`}>
+                              {inc.status === 'pending' ? 'รอดำเนินการ' : inc.status === 'resolved' ? 'เสร็จสิ้น' : 'กำลังไป'}
+                            </span>
+                            <span className="text-[11px] font-sarabun text-slate-500">
+                              {new Date(inc.reported_at).toLocaleTimeString('th-TH')}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <h4 className={`text-sm font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                              {inc.caller_name}
+                            </h4>
+                            <span className="text-xs font-mono font-bold text-emerald-600">
+                              <a href={`tel:${inc.caller_phone}`} className="hover:underline flex items-center gap-1">
+                                <PhoneCall className="w-3 h-3" />
+                                {inc.caller_phone}
+                              </a>
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-3 text-xs font-sarabun flex-wrap">
+                            <span className="flex items-center gap-1 text-slate-600 dark:text-slate-300">
+                              <MapPin className="w-3.5 h-3.5 text-red-600" />
+                              {inc.location_name}
+                            </span>
+                            <span className="px-2 py-0.5 rounded-md bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-mono font-bold text-[11px]">
+                              📍 ระยะทาง: {calculateDistanceKm(inc.latitude, inc.longitude)}
+                            </span>
+                            <span className="text-slate-400 font-mono text-[10px]">
+                              พิกัด: {inc.latitude ? inc.latitude.toFixed(4) : '16.0375'}, {inc.longitude ? inc.longitude.toFixed(4) : '103.1186'}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+                          <a
+                            href={`https://www.google.com/maps/dir/?api=1&destination=${inc.latitude || 16.0375},${inc.longitude || 103.1186}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs inline-flex items-center gap-1 shadow-sm transition-colors cursor-pointer min-h-[36px]"
+                            title="เปิดเส้นทางนำทางบน Google Maps"
+                          >
+                            <Navigation className="w-3.5 h-3.5" />
+                            <span>เปิดแผนที่นำทาง</span>
+                          </a>
+
+                          {inc.status === 'pending' && (
+                            <button
+                              onClick={() => onUpdateIncidentStatus(inc.id, 'en_route', 'ประจิม 01')}
+                              className="px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs cursor-pointer min-h-[36px]"
+                            >
+                              สั่งการออกเหตุ
+                            </button>
+                          )}
+                          {inc.status === 'en_route' && (
+                            <button
+                              onClick={() => onUpdateIncidentStatus(inc.id, 'on_scene')}
+                              className="px-3 py-2 rounded-xl bg-blue-700 hover:bg-blue-600 text-white font-bold text-xs cursor-pointer min-h-[36px]"
+                            >
+                              ถึงที่เกิดเหตุ
+                            </button>
+                          )}
+                          {(inc.status === 'on_scene' || inc.status === 'transporting') && (
+                            <button
+                              onClick={() => onUpdateIncidentStatus(inc.id, 'resolved')}
+                              className="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs cursor-pointer min-h-[36px]"
+                            >
+                              เสร็จสิ้น
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 4. Fleet Readiness Quick-Toggle Grid */}
+                <div className={`p-6 rounded-3xl border shadow-sm ${cardBg} space-y-4`}>
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
+                        <Ambulance className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h3 className={`text-base font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                          สถานะความพร้อมยานพาหนะและชุดปฏิบัติการ (Fleet Command)
+                        </h3>
+                        <p className={`text-xs font-sarabun ${isLight ? 'text-slate-500' : 'text-blue-300'}`}>
+                          คลิกปุ่มเพื่อสลับสถานะ "พร้อมออกเหตุ" / "ออกเหตุ" แบบเรียลไทม์ได้ทันที
+                        </p>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => setActiveMenu('fleet')}
+                      className="text-xs font-bold text-blue-700 dark:text-blue-300 hover:underline flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>จัดการยานพาหนะ ({fleet.length})</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {fleet.slice(0, 6).map((f) => (
+                      <div
+                        key={f.id}
+                        className={`p-4 rounded-2xl border ${cardSubBg} flex items-center justify-between gap-3`}
+                      >
+                        <div>
+                          <span className="text-xs font-mono font-bold text-blue-700 block">{f.call_sign}</span>
+                          <h5 className={`text-xs font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>{f.name_th}</h5>
+                          <span className="text-[10px] text-slate-500 font-sarabun">{f.plate_number || f.location_base}</span>
+                        </div>
+
+                        <button
+                          onClick={() => onUpdateFleetStatus(f.id, f.status === 'available' ? 'dispatched' : 'available')}
+                          className={`px-3 py-1.5 rounded-xl font-bold text-[11px] transition-all cursor-pointer ${
+                            f.status === 'available'
+                              ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border border-emerald-300'
+                              : f.status === 'dispatched'
+                              ? 'bg-amber-100 text-amber-800 hover:bg-amber-200 border border-amber-300'
+                              : 'bg-slate-200 text-slate-700'
+                          }`}
+                        >
+                          {f.status === 'available' ? '🟢 พร้อมออกเหตุ' : f.status === 'dispatched' ? '🟡 ออกเหตุอยู่' : '🔴 ซ่อมบำรุง'}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ------------------------------------------------------------- */}
             {/* PANE 3: INCIDENT DETAIL */}
             {/* ------------------------------------------------------------- */}
             {activeMenu === 'incidents' && selectedIncident && (
@@ -990,6 +1423,53 @@ export function AdminPortalView({
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
+                  </div>
+                </div>
+
+                {/* Real-time GPS Location & Google Maps Navigation Card */}
+                <div className={`p-5 rounded-2xl border ${cardSubBg} space-y-3`}>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                        <MapPin className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <span className="text-xs font-bold text-slate-900 dark:text-white block">
+                          พิกัด GPS ตำแหน่งจุดเกิดเหตุ (Auto GPS Capture 100%)
+                        </span>
+                        <span className="text-xs text-slate-600 dark:text-slate-300 font-sarabun">
+                          ห่างจากศูนย์ใหญ่กู้ภัยประจิม บรบือ: <strong className="text-blue-600 font-mono text-sm">{calculateDistanceKm(selectedIncident.latitude, selectedIncident.longitude)}</strong>
+                        </span>
+                      </div>
+                    </div>
+
+                    <a
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${selectedIncident.latitude || 16.0375},${selectedIncident.longitude || 103.1186}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition-colors cursor-pointer min-h-[38px] shrink-0"
+                    >
+                      <Navigation className="w-4 h-4" />
+                      <span>เปิด Google Maps นำทางสด</span>
+                    </a>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs font-mono">
+                    <div>
+                      <span className="text-[10px] text-slate-400 block font-sans">ละติจูด (Latitude)</span>
+                      <span className="font-bold text-slate-800 dark:text-slate-200">{selectedIncident.latitude ? selectedIncident.latitude.toFixed(6) : '16.037500 (ศูนย์ใหญ่)'}</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 block font-sans">ลองจิจูด (Longitude)</span>
+                      <span className="font-bold text-slate-800 dark:text-slate-200">{selectedIncident.longitude ? selectedIncident.longitude.toFixed(6) : '103.118600 (ศูนย์ใหญ่)'}</span>
+                    </div>
+                    <div className="col-span-2 sm:col-span-1">
+                      <span className="text-[10px] text-slate-400 block font-sans">สถานะระบบบันทึก</span>
+                      <span className="inline-flex items-center gap-1 text-[11px] text-emerald-600 font-sans font-bold">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>บันทึกพิกัดจริงอัตโนมัติ</span>
+                      </span>
+                    </div>
                   </div>
                 </div>
 

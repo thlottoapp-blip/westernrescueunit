@@ -59,6 +59,27 @@ export function EmergencyReportModal({
   const [isGettingLocation, setIsGettingLocation] = useState(false);
   const [submittedIncident, setSubmittedIncident] = useState<EmergencyIncident | null>(null);
 
+  // Automatic Background GPS Location Detection on Modal Open
+  React.useEffect(() => {
+    if (isOpen && typeof window !== 'undefined' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setLatitude(pos.coords.latitude);
+          setLongitude(pos.coords.longitude);
+        },
+        (err) => {
+          console.log('Modal auto geolocation fallback:', err.message);
+          setLatitude(16.0375);
+          setLongitude(103.1186);
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    } else if (isOpen) {
+      setLatitude(16.0375);
+      setLongitude(103.1186);
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const incidentTypes = [
@@ -114,9 +135,8 @@ export function EmergencyReportModal({
       (err) => {
         setIsGettingLocation(false);
         console.warn('Geolocation error:', err.message);
-        // Provide mock fallback coordinate in Borabue
-        setLatitude(16.0382);
-        setLongitude(103.1284);
+        setLatitude(16.0375);
+        setLongitude(103.1186);
         if (!locationName) {
           setLocationName('บริเวณใจกลางอำเภอบรบือ ถนนแจ้งสนิท (ระบุอัตโนมัติ)');
         }
@@ -132,6 +152,9 @@ export function EmergencyReportModal({
       return;
     }
 
+    const finalLat = latitude || 16.0375;
+    const finalLng = longitude || 103.1186;
+
     const created = onSubmitIncident({
       caller_name: callerName.trim(),
       caller_phone: callerPhone.trim(),
@@ -139,8 +162,8 @@ export function EmergencyReportModal({
       urgency_level: urgencyLevel,
       location_name: locationName.trim(),
       district,
-      latitude,
-      longitude,
+      latitude: finalLat,
+      longitude: finalLng,
       victim_count: Number(victimCount) || 0,
       details: details.trim(),
       image_url: imageUrl,

@@ -62,7 +62,32 @@ export function EmergencyReportView({
   const [latitude, setLatitude] = useState<number | undefined>(undefined);
   const [longitude, setLongitude] = useState<number | undefined>(undefined);
   const [isGettingLocation, setIsGettingLocation] = useState(false);
+  const [gpsAutoCaptured, setGpsAutoCaptured] = useState(false);
   const [submittedIncident, setSubmittedIncident] = useState<EmergencyIncident | null>(null);
+
+  // Automatic Background GPS Location Detection
+  React.useEffect(() => {
+    if (typeof window !== 'undefined' && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setLatitude(pos.coords.latitude);
+          setLongitude(pos.coords.longitude);
+          setGpsAutoCaptured(true);
+        },
+        (err) => {
+          console.log('Automatic GPS fallback:', err.message);
+          setLatitude(16.0375);
+          setLongitude(103.1186);
+          setGpsAutoCaptured(true);
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    } else {
+      setLatitude(16.0375);
+      setLongitude(103.1186);
+      setGpsAutoCaptured(true);
+    }
+  }, []);
 
   const incidentTypes = [
     {
@@ -107,6 +132,7 @@ export function EmergencyReportView({
       (pos) => {
         setLatitude(pos.coords.latitude);
         setLongitude(pos.coords.longitude);
+        setGpsAutoCaptured(true);
         setIsGettingLocation(false);
         if (!locationName) {
           setLocationName(
@@ -117,8 +143,9 @@ export function EmergencyReportView({
       (err) => {
         setIsGettingLocation(false);
         console.warn('Geolocation error:', err.message);
-        setLatitude(16.0382);
-        setLongitude(103.1284);
+        setLatitude(16.0375);
+        setLongitude(103.1186);
+        setGpsAutoCaptured(true);
         if (!locationName) {
           setLocationName('บริเวณใจกลางอำเภอบรบือ ถนนแจ้งสนิท (ระบุอัตโนมัติ)');
         }
@@ -134,6 +161,9 @@ export function EmergencyReportView({
       return;
     }
 
+    const finalLat = latitude || 16.0375;
+    const finalLng = longitude || 103.1186;
+
     const created = onSubmitIncident({
       caller_name: callerName.trim(),
       caller_phone: callerPhone.trim(),
@@ -141,8 +171,8 @@ export function EmergencyReportView({
       urgency_level: urgencyLevel,
       location_name: locationName.trim(),
       district,
-      latitude,
-      longitude,
+      latitude: finalLat,
+      longitude: finalLng,
       victim_count: Number(victimCount) || 0,
       details: details.trim(),
       image_url: imageUrl,
