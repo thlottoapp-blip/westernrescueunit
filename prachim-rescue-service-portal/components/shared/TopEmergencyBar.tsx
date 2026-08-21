@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { PhoneCall, MapPin, Clock, AlertTriangle, Lock } from 'lucide-react';
+import { PhoneCall, MapPin, Clock, AlertTriangle } from 'lucide-react';
 
 interface TopEmergencyBarProps {
   onOpenReportModal?: () => void;
@@ -65,19 +65,6 @@ export function TopEmergencyBar({
             >
               <AlertTriangle className="w-3.5 h-3.5 text-white shrink-0 animate-pulse" />
               <span className="whitespace-nowrap">แจ้งเหตุด่วน</span>
-            </button>
-          )}
-
-          {/* Quick Admin Portal Button */}
-          {onOpenAdminModal && (
-            <button
-              id="emergency-top-admin-btn"
-              onClick={onOpenAdminModal}
-              title="เข้าสู่ระบบศูนย์สั่งการและจัดการเว็บไซต์"
-              className="inline-flex items-center justify-center gap-1.5 bg-slate-900/80 hover:bg-blue-900 text-amber-300 hover:text-amber-200 font-semibold px-3 py-1.5 rounded-full shadow-sm border border-amber-400/50 transition-all cursor-pointer font-prompt text-xs whitespace-nowrap shrink-0 min-h-[32px]"
-            >
-              <Lock className="w-3 h-3 text-amber-400 shrink-0" />
-              <span className="whitespace-nowrap">ระบบแอดมิน</span>
             </button>
           )}
         </div>

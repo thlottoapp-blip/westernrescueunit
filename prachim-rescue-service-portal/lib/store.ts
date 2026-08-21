@@ -114,22 +114,40 @@ export function usePrachimStore() {
 
           if (isMounted) {
             if (catRes.status === 'fulfilled' && catRes.value.data && catRes.value.data.length > 0) {
-              setCategories(catRes.value.data);
+              const uniqueCats = Array.from(
+                new Map(catRes.value.data.map((item) => [item.slug || item.id, item])).values()
+              );
+              setCategories(uniqueCats);
             }
             if (misRes.status === 'fulfilled' && misRes.value.data && misRes.value.data.length > 0) {
-              setMissions(misRes.value.data);
+              const uniqueMissions = Array.from(
+                new Map(misRes.value.data.map((item) => [item.id || item.title, item])).values()
+              );
+              setMissions(uniqueMissions);
             }
             if (newsRes.status === 'fulfilled' && newsRes.value.data && newsRes.value.data.length > 0) {
-              setNews(newsRes.value.data);
+              const uniqueNews = Array.from(
+                new Map(newsRes.value.data.map((item) => [item.id || item.title, item])).values()
+              );
+              setNews(uniqueNews);
             }
             if (incRes.status === 'fulfilled' && incRes.value.data && incRes.value.data.length > 0) {
-              setIncidents(incRes.value.data);
+              const uniqueInc = Array.from(
+                new Map(incRes.value.data.map((item) => [item.incident_number || item.id, item])).values()
+              );
+              setIncidents(uniqueInc);
             }
             if (fleetRes.status === 'fulfilled' && fleetRes.value.data && fleetRes.value.data.length > 0) {
-              setFleet(fleetRes.value.data);
+              const uniqueFleet = Array.from(
+                new Map(fleetRes.value.data.map((item) => [item.call_sign || item.id, item])).values()
+              );
+              setFleet(uniqueFleet);
             }
             if (offRes.status === 'fulfilled' && offRes.value.data && offRes.value.data.length > 0) {
-              setOfficers(offRes.value.data);
+              const uniqueOff = Array.from(
+                new Map(offRes.value.data.map((item) => [item.officer_code || item.id, item])).values()
+              );
+              setOfficers(uniqueOff);
             }
           }
         } catch (err) {
