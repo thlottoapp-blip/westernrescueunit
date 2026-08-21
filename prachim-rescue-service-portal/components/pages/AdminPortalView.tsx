@@ -48,6 +48,7 @@ import {
   Navigation,
   Activity,
   TrendingUp,
+  Shield,
   ShieldCheck,
   CheckCircle,
   ExternalLink,
