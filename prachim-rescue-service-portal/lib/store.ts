@@ -42,6 +42,8 @@ const STORAGE_KEYS = {
 const DEFAULT_ADMIN_USERNAME = '0611193342';
 const DEFAULT_ADMIN_PASSWORD = '@0611193342';
 
+import { ToastItem } from '@/components/shared/ToastNotification';
+
 export function usePrachimStore() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [currentAdminUser, setCurrentAdminUser] = useState<string>(DEFAULT_ADMIN_USERNAME);
@@ -54,6 +56,27 @@ export function usePrachimStore() {
   const [siteConfig, setSiteConfig] = useState<SiteConfig>(INITIAL_SITE_CONFIG);
   const [heroSlides, setHeroSlides] = useState<HeroSlideItem[]>(INITIAL_HERO_SLIDES);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(false);
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
+
+  // Toast Helper
+  const addToast = (
+    message: string,
+    type: 'success' | 'error' | 'warning' | 'info' = 'success',
+    title?: string
+  ) => {
+    const id = 'toast-' + Date.now() + '-' + Math.random().toString(36).substr(2, 4);
+    const newToast: ToastItem = { id, message, type, title, timestamp: Date.now() };
+    setToasts((prev) => [...prev, newToast]);
+
+    // Auto dismiss after 4 seconds
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 4000);
+  };
+
+  const dismissToast = (id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
 
   // Hydrate from Supabase and localStorage once mounted on client
   useEffect(() => {
@@ -240,8 +263,10 @@ export function usePrachimStore() {
         localStorage.setItem(STORAGE_KEYS.AUTH, 'true');
         localStorage.setItem('prachim_admin_username_v1', activeUser);
       }
+      addToast(`ยินดีต้อนรับคุณ ${activeUser} เข้าสู่ศูนย์สั่งการ`, 'success', 'เข้าสู่ระบบสำเร็จ');
       return true;
     }
+    addToast('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง', 'error', 'เข้าสู่ระบบไม่สำเร็จ');
     return false;
   };
 
@@ -250,6 +275,7 @@ export function usePrachimStore() {
     if (typeof window !== 'undefined') {
       localStorage.removeItem(STORAGE_KEYS.AUTH);
     }
+    addToast('ออกจากระบบศูนย์สั่งการเรียบร้อยแล้ว', 'info', 'ออกจากระบบ');
   };
 
   const updateAdminPassword = (currentPass: string, newPass: string): boolean => {
@@ -257,11 +283,13 @@ export function usePrachimStore() {
       (typeof window !== 'undefined' ? localStorage.getItem(STORAGE_KEYS.PASSWORD) : null) ||
       DEFAULT_ADMIN_PASSWORD;
     if (currentPass !== storedPass && currentPass !== '@0611193342' && currentPass !== 'prachim2026') {
+      addToast('รหัสผ่านเดิมไม่ถูกต้อง ไม่สามารถเปลี่ยนรหัสผ่านได้', 'error', 'เกิดข้อผิดพลาด');
       return false;
     }
     if (typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEYS.PASSWORD, newPass);
     }
+    addToast('เปลี่ยนรหัสผ่านผู้ดูแลระบบใหม่เรียบร้อยแล้ว', 'success', 'เปลี่ยนรหัสผ่านสำเร็จ');
     return true;
   };
 
@@ -325,6 +353,7 @@ export function usePrachimStore() {
     setIncidents(updated);
     saveToStorage(STORAGE_KEYS.INCIDENTS, updated);
     playEmergencyAlertSound();
+    addToast(`รับแจ้งเหตุ ${incidentNumber} เข้าสู่ระบบแล้ว`, 'warning', '🚨 แจ้งเหตุด่วนฉุกเฉิน');
 
     // Async sync to Supabase
     if (isSupabaseConfigured && supabase) {
@@ -358,6 +387,7 @@ export function usePrachimStore() {
 
     setIncidents(updated);
     saveToStorage(STORAGE_KEYS.INCIDENTS, updated);
+    addToast(`อัปเดตสถานะเป็น "${status}" เรียบร้อยแล้ว`, 'success', 'อัปเดตสถานะเหตุการณ์');
 
     // Async sync to Supabase
     if (isSupabaseConfigured && supabase) {
@@ -377,6 +407,7 @@ export function usePrachimStore() {
     const updated = incidents.filter((i) => i.id !== id);
     setIncidents(updated);
     saveToStorage(STORAGE_KEYS.INCIDENTS, updated);
+    addToast('ลบรายการเหตุการณ์เรียบร้อยแล้ว', 'info', 'ลบข้อมูล');
   };
 
   // Category Operations
@@ -390,6 +421,7 @@ export function usePrachimStore() {
     const updated = [...categories, newCat];
     setCategories(updated);
     saveToStorage(STORAGE_KEYS.CATEGORIES, updated);
+    addToast(`เพิ่มหมวดหมู่ "${cat.name_th}" เรียบร้อยแล้ว`, 'success', 'บันทึกสำเร็จ');
   };
 
   const updateCategory = (id: string, updates: Partial<Category>) => {
@@ -398,12 +430,14 @@ export function usePrachimStore() {
     );
     setCategories(updated);
     saveToStorage(STORAGE_KEYS.CATEGORIES, updated);
+    addToast('อัปเดตข้อมูลหมวดหมู่เรียบร้อยแล้ว', 'success', 'บันทึกสำเร็จ');
   };
 
   const deleteCategory = (id: string) => {
     const updated = categories.filter((c) => c.id !== id);
     setCategories(updated);
     saveToStorage(STORAGE_KEYS.CATEGORIES, updated);
+    addToast('ลบหมวดหมู่เรียบร้อยแล้ว', 'warning', 'ลบข้อมูล');
   };
 
   // Mission Operations
@@ -420,6 +454,7 @@ export function usePrachimStore() {
     const updated = [newMission, ...missions];
     setMissions(updated);
     saveToStorage(STORAGE_KEYS.MISSIONS, updated);
+    addToast(`เพิ่มบันทึกภารกิจ "${mission.title.slice(0, 30)}..." เรียบร้อย`, 'success', 'บันทึกสำเร็จ');
   };
 
   const updateMission = (id: string, updates: Partial<MissionLog>) => {
@@ -428,12 +463,14 @@ export function usePrachimStore() {
     );
     setMissions(updated);
     saveToStorage(STORAGE_KEYS.MISSIONS, updated);
+    addToast('อัปเดตข้อมูลภารกิจเรียบร้อยแล้ว', 'success', 'บันทึกสำเร็จ');
   };
 
   const deleteMission = (id: string) => {
     const updated = missions.filter((m) => m.id !== id);
     setMissions(updated);
     saveToStorage(STORAGE_KEYS.MISSIONS, updated);
+    addToast('ลบภารกิจเรียบร้อยแล้ว', 'warning', 'ลบข้อมูล');
   };
 
   // News Operations
@@ -447,6 +484,7 @@ export function usePrachimStore() {
     const updated = [newArticle, ...news];
     setNews(updated);
     saveToStorage(STORAGE_KEYS.NEWS, updated);
+    addToast(`เผยแพร่ข่าว "${article.title.slice(0, 30)}..." สำเร็จ`, 'success', 'บันทึกสำเร็จ');
   };
 
   const updateNews = (id: string, updates: Partial<NewsArticle>) => {
@@ -455,12 +493,14 @@ export function usePrachimStore() {
     );
     setNews(updated);
     saveToStorage(STORAGE_KEYS.NEWS, updated);
+    addToast('อัปเดตข่าวประชาสัมพันธ์เรียบร้อยแล้ว', 'success', 'บันทึกสำเร็จ');
   };
 
   const deleteNews = (id: string) => {
     const updated = news.filter((n) => n.id !== id);
     setNews(updated);
     saveToStorage(STORAGE_KEYS.NEWS, updated);
+    addToast('ลบข่าวเรียบร้อยแล้ว', 'warning', 'ลบข้อมูล');
   };
 
   // Fleet Operations
@@ -468,6 +508,7 @@ export function usePrachimStore() {
     const updated = fleet.map((f) => (f.id === id ? { ...f, status } : f));
     setFleet(updated);
     saveToStorage(STORAGE_KEYS.FLEET, updated);
+    addToast(`ปรับสถานะยานพาหนะเป็น "${status}" เรียบร้อย`, 'success', 'อัปเดตสถานะรถ');
   };
 
   const addFleetItem = (item: Omit<EquipmentFleet, 'id' | 'created_at'>) => {
@@ -479,25 +520,42 @@ export function usePrachimStore() {
     const updated = [...fleet, newItem];
     setFleet(updated);
     saveToStorage(STORAGE_KEYS.FLEET, updated);
+    addToast(`เพิ่มยานพาหนะ/อุปกรณ์ "${item.call_sign}" เรียบร้อย`, 'success', 'บันทึกสำเร็จ');
   };
 
   const updateFleetItem = (id: string, updates: Partial<EquipmentFleet>) => {
     const updated = fleet.map((f) => (f.id === id ? { ...f, ...updates } : f));
     setFleet(updated);
     saveToStorage(STORAGE_KEYS.FLEET, updated);
+    addToast('อัปเดตข้อมูลยานพาหนะเรียบร้อยแล้ว', 'success', 'บันทึกสำเร็จ');
   };
 
   const deleteFleetItem = (id: string) => {
     const updated = fleet.filter((f) => f.id !== id);
     setFleet(updated);
     saveToStorage(STORAGE_KEYS.FLEET, updated);
+    addToast('ลบรายการยานพาหนะเรียบร้อยแล้ว', 'warning', 'ลบข้อมูล');
   };
 
   // Officer Operations
   const toggleOfficerDuty = (id: string) => {
-    const updated = officers.map((o) => (o.id === id ? { ...o, is_on_duty: !o.is_on_duty } : o));
+    let targetName = '';
+    let newDuty = false;
+    const updated = officers.map((o) => {
+      if (o.id === id) {
+        targetName = o.full_name;
+        newDuty = !o.is_on_duty;
+        return { ...o, is_on_duty: !o.is_on_duty };
+      }
+      return o;
+    });
     setOfficers(updated);
     saveToStorage(STORAGE_KEYS.OFFICERS, updated);
+    addToast(
+      `สลับสถานะของ ${targetName} เป็น "${newDuty ? 'พร้อมปฏิบัติหน้าที่' : 'พักเวร/ออกเวร'}"`,
+      newDuty ? 'success' : 'info',
+      'สถานะเวรเจ้าหน้าที่'
+    );
   };
 
   const addOfficer = (officer: Omit<OfficerRoster, 'id' | 'created_at'>) => {
@@ -509,25 +567,29 @@ export function usePrachimStore() {
     const updated = [...officers, newOfficer];
     setOfficers(updated);
     saveToStorage(STORAGE_KEYS.OFFICERS, updated);
+    addToast(`เพิ่มเจ้าหน้าที่ "${officer.full_name}" เข้าระบบแล้ว`, 'success', 'บันทึกสำเร็จ');
   };
 
   const updateOfficer = (id: string, updates: Partial<OfficerRoster>) => {
     const updated = officers.map((o) => (o.id === id ? { ...o, ...updates } : o));
     setOfficers(updated);
     saveToStorage(STORAGE_KEYS.OFFICERS, updated);
+    addToast('อัปเดตข้อมูลเจ้าหน้าที่เรียบร้อยแล้ว', 'success', 'บันทึกสำเร็จ');
   };
 
   const deleteOfficer = (id: string) => {
     const updated = officers.filter((o) => o.id !== id);
     setOfficers(updated);
     saveToStorage(STORAGE_KEYS.OFFICERS, updated);
+    addToast('ลบข้อมูลเจ้าหน้าที่เรียบร้อยแล้ว', 'warning', 'ลบข้อมูล');
   };
 
   // Site Config Operations (Behind the scenes comprehensive management)
   const updateSiteConfig = (updates: Partial<SiteConfig>) => {
-    const updated = { ...siteConfig, ...updates };
+    const updated = { ...siteConfig, ...updates, updated_at: new Date().toISOString() };
     setSiteConfig(updated);
     saveToStorage(STORAGE_KEYS.SITE_CONFIG, updated);
+    addToast('บันทึกข้อมูลองค์กร การติดต่อ และโซเชียลเรียบร้อยแล้ว', 'success', 'บันทึกการตั้งค่า');
   };
 
   // Hero Slides Operations
@@ -539,18 +601,21 @@ export function usePrachimStore() {
     const updated = [...heroSlides, newSlide];
     setHeroSlides(updated);
     saveToStorage(STORAGE_KEYS.HERO_SLIDES, updated);
+    addToast('เพิ่มสไลด์หน้าแรกเรียบร้อยแล้ว', 'success', 'บันทึกสำเร็จ');
   };
 
   const updateHeroSlide = (id: string, updates: Partial<HeroSlideItem>) => {
     const updated = heroSlides.map((s) => (s.id === id ? { ...s, ...updates } : s));
     setHeroSlides(updated);
     saveToStorage(STORAGE_KEYS.HERO_SLIDES, updated);
+    addToast('อัปเดตสไลด์หน้าแรกเรียบร้อยแล้ว', 'success', 'บันทึกสำเร็จ');
   };
 
   const deleteHeroSlide = (id: string) => {
     const updated = heroSlides.filter((s) => s.id !== id);
     setHeroSlides(updated);
     saveToStorage(STORAGE_KEYS.HERO_SLIDES, updated);
+    addToast('ลบสไลด์หน้าแรกเรียบร้อยแล้ว', 'warning', 'ลบข้อมูล');
   };
 
   // Data Export / Backup
@@ -575,6 +640,7 @@ export function usePrachimStore() {
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
+    addToast('ส่งออกไฟล์สำรองข้อมูล JSON สำเร็จ', 'info', 'สำรองข้อมูล');
   };
 
   // Data Import / Restore
@@ -613,9 +679,11 @@ export function usePrachimStore() {
         setHeroSlides(parsed.heroSlides);
         saveToStorage(STORAGE_KEYS.HERO_SLIDES, parsed.heroSlides);
       }
+      addToast('นำเข้าและกู้คืนข้อมูลสำเร็จเรียบร้อย', 'success', 'กู้คืนสำเร็จ');
       return true;
     } catch (e) {
       console.error('Error restoring data:', e);
+      addToast('ไฟล์ JSON ไม่ถูกต้อง ไม่สามารถกู้คืนข้อมูลได้', 'error', 'เกิดข้อผิดพลาด');
       return false;
     }
   };
@@ -642,6 +710,7 @@ export function usePrachimStore() {
       localStorage.removeItem(STORAGE_KEYS.HERO_SLIDES);
       localStorage.removeItem(STORAGE_KEYS.PASSWORD);
     }
+    addToast('รีเซ็ตข้อมูลทั้งหมดกลับสู่ค่าเริ่มต้นแล้ว', 'warning', 'รีเซ็ตข้อมูล');
   };
 
   return {
@@ -656,6 +725,9 @@ export function usePrachimStore() {
     siteConfig,
     heroSlides,
     isAdminAuthenticated,
+    toasts,
+    addToast,
+    dismissToast,
     loginAdmin,
     logoutAdmin,
     updateAdminPassword,

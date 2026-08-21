@@ -15,6 +15,7 @@ import { Footer } from '@/components/shared/Footer';
 import { EmergencyReportView } from '@/components/pages/EmergencyReportView';
 import { MissionDetailView } from '@/components/pages/MissionDetailView';
 import { AdminPortalView } from '@/components/pages/AdminPortalView';
+import { ToastContainer } from '@/components/shared/ToastNotification';
 import { usePrachimStore } from '@/lib/store';
 import { MissionLog } from '@/types/database';
 
@@ -35,6 +36,8 @@ export default function HomePage() {
     siteConfig,
     heroSlides,
     isAdminAuthenticated,
+    toasts,
+    dismissToast,
     loginAdmin,
     logoutAdmin,
     updateAdminPassword,
@@ -124,81 +127,92 @@ export default function HomePage() {
   // 1. Full Page: Emergency Citizen Report
   if (currentView === 'report') {
     return (
-      <EmergencyReportView
-        onBackToHome={handleBackToHome}
-        onSubmitIncident={submitEmergencyIncident}
-      />
+      <>
+        <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+        <EmergencyReportView
+          onBackToHome={handleBackToHome}
+          onSubmitIncident={submitEmergencyIncident}
+        />
+      </>
     );
   }
 
   // 2. Full Page: Mission Detail View
   if (currentView === 'mission-detail' && selectedMission) {
     return (
-      <MissionDetailView
-        mission={selectedMission}
-        allMissions={missions}
-        onBack={handleBackToHome}
-        onSelectMission={(m) => {
-          setSelectedMission(m);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        onOpenReportPage={handleOpenReportPage}
-      />
+      <>
+        <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+        <MissionDetailView
+          mission={selectedMission}
+          allMissions={missions}
+          onBack={handleBackToHome}
+          onSelectMission={(m) => {
+            setSelectedMission(m);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          onOpenReportPage={handleOpenReportPage}
+        />
+      </>
     );
   }
 
   // 3. Full Page: Admin Dispatch and CMS Portal
   if (currentView === 'admin') {
     return (
-      <AdminPortalView
-        onBackToHome={handleBackToHome}
-        isAdminAuthenticated={isAdminAuthenticated}
-        onLogin={loginAdmin}
-        onLogout={logoutAdmin}
-        onUpdatePassword={updateAdminPassword}
-        currentAdminUser={currentAdminUser}
-        categories={categories}
-        missions={missions}
-        news={news}
-        incidents={incidents}
-        fleet={fleet}
-        officers={officers}
-        siteConfig={siteConfig}
-        heroSlides={heroSlides}
-        onUpdateIncidentStatus={updateIncidentStatus}
-        onDeleteIncident={deleteIncident}
-        onAddCategory={addCategory}
-        onUpdateCategory={updateCategory}
-        onDeleteCategory={deleteCategory}
-        onAddMission={addMission}
-        onUpdateMission={updateMission}
-        onDeleteMission={deleteMission}
-        onAddNews={addNews}
-        onUpdateNews={updateNews}
-        onDeleteNews={deleteNews}
-        onUpdateFleetStatus={updateFleetStatus}
-        onAddFleetItem={addFleetItem}
-        onUpdateFleetItem={updateFleetItem}
-        onDeleteFleetItem={deleteFleetItem}
-        onToggleOfficerDuty={toggleOfficerDuty}
-        onAddOfficer={addOfficer}
-        onUpdateOfficer={updateOfficer}
-        onDeleteOfficer={deleteOfficer}
-        onUpdateSiteConfig={updateSiteConfig}
-        onAddHeroSlide={addHeroSlide}
-        onUpdateHeroSlide={updateHeroSlide}
-        onDeleteHeroSlide={deleteHeroSlide}
-        onExportData={exportAllData}
-        onImportData={importAllData}
-        onResetToDefault={resetToFactoryDefault}
-        onTestSoundAlert={playEmergencyAlertSound}
-      />
+      <>
+        <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+        <AdminPortalView
+          onBackToHome={handleBackToHome}
+          isAdminAuthenticated={isAdminAuthenticated}
+          onLogin={loginAdmin}
+          onLogout={logoutAdmin}
+          onUpdatePassword={updateAdminPassword}
+          currentAdminUser={currentAdminUser}
+          categories={categories}
+          missions={missions}
+          news={news}
+          incidents={incidents}
+          fleet={fleet}
+          officers={officers}
+          siteConfig={siteConfig}
+          heroSlides={heroSlides}
+          onUpdateIncidentStatus={updateIncidentStatus}
+          onDeleteIncident={deleteIncident}
+          onAddCategory={addCategory}
+          onUpdateCategory={updateCategory}
+          onDeleteCategory={deleteCategory}
+          onAddMission={addMission}
+          onUpdateMission={updateMission}
+          onDeleteMission={deleteMission}
+          onAddNews={addNews}
+          onUpdateNews={updateNews}
+          onDeleteNews={deleteNews}
+          onUpdateFleetStatus={updateFleetStatus}
+          onAddFleetItem={addFleetItem}
+          onUpdateFleetItem={updateFleetItem}
+          onDeleteFleetItem={deleteFleetItem}
+          onToggleOfficerDuty={toggleOfficerDuty}
+          onAddOfficer={addOfficer}
+          onUpdateOfficer={updateOfficer}
+          onDeleteOfficer={deleteOfficer}
+          onUpdateSiteConfig={updateSiteConfig}
+          onAddHeroSlide={addHeroSlide}
+          onUpdateHeroSlide={updateHeroSlide}
+          onDeleteHeroSlide={deleteHeroSlide}
+          onExportData={exportAllData}
+          onImportData={importAllData}
+          onResetToDefault={resetToFactoryDefault}
+          onTestSoundAlert={playEmergencyAlertSound}
+        />
+      </>
     );
   }
 
   // 4. Default: Homepage View
   return (
     <div className="min-h-screen bg-white text-slate-900 flex flex-col font-prompt selection:bg-red-600 selection:text-white">
+      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+
       {/* 1. Top Emergency Bar */}
       <TopEmergencyBar
         onOpenReportModal={handleOpenReportPage}
@@ -261,3 +275,4 @@ export default function HomePage() {
     </div>
   );
 }
+
