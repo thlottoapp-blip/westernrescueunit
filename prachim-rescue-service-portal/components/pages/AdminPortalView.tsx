@@ -41,6 +41,9 @@ import {
   Send,
   Lock,
   Menu,
+  Sun,
+  Moon,
+  Save,
 } from 'lucide-react';
 import {
   Category,
@@ -56,7 +59,6 @@ import {
   UrgencyLevel,
 } from '@/types/database';
 import { OfficialLogo } from '@/components/shared/OfficialLogo';
-import { FacebookIcon, LineIcon, TikTokIcon, YouTubeIcon } from '@/components/shared/OfficialIcons';
 
 interface AdminPortalViewProps {
   onBackToHome: () => void;
@@ -150,17 +152,20 @@ export function AdminPortalView({
   onResetToDefault,
   onTestSoundAlert,
 }: AdminPortalViewProps) {
-  // Login State
+  // Theme Mode: 'light' (default as requested) or 'dark'
+  const [themeMode, setThemeMode] = useState<'light' | 'dark'>('light');
+
+  // Login Form States
   const [enteredUsername, setEnteredUsername] = useState('0611193342');
   const [enteredPassword, setEnteredPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-  // 3-Pane Navigation Active States
+  // 3-Pane Navigation Active Tab
   const [activeMenu, setActiveMenu] = useState<
     'incidents' | 'missions' | 'news' | 'fleet' | 'officers' | 'categories' | 'hero_slides' | 'site_config' | 'settings'
   >('incidents');
 
-  // Selected Item IDs in Pane 2 (Master List)
+  // Selected Item IDs for Pane 2 & 3
   const [selectedIncidentId, setSelectedIncidentId] = useState<string | null>(incidents[0]?.id || null);
   const [selectedMissionId, setSelectedMissionId] = useState<string | null>(missions[0]?.id || null);
   const [selectedNewsId, setSelectedNewsId] = useState<string | null>(news[0]?.id || null);
@@ -169,17 +174,18 @@ export function AdminPortalView({
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(categories[0]?.id || null);
   const [selectedSlideId, setSelectedSlideId] = useState<string | null>(heroSlides[0]?.id || null);
 
-  // Search & Filter
+  // Search and Sub-filters
   const [searchTerm, setSearchTerm] = useState('');
   const [incidentFilter, setIncidentFilter] = useState<'all' | 'pending' | 'dispatched' | 'en_route' | 'on_scene' | 'resolved'>('all');
 
-  // Mobile Drilldown Mode (list vs detail)
+  // Mobile Views
   const [mobileDetailOpen, setMobileDetailOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-  // Right Slide-Over Drawer State (Slide out from the right on PC)
+  // Right Slide-Over Creation / Edit Drawer State
   const [isSlideDrawerOpen, setIsSlideDrawerOpen] = useState(false);
   const [slideDrawerModule, setSlideDrawerModule] = useState<typeof activeMenu>('missions');
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
 
   // Password Update Form State
   const [currentPassInput, setCurrentPassInput] = useState('');
@@ -189,13 +195,26 @@ export function AdminPortalView({
   // Site Config Edit State
   const [configForm, setConfigForm] = useState<SiteConfig>(siteConfig);
 
-  // Open Creation Slide-over Drawer
+  // Toggle Theme
+  const toggleTheme = () => {
+    setThemeMode((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
+
+  // Open Creation Drawer
   const handleOpenCreateDrawer = (moduleName: typeof activeMenu) => {
     setSlideDrawerModule(moduleName);
+    setEditingItemId(null);
     setIsSlideDrawerOpen(true);
   };
 
-  // Handle Login
+  // Open Edit Drawer
+  const handleOpenEditDrawer = (moduleName: typeof activeMenu, itemId: string) => {
+    setSlideDrawerModule(moduleName);
+    setEditingItemId(itemId);
+    setIsSlideDrawerOpen(true);
+  };
+
+  // Handle Login Submit
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setPasswordError('');
@@ -205,17 +224,16 @@ export function AdminPortalView({
     }
   };
 
-  // If Not Logged In, Show Secure Login Screen
+  // Login Screen
   if (!isAdminAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#060e22] via-[#0c1c42] to-[#060e22] flex items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-amber-400/40 p-8 sm:p-10 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-amber-400/10 rounded-full blur-2xl pointer-events-none" />
+      <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4 font-prompt">
+        <div className="max-w-md w-full bg-white rounded-3xl shadow-2xl border border-slate-200 p-8 sm:p-10 relative overflow-hidden">
           <div className="text-center mb-8">
             <div className="inline-block p-3 rounded-full bg-blue-50 border border-blue-200 shadow-sm mb-4">
-              <OfficialLogo size={64} withGlow={true} />
+              <OfficialLogo size={64} withGlow={false} />
             </div>
-            <h2 className="text-2xl font-black text-slate-900 font-prompt tracking-tight">
+            <h2 className="text-2xl font-black text-slate-900 tracking-tight">
               ศูนย์สั่งการและจัดการระบบ (CMS)
             </h2>
             <p className="text-xs text-slate-600 font-sarabun mt-1">
@@ -225,7 +243,7 @@ export function AdminPortalView({
 
           <form onSubmit={handleLoginSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 font-prompt mb-1.5">
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 ชื่อผู้ใช้งาน (Username)
               </label>
               <input
@@ -239,7 +257,7 @@ export function AdminPortalView({
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 font-prompt mb-1.5">
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 รหัสผ่าน (Password)
               </label>
               <input
@@ -260,7 +278,7 @@ export function AdminPortalView({
 
             <button
               type="submit"
-              className="w-full py-3.5 bg-gradient-to-r from-[#16377e] to-[#0a193b] hover:from-[#1b4396] hover:to-[#0f2452] text-white font-bold rounded-2xl shadow-md text-sm font-prompt transition-all cursor-pointer border border-amber-400/50 min-h-[44px]"
+              className="w-full py-3.5 bg-[#16377e] hover:bg-[#0f2452] text-white font-bold rounded-2xl shadow-md text-sm transition-all cursor-pointer min-h-[44px]"
             >
               เข้าสู่ระบบศูนย์สั่งการ
             </button>
@@ -268,7 +286,7 @@ export function AdminPortalView({
             <button
               type="button"
               onClick={onBackToHome}
-              className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-2xl text-xs font-prompt transition-colors cursor-pointer"
+              className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-2xl text-xs transition-colors cursor-pointer min-h-[40px]"
             >
               ← กลับสู่หน้าเว็บไซต์หลัก
             </button>
@@ -278,10 +296,10 @@ export function AdminPortalView({
     );
   }
 
-  // Active Pending Count
+  // Pending Incidents Count
   const pendingCount = incidents.filter((i) => i.status === 'pending').length;
 
-  // Menu Definitions (Pane 1)
+  // Navigation Items
   const menuList = [
     { id: 'incidents', label: 'แจ้งเหตุฉุกเฉินสด', icon: AlertTriangle, count: pendingCount, isAlert: pendingCount > 0 },
     { id: 'missions', label: 'บันทึกผลงานภารกิจ', icon: FileText, count: missions.length },
@@ -294,13 +312,12 @@ export function AdminPortalView({
     { id: 'settings', label: 'ตั้งค่า & สำรองข้อมูล', icon: Settings },
   ];
 
-  // Filtered Master List Data (Pane 2)
+  // Filtered Master Data (Pane 2)
   const filteredIncidents = incidents.filter((inc) => {
     const matchSearch =
       inc.incident_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
       inc.caller_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      inc.location_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      inc.details?.toLowerCase().includes(searchTerm.toLowerCase());
+      inc.location_name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchFilter = incidentFilter === 'all' || inc.status === incidentFilter;
     return matchSearch && matchFilter;
   });
@@ -336,7 +353,7 @@ export function AdminPortalView({
     s.badge.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Currently Selected Detail Objects (Pane 3)
+  // Active Selected Detail Objects for Pane 3
   const selectedIncident = incidents.find((i) => i.id === selectedIncidentId) || incidents[0];
   const selectedMission = missions.find((m) => m.id === selectedMissionId) || missions[0];
   const selectedNews = news.find((n) => n.id === selectedNewsId) || news[0];
@@ -345,90 +362,131 @@ export function AdminPortalView({
   const selectedCategory = categories.find((c) => c.id === selectedCategoryId) || categories[0];
   const selectedSlide = heroSlides.find((s) => s.id === selectedSlideId) || heroSlides[0];
 
+  // Theme-based Styles
+  const isLight = themeMode === 'light';
+  const bgMain = isLight ? 'bg-white text-slate-900' : 'bg-slate-900 text-slate-100';
+  const bgHeader = isLight ? 'bg-white border-slate-200 text-slate-900' : 'bg-[#08132b] border-blue-900/60 text-white';
+  const bgSidebar = isLight ? 'bg-slate-50 border-slate-200' : 'bg-[#0a1738] border-blue-900/60';
+  const bgMasterList = isLight ? 'bg-slate-100/70 border-slate-200' : 'bg-[#0e1f4d] border-blue-900/60';
+  const bgMasterHeader = isLight ? 'bg-white border-slate-200' : 'bg-[#0c1a40] border-blue-900/60';
+  const bgWorkspace = isLight ? 'bg-slate-50' : 'bg-[#070e24]';
+  const cardBg = isLight ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-900/90 border-blue-900/60 shadow-xl';
+  const cardSubBg = isLight ? 'bg-slate-50 border-slate-200' : 'bg-blue-950/40 border-blue-900/40';
+
   return (
-    <div className="h-screen w-screen flex flex-col bg-slate-900 text-slate-100 font-prompt overflow-hidden selection:bg-red-600 selection:text-white relative">
-      {/* 1. Global Top Navigation Header */}
-      <header className="h-14 bg-[#08132b] border-b border-blue-900/60 px-4 flex items-center justify-between shrink-0 z-30">
+    <div className={`h-screen w-screen flex flex-col font-prompt overflow-hidden selection:bg-red-600 selection:text-white ${bgMain}`}>
+      {/* 1. Global Admin Top Header */}
+      <header className={`h-14 border-b px-4 flex items-center justify-between shrink-0 z-30 shadow-xs ${bgHeader}`}>
         <div className="flex items-center gap-3">
           <button
             onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-            className="lg:hidden p-2 rounded-xl text-blue-200 hover:bg-blue-900/60 transition-colors"
+            className={`lg:hidden p-2 rounded-xl transition-colors ${isLight ? 'text-slate-700 hover:bg-slate-100' : 'text-blue-200 hover:bg-blue-900/60'}`}
           >
             <Menu className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2.5">
-            <OfficialLogo size={34} withGlow={true} />
+            <OfficialLogo size={32} withGlow={false} />
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-white leading-tight font-prompt hidden sm:inline">
+              <span className={`text-sm font-bold leading-tight hidden sm:inline ${isLight ? 'text-slate-900' : 'text-white'}`}>
                 หน่วยกู้ภัยประจิม (สมาคมประจิมสารคาม)
               </span>
-              <span className="text-xs font-bold text-white leading-tight font-prompt sm:hidden">
+              <span className={`text-xs font-bold leading-tight sm:hidden ${isLight ? 'text-slate-900' : 'text-white'}`}>
                 กู้ภัยประจิม CMS
               </span>
-              <span className="text-[10px] text-blue-300 font-mono">
-                DISPATCH WORKSPACE 3.0 • User: {currentAdminUser}
+              <span className="text-[10px] text-blue-600 font-mono font-bold">
+                ENTERPRISE 3-PANE • User: {currentAdminUser}
               </span>
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Quick Create Button in Header for Desktop */}
+          {/* Day / Night Theme Toggle */}
           <button
-            onClick={() => handleOpenCreateDrawer(activeMenu)}
-            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-xs font-bold shadow-md transition-all cursor-pointer"
+            onClick={toggleTheme}
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border ${
+              isLight
+                ? 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300'
+                : 'bg-blue-950 hover:bg-blue-900 text-amber-300 border-blue-800'
+            }`}
+            title="สลับธีมกลางวัน (สีขาว) / กลางคืน (มืด)"
           >
-            <Plus className="w-3.5 h-3.5 text-slate-950" />
-            <span>เพิ่มรายการใหม่</span>
+            {isLight ? (
+              <>
+                <Moon className="w-3.5 h-3.5 text-blue-700" />
+                <span className="hidden sm:inline">ธีมกลางคืน</span>
+              </>
+            ) : (
+              <>
+                <Sun className="w-3.5 h-3.5 text-amber-400" />
+                <span className="hidden sm:inline">ธีมกลางวัน (ขาว)</span>
+              </>
+            )}
           </button>
 
+          {/* Quick Add Button */}
+          <button
+            onClick={() => handleOpenCreateDrawer(activeMenu)}
+            className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-xs transition-all cursor-pointer min-h-[36px]"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">เพิ่มรายการใหม่</span>
+            <span className="sm:hidden">เพิ่ม</span>
+          </button>
+
+          {/* Siren Alert Sound Test */}
           <button
             onClick={onTestSoundAlert}
             title="ทดสอบสัญญาณเสียงฉุกเฉิน"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-950 hover:bg-blue-900 text-amber-300 text-xs font-semibold border border-amber-400/40 transition-colors cursor-pointer"
+            className="hidden md:inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 hover:bg-blue-100 text-xs font-semibold border border-blue-200 transition-colors cursor-pointer min-h-[36px]"
           >
-            <Volume2 className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-            <span className="hidden md:inline">ทดสอบไซเรน</span>
+            <Volume2 className="w-3.5 h-3.5 text-blue-600" />
+            <span>ทดสอบไซเรน</span>
           </button>
 
+          {/* Back to Web Portal */}
           <button
             onClick={onBackToHome}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold border border-slate-700 transition-colors cursor-pointer"
+            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors cursor-pointer min-h-[36px] ${
+              isLight ? 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300' : 'bg-slate-800 hover:bg-slate-700 text-white border-slate-700'
+            }`}
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>หน้าเว็บไซต์</span>
+            <span className="hidden sm:inline">หน้าหลัก</span>
           </button>
 
+          {/* Logout Button */}
           <button
             onClick={onLogout}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-colors cursor-pointer"
+            className="inline-flex items-center px-3 py-1.5 rounded-full bg-red-600 hover:bg-red-500 text-white text-xs font-bold transition-colors cursor-pointer min-h-[36px]"
           >
             <span>ออกจากระบบ</span>
           </button>
         </div>
       </header>
 
-      {/* 2. Main 3-Pane Body Layout */}
+      {/* 2. Main 3-Pane Desktop Layout (Left Sidebar + Middle Master List + Right Detail Workspace) */}
       <div className="flex-1 flex overflow-hidden relative">
         {/* ========================================================================= */}
-        {/* PANE 1: LEFT SIDEBAR NAVIGATION (Width: 260px on Desktop) */}
+        {/* PANE 1: LEFT SIDEBAR NAVIGATION (Width: 250px on Desktop) */}
         {/* ========================================================================= */}
         <aside
           className={`
-            fixed lg:static inset-y-0 left-0 z-40 w-64 bg-[#0a1738] border-r border-blue-900/60 flex flex-col shrink-0 transition-transform duration-300 ease-in-out
+            fixed lg:static inset-y-0 left-0 z-40 w-64 border-r flex flex-col shrink-0 transition-transform duration-300 ease-in-out
             ${mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+            ${bgSidebar}
           `}
         >
-          <div className="p-4 border-b border-blue-900/50 flex items-center justify-between">
+          <div className={`p-4 border-b flex items-center justify-between ${isLight ? 'border-slate-200' : 'border-blue-900/50'}`}>
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider font-mono">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+              <span className="text-xs font-bold text-emerald-600 font-mono">
                 SUPABASE CONNECTED
               </span>
             </div>
             <button
               onClick={() => setMobileSidebarOpen(false)}
-              className="lg:hidden text-slate-400 hover:text-white p-1"
+              className="lg:hidden text-slate-400 hover:text-slate-700 p-1"
             >
               <X className="w-5 h-5" />
             </button>
@@ -448,16 +506,20 @@ export function AdminPortalView({
                     setMobileSidebarOpen(false);
                   }}
                   className={`
-                    w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs font-semibold font-prompt transition-all cursor-pointer group
+                    w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs font-semibold transition-all cursor-pointer
                     ${
                       isActive
-                        ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold shadow-lg shadow-amber-500/20'
+                        ? isLight
+                          ? 'bg-[#16377e] text-white font-bold shadow-md'
+                          : 'bg-amber-400 text-slate-950 font-bold shadow-lg'
+                        : isLight
+                        ? 'text-slate-700 hover:bg-slate-200/70'
                         : 'text-blue-200/90 hover:bg-blue-900/40 hover:text-white'
                     }
                   `}
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-slate-950' : 'text-blue-400 group-hover:text-amber-300'}`} />
+                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? (isLight ? 'text-white' : 'text-slate-950') : 'text-blue-500'}`} />
                     <span className="truncate">{item.label}</span>
                   </div>
                   {item.count !== undefined && (
@@ -468,8 +530,8 @@ export function AdminPortalView({
                           item.isAlert
                             ? 'bg-red-600 text-white animate-pulse'
                             : isActive
-                            ? 'bg-slate-950/20 text-slate-950'
-                            : 'bg-blue-950/80 text-blue-300 border border-blue-800/60'
+                            ? isLight ? 'bg-white/20 text-white' : 'bg-slate-950/20 text-slate-950'
+                            : isLight ? 'bg-slate-200 text-slate-700' : 'bg-blue-950 text-blue-300 border border-blue-800'
                         }
                       `}
                     >
@@ -481,36 +543,39 @@ export function AdminPortalView({
             })}
           </nav>
 
-          <div className="p-3 border-t border-blue-900/50 bg-black/20 space-y-2">
+          <div className={`p-3 border-t space-y-2 ${isLight ? 'border-slate-200 bg-white' : 'border-blue-900/50 bg-black/20'}`}>
             <button
               onClick={onExportData}
-              className="w-full py-2 px-3 rounded-xl bg-blue-950/80 hover:bg-blue-900 text-blue-200 text-xs font-semibold flex items-center justify-center gap-2 border border-blue-800/50 transition-colors"
+              className={`w-full py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 border transition-colors cursor-pointer min-h-[40px] ${
+                isLight ? 'bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300' : 'bg-blue-950/80 hover:bg-blue-900 text-blue-200 border-blue-800'
+              }`}
             >
-              <Download className="w-3.5 h-3.5 text-amber-400" />
+              <Download className="w-3.5 h-3.5 text-blue-600" />
               <span>สำรองข้อมูล JSON</span>
             </button>
           </div>
         </aside>
 
         {/* ========================================================================= */}
-        {/* PANE 2: MIDDLE MASTER LIST (Width: 340px on Desktop) */}
+        {/* PANE 2: MIDDLE MASTER LIST (Width: 320px - 380px on Desktop) */}
         {/* ========================================================================= */}
         <section
           className={`
-            w-full lg:w-84 xl:w-96 bg-[#0e1f4d] border-r border-blue-900/60 flex flex-col shrink-0 overflow-hidden
+            w-full lg:w-80 xl:w-96 border-r flex flex-col shrink-0 overflow-hidden
             ${mobileDetailOpen ? 'hidden lg:flex' : 'flex'}
+            ${bgMasterList}
           `}
         >
-          {/* Pane 2 Header with Search & Slide-Over Add Button */}
-          <div className="p-4 border-b border-blue-900/60 space-y-3 bg-[#0c1a40]">
+          {/* Pane 2 Header with Search & Add Button */}
+          <div className={`p-4 border-b space-y-3 ${bgMasterHeader}`}>
             <div className="flex items-center justify-between gap-2">
-              <h2 className="text-sm font-bold text-white font-prompt truncate">
+              <h2 className={`text-sm font-bold truncate ${isLight ? 'text-slate-900' : 'text-white'}`}>
                 {menuList.find((m) => m.id === activeMenu)?.label}
               </h2>
               {['incidents', 'missions', 'news', 'fleet', 'officers', 'categories', 'hero_slides'].includes(activeMenu) && (
                 <button
                   onClick={() => handleOpenCreateDrawer(activeMenu)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-sm transition-all cursor-pointer hover:scale-105"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-xs transition-all cursor-pointer min-h-[34px]"
                   title="เปิดสไลด์เพิ่มรายการใหม่จากฝั่งขวา"
                 >
                   <Plus className="w-3.5 h-3.5" />
@@ -521,13 +586,15 @@ export function AdminPortalView({
 
             {/* Search Box */}
             <div className="relative">
-              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-blue-400" />
+              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
                 placeholder="ค้นหาข้อมูล..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-3 py-2 bg-blue-950/70 border border-blue-800/60 rounded-xl text-xs text-white placeholder-blue-400/60 focus:outline-none focus:border-amber-400 font-sarabun"
+                className={`w-full pl-9 pr-3 py-2 border rounded-xl text-xs focus:outline-none font-sarabun ${
+                  isLight ? 'bg-slate-50 border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/70 border-blue-800 text-white focus:border-amber-400'
+                }`}
               />
             </div>
 
@@ -546,8 +613,8 @@ export function AdminPortalView({
                     onClick={() => setIncidentFilter(f.id as typeof incidentFilter)}
                     className={`px-2.5 py-1 rounded-full whitespace-nowrap font-semibold transition-all ${
                       incidentFilter === f.id
-                        ? 'bg-amber-400 text-slate-950 font-bold'
-                        : 'bg-blue-950 text-blue-300 hover:bg-blue-900'
+                        ? isLight ? 'bg-[#16377e] text-white font-bold' : 'bg-amber-400 text-slate-950 font-bold'
+                        : isLight ? 'bg-slate-200 text-slate-700 hover:bg-slate-300' : 'bg-blue-950 text-blue-300 hover:bg-blue-900'
                     }`}
                   >
                     {f.label}
@@ -574,22 +641,26 @@ export function AdminPortalView({
                       p-3.5 rounded-2xl border transition-all cursor-pointer relative
                       ${
                         isSelected
-                          ? 'bg-gradient-to-r from-blue-900/90 to-[#16377e] border-amber-400 shadow-md shadow-amber-400/10'
+                          ? isLight
+                            ? 'bg-blue-50 border-[#16377e] shadow-sm ring-1 ring-[#16377e]'
+                            : 'bg-[#16377e] border-amber-400 shadow-md'
+                          : isLight
+                          ? 'bg-white hover:bg-slate-50 border-slate-200 text-slate-800'
                           : 'bg-[#0a1636]/70 hover:bg-blue-950/60 border-blue-900/40 text-blue-100'
                       }
                     `}
                   >
-                    <div className="flex items-start justify-between gap-2 mb-1.5">
-                      <span className="text-xs font-mono font-bold text-amber-300">
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <span className="text-xs font-mono font-bold text-blue-700">
                         {inc.incident_number}
                       </span>
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                           inc.status === 'pending'
-                            ? 'bg-red-500/20 text-red-300 border border-red-500/40 animate-pulse'
+                            ? 'bg-red-100 text-red-700 border border-red-300'
                             : inc.status === 'resolved'
-                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                            : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                            ? 'bg-emerald-100 text-emerald-700 border border-emerald-300'
+                            : 'bg-amber-100 text-amber-800 border border-amber-300'
                         }`}
                       >
                         {inc.status === 'pending'
@@ -599,10 +670,10 @@ export function AdminPortalView({
                           : 'กำลังปฏิบัติการ'}
                       </span>
                     </div>
-                    <h4 className="text-xs font-bold text-white line-clamp-1 mb-1 font-prompt">
+                    <h4 className={`text-xs font-bold line-clamp-1 mb-0.5 ${isLight ? 'text-slate-900' : 'text-white'}`}>
                       {inc.caller_name} • {inc.location_name}
                     </h4>
-                    <p className="text-[11px] text-blue-200/80 font-sarabun line-clamp-2">
+                    <p className={`text-[11px] font-sarabun line-clamp-2 ${isLight ? 'text-slate-600' : 'text-blue-200/80'}`}>
                       {inc.details || 'ไม่มีรายละเอียดเพิ่มเติม'}
                     </p>
                   </div>
@@ -624,19 +695,23 @@ export function AdminPortalView({
                       p-3 rounded-2xl border transition-all cursor-pointer flex items-center gap-3
                       ${
                         isSelected
-                          ? 'bg-[#16377e] border-amber-400 shadow-md'
+                          ? isLight
+                            ? 'bg-blue-50 border-[#16377e] shadow-sm ring-1 ring-[#16377e]'
+                            : 'bg-[#16377e] border-amber-400 shadow-md'
+                          : isLight
+                          ? 'bg-white hover:bg-slate-50 border-slate-200'
                           : 'bg-[#0a1636]/70 hover:bg-blue-950/60 border-blue-900/40'
                       }
                     `}
                   >
                     <div
-                      className="w-12 h-12 rounded-xl bg-cover bg-center shrink-0 border border-blue-800"
+                      className="w-12 h-12 rounded-xl bg-cover bg-center shrink-0 border border-slate-300"
                       style={{ backgroundImage: `url(${m.cover_image_url})` }}
                     />
                     <div className="flex-1 min-w-0">
-                      <span className="text-[10px] text-amber-300 font-mono">{m.incident_date}</span>
-                      <h4 className="text-xs font-bold text-white line-clamp-1 font-prompt">{m.title}</h4>
-                      <p className="text-[11px] text-blue-200/70 font-sarabun truncate">{m.location}</p>
+                      <span className="text-[10px] text-blue-700 font-mono font-bold">{m.incident_date}</span>
+                      <h4 className={`text-xs font-bold line-clamp-1 ${isLight ? 'text-slate-900' : 'text-white'}`}>{m.title}</h4>
+                      <p className={`text-[11px] font-sarabun truncate ${isLight ? 'text-slate-600' : 'text-blue-200/70'}`}>{m.location}</p>
                     </div>
                   </div>
                 );
@@ -657,14 +732,18 @@ export function AdminPortalView({
                       p-3.5 rounded-2xl border transition-all cursor-pointer
                       ${
                         isSelected
-                          ? 'bg-[#16377e] border-amber-400 shadow-md'
+                          ? isLight
+                            ? 'bg-blue-50 border-[#16377e] shadow-sm ring-1 ring-[#16377e]'
+                            : 'bg-[#16377e] border-amber-400 shadow-md'
+                          : isLight
+                          ? 'bg-white hover:bg-slate-50 border-slate-200'
                           : 'bg-[#0a1636]/70 hover:bg-blue-950/60 border-blue-900/40'
                       }
                     `}
                   >
-                    <span className="text-[10px] text-amber-300 font-mono">{n.published_date}</span>
-                    <h4 className="text-xs font-bold text-white line-clamp-2 font-prompt my-1">{n.title}</h4>
-                    <p className="text-[11px] text-blue-200/70 font-sarabun line-clamp-2">{n.summary}</p>
+                    <span className="text-[10px] text-blue-700 font-mono font-bold">{n.published_date}</span>
+                    <h4 className={`text-xs font-bold line-clamp-2 my-1 ${isLight ? 'text-slate-900' : 'text-white'}`}>{n.title}</h4>
+                    <p className={`text-[11px] font-sarabun line-clamp-2 ${isLight ? 'text-slate-600' : 'text-blue-200/70'}`}>{n.summary}</p>
                   </div>
                 );
               })}
@@ -684,21 +763,25 @@ export function AdminPortalView({
                       p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between
                       ${
                         isSelected
-                          ? 'bg-[#16377e] border-amber-400 shadow-md'
+                          ? isLight
+                            ? 'bg-blue-50 border-[#16377e] shadow-sm ring-1 ring-[#16377e]'
+                            : 'bg-[#16377e] border-amber-400 shadow-md'
+                          : isLight
+                          ? 'bg-white hover:bg-slate-50 border-slate-200'
                           : 'bg-[#0a1636]/70 hover:bg-blue-950/60 border-blue-900/40'
                       }
                     `}
                   >
                     <div>
-                      <span className="text-xs font-mono font-bold text-amber-300">{f.call_sign}</span>
-                      <h4 className="text-xs font-bold text-white line-clamp-1 font-prompt mt-0.5">{f.name_th}</h4>
-                      <p className="text-[10px] text-blue-300 font-sarabun">{f.plate_number || 'ประจำศูนย์'}</p>
+                      <span className="text-xs font-mono font-bold text-blue-700">{f.call_sign}</span>
+                      <h4 className={`text-xs font-bold line-clamp-1 mt-0.5 ${isLight ? 'text-slate-900' : 'text-white'}`}>{f.name_th}</h4>
+                      <p className={`text-[10px] font-sarabun ${isLight ? 'text-slate-500' : 'text-blue-300'}`}>{f.plate_number || 'ประจำศูนย์'}</p>
                     </div>
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                         f.status === 'available'
-                          ? 'bg-emerald-500/20 text-emerald-300'
-                          : 'bg-red-500/20 text-red-300'
+                          ? 'bg-emerald-100 text-emerald-800'
+                          : 'bg-red-100 text-red-800'
                       }`}
                     >
                       {f.status === 'available' ? 'พร้อมออกเหตุ' : 'ออกเหตุ'}
@@ -722,19 +805,23 @@ export function AdminPortalView({
                       p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center justify-between
                       ${
                         isSelected
-                          ? 'bg-[#16377e] border-amber-400 shadow-md'
+                          ? isLight
+                            ? 'bg-blue-50 border-[#16377e] shadow-sm ring-1 ring-[#16377e]'
+                            : 'bg-[#16377e] border-amber-400 shadow-md'
+                          : isLight
+                          ? 'bg-white hover:bg-slate-50 border-slate-200'
                           : 'bg-[#0a1636]/70 hover:bg-blue-950/60 border-blue-900/40'
                       }
                     `}
                   >
                     <div>
-                      <span className="text-xs font-mono font-bold text-amber-300">{o.officer_code}</span>
-                      <h4 className="text-xs font-bold text-white line-clamp-1 font-prompt mt-0.5">{o.full_name}</h4>
-                      <p className="text-[10px] text-blue-300 font-sarabun">{o.role_title}</p>
+                      <span className="text-xs font-mono font-bold text-blue-700">{o.officer_code}</span>
+                      <h4 className={`text-xs font-bold line-clamp-1 mt-0.5 ${isLight ? 'text-slate-900' : 'text-white'}`}>{o.full_name}</h4>
+                      <p className={`text-[10px] font-sarabun ${isLight ? 'text-slate-500' : 'text-blue-300'}`}>{o.role_title}</p>
                     </div>
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        o.is_on_duty ? 'bg-emerald-500/20 text-emerald-300' : 'bg-slate-700 text-slate-400'
+                        o.is_on_duty ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'
                       }`}
                     >
                       {o.is_on_duty ? 'เข้าเวร' : 'พักเวร'}
@@ -758,14 +845,18 @@ export function AdminPortalView({
                       p-3.5 rounded-2xl border transition-all cursor-pointer
                       ${
                         isSelected
-                          ? 'bg-[#16377e] border-amber-400 shadow-md'
+                          ? isLight
+                            ? 'bg-blue-50 border-[#16377e] shadow-sm ring-1 ring-[#16377e]'
+                            : 'bg-[#16377e] border-amber-400 shadow-md'
+                          : isLight
+                          ? 'bg-white hover:bg-slate-50 border-slate-200'
                           : 'bg-[#0a1636]/70 hover:bg-blue-950/60 border-blue-900/40'
                       }
                     `}
                   >
-                    <span className="text-[10px] font-mono text-amber-300 font-bold">{c.slug}</span>
-                    <h4 className="text-xs font-bold text-white font-prompt mt-0.5">{c.name_th}</h4>
-                    <p className="text-[11px] text-blue-200/70 font-sarabun line-clamp-2 mt-1">{c.description}</p>
+                    <span className="text-[10px] font-mono text-blue-700 font-bold">{c.slug}</span>
+                    <h4 className={`text-xs font-bold mt-0.5 ${isLight ? 'text-slate-900' : 'text-white'}`}>{c.name_th}</h4>
+                    <p className={`text-[11px] font-sarabun line-clamp-2 mt-1 ${isLight ? 'text-slate-600' : 'text-blue-200/70'}`}>{c.description}</p>
                   </div>
                 );
               })}
@@ -785,31 +876,35 @@ export function AdminPortalView({
                       p-3 rounded-2xl border transition-all cursor-pointer flex items-center gap-3
                       ${
                         isSelected
-                          ? 'bg-[#16377e] border-amber-400 shadow-md'
+                          ? isLight
+                            ? 'bg-blue-50 border-[#16377e] shadow-sm ring-1 ring-[#16377e]'
+                            : 'bg-[#16377e] border-amber-400 shadow-md'
+                          : isLight
+                          ? 'bg-white hover:bg-slate-50 border-slate-200'
                           : 'bg-[#0a1636]/70 hover:bg-blue-950/60 border-blue-900/40'
                       }
                     `}
                   >
                     <div
-                      className="w-12 h-12 rounded-xl bg-cover bg-center shrink-0 border border-blue-800"
+                      className="w-12 h-12 rounded-xl bg-cover bg-center shrink-0 border border-slate-300"
                       style={{ backgroundImage: `url(${s.cover_image})` }}
                     />
                     <div className="flex-1 min-w-0">
-                      <span className="text-[10px] text-amber-300 font-mono">สไลด์ที่ {idx + 1}</span>
-                      <h4 className="text-xs font-bold text-white line-clamp-1 font-prompt">{s.title_line1}</h4>
-                      <p className="text-[10px] text-blue-200/70 font-sarabun truncate">{s.badge}</p>
+                      <span className="text-[10px] text-blue-700 font-mono font-bold">สไลด์ที่ {idx + 1}</span>
+                      <h4 className={`text-xs font-bold line-clamp-1 ${isLight ? 'text-slate-900' : 'text-white'}`}>{s.title_line1}</h4>
+                      <p className={`text-[10px] font-sarabun truncate ${isLight ? 'text-slate-500' : 'text-blue-200/70'}`}>{s.badge}</p>
                     </div>
                   </div>
                 );
               })}
 
-            {/* SITE CONFIG & SETTINGS: Direct Click Info */}
+            {/* Direct Info for Site Config & Settings */}
             {['site_config', 'settings'].includes(activeMenu) && (
-              <div className="p-4 rounded-2xl bg-blue-950/50 border border-blue-800/40 text-center">
-                <Settings className="w-8 h-8 text-amber-300 mx-auto mb-2 opacity-80" />
-                <h4 className="text-xs font-bold text-white font-prompt">จัดการข้อมูลระบบส่วนกลาง</h4>
-                <p className="text-[11px] text-blue-200 font-sarabun mt-1">
-                  แก้ไขข้อมูลผ่านหน้าต่างหลักด้านขวาได้ทันที
+              <div className={`p-4 rounded-2xl border text-center ${cardSubBg}`}>
+                <Settings className="w-8 h-8 text-blue-600 mx-auto mb-2 opacity-80" />
+                <h4 className={`text-xs font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>จัดการข้อมูลระบบส่วนกลาง</h4>
+                <p className={`text-[11px] font-sarabun mt-1 ${isLight ? 'text-slate-600' : 'text-blue-200'}`}>
+                  แก้ไขข้อมูลผ่านหน้าต่างหลักคอลัมน์ขวาได้ทันที
                 </p>
               </div>
             )}
@@ -821,15 +916,16 @@ export function AdminPortalView({
         {/* ========================================================================= */}
         <main
           className={`
-            flex-1 bg-[#070e24] flex flex-col overflow-y-auto
+            flex-1 flex flex-col overflow-y-auto
             ${mobileDetailOpen ? 'flex' : 'hidden lg:flex'}
+            ${bgWorkspace}
           `}
         >
           {/* Mobile Back Button */}
-          <div className="lg:hidden p-3 bg-[#0a1738] border-b border-blue-900/60 flex items-center justify-between">
+          <div className={`lg:hidden p-3 border-b flex items-center justify-between ${bgHeader}`}>
             <button
               onClick={() => setMobileDetailOpen(false)}
-              className="inline-flex items-center gap-1.5 text-xs text-amber-300 font-bold font-prompt"
+              className="inline-flex items-center gap-1.5 text-xs text-[#16377e] font-bold font-prompt"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>กลับสู่รายการ</span>
@@ -845,46 +941,45 @@ export function AdminPortalView({
 
           <div className="flex-1 p-4 sm:p-6 lg:p-8 max-w-5xl w-full mx-auto space-y-6">
             {/* ------------------------------------------------------------- */}
-            {/* PANE 3 DETAIL: INCIDENT DETAIL & DISPATCH ACTION */}
+            {/* PANE 3: INCIDENT DETAIL */}
             {/* ------------------------------------------------------------- */}
             {activeMenu === 'incidents' && selectedIncident && (
-              <div className="bg-slate-900/90 rounded-3xl border border-blue-900/60 p-6 sm:p-8 shadow-xl backdrop-blur-md space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-blue-900/60">
+              <div className={`rounded-3xl border p-6 sm:p-8 space-y-6 ${cardBg}`}>
+                <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b ${isLight ? 'border-slate-200' : 'border-blue-900/60'}`}>
                   <div>
-                    <span className="text-xs font-mono font-bold text-amber-400">
+                    <span className="text-xs font-mono font-bold text-blue-700">
                       เลขที่แจ้งเหตุ: {selectedIncident.incident_number}
                     </span>
-                    <h3 className="text-xl sm:text-2xl font-black text-white font-prompt mt-1">
+                    <h3 className={`text-xl sm:text-2xl font-black mt-1 ${isLight ? 'text-slate-900' : 'text-white'}`}>
                       {selectedIncident.caller_name}
                     </h3>
-                    <p className="text-xs text-blue-300 font-sarabun mt-0.5">
+                    <p className={`text-xs font-sarabun mt-0.5 ${isLight ? 'text-slate-500' : 'text-blue-300'}`}>
                       เวลาแจ้ง: {new Date(selectedIncident.reported_at).toLocaleString('th-TH')}
                     </p>
                   </div>
 
-                  {/* Incident Action Buttons */}
                   <div className="flex items-center gap-2 flex-wrap">
                     <button
                       onClick={() => onUpdateIncidentStatus(selectedIncident.id, 'en_route', 'ประจิม 01')}
-                      className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs font-prompt cursor-pointer transition-colors"
+                      className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs cursor-pointer transition-colors min-h-[38px]"
                     >
                       สั่งการออกเหตุ
                     </button>
                     <button
                       onClick={() => onUpdateIncidentStatus(selectedIncident.id, 'on_scene')}
-                      className="px-3.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs font-prompt cursor-pointer transition-colors"
+                      className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs cursor-pointer transition-colors min-h-[38px]"
                     >
                       ถึงที่เกิดเหตุ
                     </button>
                     <button
                       onClick={() => onUpdateIncidentStatus(selectedIncident.id, 'resolved')}
-                      className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs font-prompt cursor-pointer transition-colors"
+                      className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs cursor-pointer transition-colors min-h-[38px]"
                     >
                       เสร็จสิ้นภารกิจ
                     </button>
                     <button
                       onClick={() => onDeleteIncident(selectedIncident.id)}
-                      className="p-2 rounded-xl bg-red-950 hover:bg-red-900 text-red-300 border border-red-800/50 cursor-pointer transition-colors"
+                      className="p-2 rounded-xl bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 cursor-pointer transition-colors min-h-[38px]"
                       title="ลบเหตุการณ์"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -892,34 +987,33 @@ export function AdminPortalView({
                   </div>
                 </div>
 
-                {/* Incident Detail Cards Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-2xl bg-blue-950/40 border border-blue-900/40 space-y-2">
-                    <h5 className="text-xs font-bold text-amber-300 font-prompt">ข้อมูลผู้แจ้งและเบอร์ติดต่อ</h5>
-                    <div className="flex items-center gap-2 text-sm text-white font-prompt">
-                      <PhoneCall className="w-4 h-4 text-emerald-400" />
-                      <a href={`tel:${selectedIncident.caller_phone}`} className="hover:underline font-mono font-bold">
+                  <div className={`p-4 rounded-2xl border space-y-2 ${cardSubBg}`}>
+                    <h5 className="text-xs font-bold text-blue-700">ข้อมูลผู้แจ้งและเบอร์ติดต่อ</h5>
+                    <div className={`flex items-center gap-2 text-sm font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                      <PhoneCall className="w-4 h-4 text-emerald-600" />
+                      <a href={`tel:${selectedIncident.caller_phone}`} className="hover:underline font-mono">
                         {selectedIncident.caller_phone}
                       </a>
                     </div>
-                    <p className="text-xs text-blue-200 font-sarabun">ผู้แจ้ง: {selectedIncident.caller_name}</p>
+                    <p className={`text-xs font-sarabun ${isLight ? 'text-slate-600' : 'text-blue-200'}`}>ผู้แจ้ง: {selectedIncident.caller_name}</p>
                   </div>
 
-                  <div className="p-4 rounded-2xl bg-blue-950/40 border border-blue-900/40 space-y-2">
-                    <h5 className="text-xs font-bold text-amber-300 font-prompt">สถานที่เกิดเหตุ</h5>
-                    <div className="flex items-center gap-2 text-sm text-white font-prompt">
-                      <MapPin className="w-4 h-4 text-red-400" />
+                  <div className={`p-4 rounded-2xl border space-y-2 ${cardSubBg}`}>
+                    <h5 className="text-xs font-bold text-blue-700">สถานที่เกิดเหตุ</h5>
+                    <div className={`flex items-center gap-2 text-sm font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                      <MapPin className="w-4 h-4 text-red-600" />
                       <span>{selectedIncident.location_name}</span>
                     </div>
-                    <p className="text-xs text-blue-200 font-sarabun">
+                    <p className={`text-xs font-sarabun ${isLight ? 'text-slate-600' : 'text-blue-200'}`}>
                       {selectedIncident.district} {selectedIncident.province}
                     </p>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-blue-950/30 border border-blue-900/40">
-                  <h5 className="text-xs font-bold text-amber-300 font-prompt mb-1.5">รายละเอียดเหตุการณ์</h5>
-                  <p className="text-sm text-slate-200 font-sarabun leading-relaxed">
+                <div className={`p-4 rounded-2xl border ${cardSubBg}`}>
+                  <h5 className="text-xs font-bold text-blue-700 mb-1.5">รายละเอียดเหตุการณ์</h5>
+                  <p className={`text-sm font-sarabun leading-relaxed break-words ${isLight ? 'text-slate-700' : 'text-slate-200'}`}>
                     {selectedIncident.details || 'ไม่มีรายละเอียดเพิ่มเติม'}
                   </p>
                 </div>
@@ -927,48 +1021,49 @@ export function AdminPortalView({
             )}
 
             {/* ------------------------------------------------------------- */}
-            {/* PANE 3 DETAIL: MISSIONS DETAIL & EDIT */}
+            {/* PANE 3: MISSIONS DETAIL & ACTION */}
             {/* ------------------------------------------------------------- */}
             {activeMenu === 'missions' && selectedMission && (
-              <div className="bg-slate-900/90 rounded-3xl border border-blue-900/60 p-6 sm:p-8 shadow-xl backdrop-blur-md space-y-6">
-                <div className="flex items-center justify-between pb-4 border-b border-blue-900/60">
+              <div className={`rounded-3xl border p-6 sm:p-8 space-y-6 ${cardBg}`}>
+                <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b ${isLight ? 'border-slate-200' : 'border-blue-900/60'}`}>
                   <div>
-                    <span className="text-xs font-mono font-bold text-amber-400">
+                    <span className="text-xs font-mono font-bold text-blue-700">
                       วันที่: {selectedMission.incident_date}
                     </span>
-                    <h3 className="text-xl font-bold text-white font-prompt mt-0.5">{selectedMission.title}</h3>
+                    <h3 className={`text-xl font-bold mt-0.5 ${isLight ? 'text-slate-900' : 'text-white'}`}>{selectedMission.title}</h3>
                   </div>
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleOpenCreateDrawer('missions')}
-                      className="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs font-prompt cursor-pointer transition-colors"
+                      className="px-4 py-2 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-xs cursor-pointer min-h-[38px]"
                     >
                       + เพิ่มภารกิจใหม่
                     </button>
                     <button
                       onClick={() => onDeleteMission(selectedMission.id)}
-                      className="p-2 rounded-xl bg-red-950 hover:bg-red-900 text-red-300 border border-red-800"
+                      className="p-2 rounded-xl bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 min-h-[38px]"
+                      title="ลบภารกิจ"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
 
-                <div className="relative h-64 rounded-2xl overflow-hidden bg-cover bg-center border border-blue-900" style={{ backgroundImage: `url(${selectedMission.cover_image_url})` }}>
+                <div className="relative h-64 rounded-2xl overflow-hidden bg-cover bg-center border border-slate-200" style={{ backgroundImage: `url(${selectedMission.cover_image_url})` }}>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
-                    <span className="text-xs text-white font-sarabun">{selectedMission.location}</span>
+                    <span className="text-xs text-white font-sarabun font-bold">{selectedMission.location}</span>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <div className="p-4 rounded-2xl bg-blue-950/40 border border-blue-900/40">
-                    <span className="text-xs font-bold text-amber-300 font-prompt mb-1 block">สรุปย่อภารกิจ</span>
-                    <p className="text-sm text-slate-200 font-sarabun leading-relaxed">{selectedMission.summary}</p>
+                  <div className={`p-4 rounded-2xl border ${cardSubBg}`}>
+                    <span className="text-xs font-bold text-blue-700 mb-1 block">สรุปย่อภารกิจ</span>
+                    <p className={`text-sm font-sarabun leading-relaxed break-words ${isLight ? 'text-slate-700' : 'text-slate-200'}`}>{selectedMission.summary}</p>
                   </div>
                   {selectedMission.details && (
-                    <div className="p-4 rounded-2xl bg-blue-950/30 border border-blue-900/40">
-                      <span className="text-xs font-bold text-blue-300 font-prompt mb-1 block">รายละเอียดการปฏิบัติงาน</span>
-                      <p className="text-sm text-slate-200 font-sarabun leading-relaxed whitespace-pre-line">{selectedMission.details}</p>
+                    <div className={`p-4 rounded-2xl border ${cardSubBg}`}>
+                      <span className="text-xs font-bold text-blue-700 mb-1 block">รายละเอียดการปฏิบัติงาน</span>
+                      <p className={`text-sm font-sarabun leading-relaxed whitespace-pre-line break-words ${isLight ? 'text-slate-700' : 'text-slate-200'}`}>{selectedMission.details}</p>
                     </div>
                   )}
                 </div>
@@ -976,15 +1071,166 @@ export function AdminPortalView({
             )}
 
             {/* ------------------------------------------------------------- */}
-            {/* PANE 3 DETAIL: SITE CONFIG & HOTLINES */}
+            {/* PANE 3: NEWS DETAIL & ACTION */}
+            {/* ------------------------------------------------------------- */}
+            {activeMenu === 'news' && selectedNews && (
+              <div className={`rounded-3xl border p-6 sm:p-8 space-y-6 ${cardBg}`}>
+                <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b ${isLight ? 'border-slate-200' : 'border-blue-900/60'}`}>
+                  <div>
+                    <span className="text-xs font-mono font-bold text-blue-700">
+                      เผยแพร่: {selectedNews.published_date}
+                    </span>
+                    <h3 className={`text-xl font-bold mt-0.5 ${isLight ? 'text-slate-900' : 'text-white'}`}>{selectedNews.title}</h3>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleOpenCreateDrawer('news')}
+                      className="px-4 py-2 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-xs cursor-pointer min-h-[38px]"
+                    >
+                      + เพิ่มข่าวใหม่
+                    </button>
+                    <button
+                      onClick={() => onDeleteNews(selectedNews.id)}
+                      className="p-2 rounded-xl bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 min-h-[38px]"
+                      title="ลบข่าว"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="relative h-64 rounded-2xl overflow-hidden bg-cover bg-center border border-slate-200" style={{ backgroundImage: `url(${selectedNews.cover_image_url})` }}>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
+                    <span className="text-xs text-white font-sarabun font-bold">{selectedNews.author_name}</span>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className={`p-4 rounded-2xl border ${cardSubBg}`}>
+                    <span className="text-xs font-bold text-blue-700 mb-1 block">สรุปย่อข่าวสาร</span>
+                    <p className={`text-sm font-sarabun leading-relaxed break-words ${isLight ? 'text-slate-700' : 'text-slate-200'}`}>{selectedNews.summary}</p>
+                  </div>
+                  <div className={`p-4 rounded-2xl border ${cardSubBg}`}>
+                    <span className="text-xs font-bold text-blue-700 mb-1 block">เนื้อหาข่าวฉบับเต็ม</span>
+                    <p className={`text-sm font-sarabun leading-relaxed whitespace-pre-line break-words ${isLight ? 'text-slate-700' : 'text-slate-200'}`}>{selectedNews.content}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ------------------------------------------------------------- */}
+            {/* PANE 3: FLEET DETAIL & ACTION */}
+            {/* ------------------------------------------------------------- */}
+            {activeMenu === 'fleet' && selectedFleetItem && (
+              <div className={`rounded-3xl border p-6 sm:p-8 space-y-6 ${cardBg}`}>
+                <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b ${isLight ? 'border-slate-200' : 'border-blue-900/60'}`}>
+                  <div>
+                    <span className="text-xs font-mono font-bold text-blue-700">{selectedFleetItem.call_sign}</span>
+                    <h3 className={`text-xl font-bold mt-0.5 ${isLight ? 'text-slate-900' : 'text-white'}`}>{selectedFleetItem.name_th}</h3>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() =>
+                        onUpdateFleetStatus(
+                          selectedFleetItem.id,
+                          selectedFleetItem.status === 'available' ? 'dispatched' : 'available'
+                        )
+                      }
+                      className={`px-4 py-2 rounded-xl text-xs font-bold cursor-pointer transition-all min-h-[38px] ${
+                        selectedFleetItem.status === 'available'
+                          ? 'bg-amber-500 hover:bg-amber-400 text-slate-950'
+                          : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                      }`}
+                    >
+                      {selectedFleetItem.status === 'available' ? 'สลับเป็น: ออกเหตุ' : 'สลับเป็น: พร้อมออกเหตุ'}
+                    </button>
+                    <button
+                      onClick={() => handleOpenCreateDrawer('fleet')}
+                      className="px-4 py-2 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-xs cursor-pointer min-h-[38px]"
+                    >
+                      + เพิ่มรถ/อุปกรณ์
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className={`p-4 rounded-2xl border ${cardSubBg}`}>
+                    <span className="text-xs font-bold text-blue-700">ทะเบียนรถ / รหัสประจำการ</span>
+                    <p className={`text-base font-mono font-bold mt-1 ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                      {selectedFleetItem.plate_number || 'ประจำศูนย์ใหญ่'}
+                    </p>
+                  </div>
+                  <div className={`p-4 rounded-2xl border ${cardSubBg}`}>
+                    <span className="text-xs font-bold text-blue-700">จุดประจำการ</span>
+                    <p className={`text-sm font-sarabun mt-1 ${isLight ? 'text-slate-800' : 'text-white'}`}>{selectedFleetItem.location_base}</p>
+                  </div>
+                </div>
+
+                <div className={`p-4 rounded-2xl border ${cardSubBg}`}>
+                  <span className="text-xs font-bold text-blue-700 mb-1.5 block">
+                    ข้อมูลจำเพาะและอุปกรณ์ประจำรถ
+                  </span>
+                  <p className={`text-sm font-sarabun leading-relaxed break-words ${isLight ? 'text-slate-700' : 'text-slate-200'}`}>
+                    {selectedFleetItem.specifications}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* ------------------------------------------------------------- */}
+            {/* PANE 3: OFFICERS DETAIL & ACTION */}
+            {/* ------------------------------------------------------------- */}
+            {activeMenu === 'officers' && selectedOfficer && (
+              <div className={`rounded-3xl border p-6 sm:p-8 space-y-6 ${cardBg}`}>
+                <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b ${isLight ? 'border-slate-200' : 'border-blue-900/60'}`}>
+                  <div>
+                    <span className="text-xs font-mono font-bold text-blue-700">{selectedOfficer.officer_code}</span>
+                    <h3 className={`text-xl font-bold mt-0.5 ${isLight ? 'text-slate-900' : 'text-white'}`}>{selectedOfficer.full_name}</h3>
+                    <p className={`text-xs font-sarabun ${isLight ? 'text-slate-600' : 'text-blue-300'}`}>{selectedOfficer.role_title}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => onToggleOfficerDuty(selectedOfficer.id)}
+                      className={`px-4 py-2 rounded-xl text-xs font-bold cursor-pointer transition-all min-h-[38px] ${
+                        selectedOfficer.is_on_duty
+                          ? 'bg-slate-200 hover:bg-slate-300 text-slate-800'
+                          : 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                      }`}
+                    >
+                      {selectedOfficer.is_on_duty ? 'สลับเป็น: พักเวร' : 'สลับเป็น: เข้าเวรปฏิบัติการ'}
+                    </button>
+                    <button
+                      onClick={() => handleOpenCreateDrawer('officers')}
+                      className="px-4 py-2 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-xs cursor-pointer min-h-[38px]"
+                    >
+                      + เพิ่มจนท.
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className={`p-4 rounded-2xl border ${cardSubBg}`}>
+                    <span className="text-xs font-bold text-blue-700">เบอร์โทรศัพท์ติดต่อ</span>
+                    <p className={`text-base font-mono font-bold mt-1 ${isLight ? 'text-slate-900' : 'text-white'}`}>{selectedOfficer.phone || '061-119-3342'}</p>
+                  </div>
+                  <div className={`p-4 rounded-2xl border ${cardSubBg}`}>
+                    <span className="text-xs font-bold text-blue-700">สถานีประจำการ</span>
+                    <p className={`text-sm font-sarabun mt-1 ${isLight ? 'text-slate-800' : 'text-white'}`}>{selectedOfficer.station_base}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ------------------------------------------------------------- */}
+            {/* PANE 3: SITE CONFIG & HOTLINES */}
             {/* ------------------------------------------------------------- */}
             {activeMenu === 'site_config' && (
-              <div className="bg-slate-900/90 rounded-3xl border border-blue-900/60 p-6 sm:p-8 shadow-xl backdrop-blur-md space-y-6">
-                <div className="pb-4 border-b border-blue-900/60">
-                  <h3 className="text-xl font-bold text-white font-prompt">
+              <div className={`rounded-3xl border p-6 sm:p-8 space-y-6 ${cardBg}`}>
+                <div className={`pb-4 border-b ${isLight ? 'border-slate-200' : 'border-blue-900/60'}`}>
+                  <h3 className={`text-xl font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
                     🌐 จัดการข้อมูลองค์กร ช่องวิทยุสื่อสาร & โซเชียลมีเดีย
                   </h3>
-                  <p className="text-xs text-blue-300 font-sarabun mt-1">
+                  <p className={`text-xs font-sarabun mt-1 ${isLight ? 'text-slate-600' : 'text-blue-300'}`}>
                     ปรับแก้เบอร์โทรศัพท์สายด่วน ความถี่วิทยุ บัญชีรับบริจาค และข้อมูลองค์พ่อปู่จูมคำ
                   </p>
                 </div>
@@ -998,82 +1244,96 @@ export function AdminPortalView({
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-blue-200 font-prompt mb-1">
+                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
                         เบอร์โทรสายด่วนฉุกเฉิน (Primary Hotline)
                       </label>
                       <input
                         value={configForm.hotline_primary}
                         onChange={(e) => setConfigForm({ ...configForm, hotline_primary: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-blue-950/60 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-mono font-bold"
+                        className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none font-mono font-bold ${
+                          isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                        }`}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-blue-200 font-prompt mb-1">
+                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
                         ช่องความถี่วิทยุสื่อสาร
                       </label>
                       <input
                         value={configForm.radio_frequency}
                         onChange={(e) => setConfigForm({ ...configForm, radio_frequency: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-blue-950/60 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-mono"
+                        className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none font-mono ${
+                          isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                        }`}
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-blue-200 font-prompt mb-1">
+                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
                         ชื่อสมาคมทางการ
                       </label>
                       <input
                         value={configForm.association_name}
                         onChange={(e) => setConfigForm({ ...configForm, association_name: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-blue-950/60 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-prompt"
+                        className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none ${
+                          isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                        }`}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-blue-200 font-prompt mb-1">
+                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
                         คำขวัญ/วิสัยทัศน์
                       </label>
                       <input
                         value={configForm.slogan}
                         onChange={(e) => setConfigForm({ ...configForm, slogan: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-blue-950/60 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
+                        className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none font-sarabun ${
+                          isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                        }`}
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-blue-200 font-prompt mb-1">ธนาคารรับบริจาค</label>
+                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>ธนาคารรับบริจาค</label>
                       <input
                         value={configForm.bank_name}
                         onChange={(e) => setConfigForm({ ...configForm, bank_name: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-blue-950/60 border border-blue-800/60 rounded-xl text-white text-sm font-prompt"
+                        className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:outline-none ${
+                          isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                        }`}
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-blue-200 font-prompt mb-1">เลขที่บัญชี</label>
+                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>เลขที่บัญชี</label>
                       <input
                         value={configForm.bank_account_number}
                         onChange={(e) => setConfigForm({ ...configForm, bank_account_number: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-blue-950/60 border border-blue-800/60 rounded-xl text-white text-sm font-mono"
+                        className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono focus:outline-none ${
+                          isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                        }`}
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-blue-200 font-prompt mb-1">พร้อมเพย์</label>
+                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>พร้อมเพย์</label>
                       <input
                         value={configForm.promptpay_id}
                         onChange={(e) => setConfigForm({ ...configForm, promptpay_id: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-blue-950/60 border border-blue-800/60 rounded-xl text-white text-sm font-mono"
+                        className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono focus:outline-none ${
+                          isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                        }`}
                       />
                     </div>
                   </div>
 
                   <button
                     type="submit"
-                    className="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold font-prompt text-sm shadow-md transition-all cursor-pointer"
+                    className="px-6 py-3 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-sm shadow-md transition-all cursor-pointer min-h-[44px]"
                   >
                     💾 บันทึกการตั้งค่าองค์กรขึ้น Supabase
                   </button>
@@ -1082,117 +1342,12 @@ export function AdminPortalView({
             )}
 
             {/* ------------------------------------------------------------- */}
-            {/* PANE 3 DETAIL: FLEET & VEHICLE */}
-            {/* ------------------------------------------------------------- */}
-            {activeMenu === 'fleet' && selectedFleetItem && (
-              <div className="bg-slate-900/90 rounded-3xl border border-blue-900/60 p-6 sm:p-8 shadow-xl backdrop-blur-md space-y-6">
-                <div className="flex items-center justify-between pb-4 border-b border-blue-900/60">
-                  <div>
-                    <span className="text-xs font-mono font-bold text-amber-400">{selectedFleetItem.call_sign}</span>
-                    <h3 className="text-xl font-bold text-white font-prompt mt-0.5">{selectedFleetItem.name_th}</h3>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() =>
-                        onUpdateFleetStatus(
-                          selectedFleetItem.id,
-                          selectedFleetItem.status === 'available' ? 'dispatched' : 'available'
-                        )
-                      }
-                      className={`px-4 py-2 rounded-xl text-xs font-bold font-prompt cursor-pointer transition-all ${
-                        selectedFleetItem.status === 'available'
-                          ? 'bg-amber-500 hover:bg-amber-400 text-slate-950'
-                          : 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                      }`}
-                    >
-                      {selectedFleetItem.status === 'available' ? 'สลับเป็น: ออกเหตุ' : 'สลับเป็น: พร้อมออกเหตุ'}
-                    </button>
-                    <button
-                      onClick={() => handleOpenCreateDrawer('fleet')}
-                      className="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs font-prompt cursor-pointer"
-                    >
-                      + เพิ่มรถ/อุปกรณ์
-                    </button>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-4 rounded-2xl bg-blue-950/40 border border-blue-900/40">
-                      <span className="text-xs font-bold text-blue-300 font-prompt">ทะเบียนรถ / รหัสประจำการ</span>
-                      <p className="text-base font-mono font-bold text-white mt-1">
-                        {selectedFleetItem.plate_number || 'ประจำศูนย์ใหญ่'}
-                      </p>
-                    </div>
-                    <div className="p-4 rounded-2xl bg-blue-950/40 border border-blue-900/40">
-                      <span className="text-xs font-bold text-blue-300 font-prompt">จุดประจำการ</span>
-                      <p className="text-sm font-sarabun text-white mt-1">{selectedFleetItem.location_base}</p>
-                    </div>
-                  </div>
-
-                  <div className="p-4 rounded-2xl bg-blue-950/30 border border-blue-900/40">
-                    <span className="text-xs font-bold text-amber-300 font-prompt mb-1.5 block">
-                      ข้อมูลจำเพาะและอุปกรณ์ประจำรถ
-                    </span>
-                    <p className="text-sm text-slate-200 font-sarabun leading-relaxed">
-                      {selectedFleetItem.specifications}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* ------------------------------------------------------------- */}
-            {/* PANE 3 DETAIL: OFFICERS ROSTER */}
-            {/* ------------------------------------------------------------- */}
-            {activeMenu === 'officers' && selectedOfficer && (
-              <div className="bg-slate-900/90 rounded-3xl border border-blue-900/60 p-6 sm:p-8 shadow-xl backdrop-blur-md space-y-6">
-                <div className="flex items-center justify-between pb-4 border-b border-blue-900/60">
-                  <div>
-                    <span className="text-xs font-mono font-bold text-amber-400">{selectedOfficer.officer_code}</span>
-                    <h3 className="text-xl font-bold text-white font-prompt mt-0.5">{selectedOfficer.full_name}</h3>
-                    <p className="text-xs text-blue-300 font-sarabun">{selectedOfficer.role_title}</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => onToggleOfficerDuty(selectedOfficer.id)}
-                      className={`px-4 py-2 rounded-xl text-xs font-bold font-prompt cursor-pointer transition-all ${
-                        selectedOfficer.is_on_duty
-                          ? 'bg-slate-700 hover:bg-slate-600 text-slate-200'
-                          : 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                      }`}
-                    >
-                      {selectedOfficer.is_on_duty ? 'สลับเป็น: พักเวร' : 'สลับเป็น: เข้าเวรปฏิบัติการ'}
-                    </button>
-                    <button
-                      onClick={() => handleOpenCreateDrawer('officers')}
-                      className="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-xs font-prompt cursor-pointer"
-                    >
-                      + เพิ่มจนท.
-                    </button>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="p-4 rounded-2xl bg-blue-950/40 border border-blue-900/40">
-                    <span className="text-xs font-bold text-blue-300 font-prompt">เบอร์โทรศัพท์ติดต่อ</span>
-                    <p className="text-base font-mono font-bold text-white mt-1">{selectedOfficer.phone || '061-119-3342'}</p>
-                  </div>
-                  <div className="p-4 rounded-2xl bg-blue-950/40 border border-blue-900/40">
-                    <span className="text-xs font-bold text-blue-300 font-prompt">สถานีประจำการ</span>
-                    <p className="text-sm font-sarabun text-white mt-1">{selectedOfficer.station_base}</p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* ------------------------------------------------------------- */}
-            {/* PANE 3 DETAIL: SYSTEM SETTINGS & PASSWORD */}
+            {/* PANE 3: SETTINGS & PASSWORD */}
             {/* ------------------------------------------------------------- */}
             {activeMenu === 'settings' && (
-              <div className="bg-slate-900/90 rounded-3xl border border-blue-900/60 p-6 sm:p-8 shadow-xl backdrop-blur-md space-y-6">
-                <div className="pb-4 border-b border-blue-900/60">
-                  <h3 className="text-xl font-bold text-white font-prompt">⚙️ ความปลอดภัยและการสำรองข้อมูล</h3>
+              <div className={`rounded-3xl border p-6 sm:p-8 space-y-6 ${cardBg}`}>
+                <div className={`pb-4 border-b ${isLight ? 'border-slate-200' : 'border-blue-900/60'}`}>
+                  <h3 className={`text-xl font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>⚙️ ความปลอดภัยและการสำรองข้อมูล</h3>
                 </div>
 
                 <form
@@ -1209,51 +1364,57 @@ export function AdminPortalView({
                   }}
                   className="space-y-4 max-w-md"
                 >
-                  <h4 className="text-sm font-bold text-amber-300 font-prompt">เปลี่ยนรหัสผ่านผู้ดูแลระบบ</h4>
+                  <h4 className="text-sm font-bold text-blue-700">เปลี่ยนรหัสผ่านผู้ดูแลระบบ</h4>
                   <div>
-                    <label className="block text-xs font-bold text-blue-200 font-prompt mb-1">รหัสผ่านปัจจุบัน</label>
+                    <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>รหัสผ่านปัจจุบัน</label>
                     <input
                       type="password"
                       required
                       value={currentPassInput}
                       onChange={(e) => setCurrentPassInput(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-blue-950/60 border border-blue-800/60 rounded-xl text-white text-sm font-mono"
+                      className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono ${
+                        isLight ? 'bg-white border-slate-300 text-slate-900' : 'bg-blue-950/60 border-blue-800 text-white'
+                      }`}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-blue-200 font-prompt mb-1">รหัสผ่านใหม่</label>
+                    <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>รหัสผ่านใหม่</label>
                     <input
                       type="password"
                       required
                       value={newPassInput}
                       onChange={(e) => setNewPassInput(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-blue-950/60 border border-blue-800/60 rounded-xl text-white text-sm font-mono"
+                      className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono ${
+                        isLight ? 'bg-white border-slate-300 text-slate-900' : 'bg-blue-950/60 border-blue-800 text-white'
+                      }`}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-blue-200 font-prompt mb-1">ยืนยันรหัสผ่านใหม่</label>
+                    <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>ยืนยันรหัสผ่านใหม่</label>
                     <input
                       type="password"
                       required
                       value={confirmPassInput}
                       onChange={(e) => setConfirmPassInput(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-blue-950/60 border border-blue-800/60 rounded-xl text-white text-sm font-mono"
+                      className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono ${
+                        isLight ? 'bg-white border-slate-300 text-slate-900' : 'bg-blue-950/60 border-blue-800 text-white'
+                      }`}
                     />
                   </div>
 
                   <button
                     type="submit"
-                    className="px-6 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold font-prompt text-xs shadow-md transition-all cursor-pointer"
+                    className="px-6 py-2.5 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-xs shadow-md transition-all cursor-pointer min-h-[40px]"
                   >
                     เปลี่ยนรหัสผ่าน
                   </button>
                 </form>
 
-                <div className="pt-6 border-t border-blue-900/60 space-y-3">
-                  <h4 className="text-sm font-bold text-red-400 font-prompt">รีเซ็ตระบบ (Factory Reset)</h4>
-                  <p className="text-xs text-blue-200 font-sarabun">
+                <div className={`pt-6 border-t space-y-3 ${isLight ? 'border-slate-200' : 'border-blue-900/60'}`}>
+                  <h4 className="text-sm font-bold text-red-600">รีเซ็ตระบบ (Factory Reset)</h4>
+                  <p className={`text-xs font-sarabun ${isLight ? 'text-slate-600' : 'text-blue-200'}`}>
                     การรีเซ็ตจะคืนค่าข้อมูลทั้งหมดกลับสู่สถานะเริ่มต้นของหน่วยกู้ภัยประจิม
                   </p>
                   <button
@@ -1262,7 +1423,7 @@ export function AdminPortalView({
                         onResetToDefault();
                       }
                     }}
-                    className="px-4 py-2.5 rounded-xl bg-red-950 hover:bg-red-900 text-red-300 border border-red-800 text-xs font-bold font-prompt cursor-pointer transition-colors"
+                    className="px-4 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-300 text-xs font-bold cursor-pointer transition-colors min-h-[40px]"
                   >
                     ⚠️ รีเซ็ตข้อมูลทั้งหมดเป็นค่าเริ่มต้น
                   </button>
@@ -1274,26 +1435,26 @@ export function AdminPortalView({
       </div>
 
       {/* ========================================================================= */}
-      {/* RIGHT SLIDE-OVER DRAWER (Slide out from the right on Desktop/Tablet/Mobile) */}
+      {/* RIGHT SLIDE-OVER DRAWER (For adding & editing items on desktop & mobile) */}
       {/* ========================================================================= */}
       {isSlideDrawerOpen && (
         <div className="fixed inset-0 z-50 overflow-hidden flex justify-end">
           {/* Backdrop Blur Overlay */}
           <div
             onClick={() => setIsSlideDrawerOpen(false)}
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300 animate-in fade-in"
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300 animate-in fade-in"
           />
 
           {/* Slide-over Right Sheet */}
-          <div className="relative w-full max-w-xl bg-[#081538] border-l-2 border-amber-400/60 shadow-2xl z-10 flex flex-col h-full overflow-hidden transform transition-transform duration-300 ease-out animate-in slide-in-from-right font-prompt">
+          <div className={`relative w-full max-w-xl border-l-2 shadow-2xl z-10 flex flex-col h-full overflow-hidden transform transition-transform duration-300 ease-out animate-in slide-in-from-right ${isLight ? 'bg-white border-[#16377e]' : 'bg-[#081538] border-amber-400'}`}>
             {/* Drawer Header */}
-            <div className="p-5 border-b border-blue-900/60 flex items-center justify-between bg-[#060e24]">
+            <div className={`p-5 border-b flex items-center justify-between ${isLight ? 'bg-slate-50 border-slate-200' : 'bg-[#060e24] border-blue-900/60'}`}>
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-amber-400 text-slate-950 flex items-center justify-center font-bold">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${isLight ? 'bg-[#16377e] text-white' : 'bg-amber-400 text-slate-950'}`}>
                   <Plus className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-white font-prompt">
+                  <h3 className={`text-base font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
                     {slideDrawerModule === 'missions' && 'เพิ่มบันทึกภารกิจปฏิบัติการใหม่'}
                     {slideDrawerModule === 'news' && 'เผยแพร่ข่าวสารประชาสัมพันธ์ใหม่'}
                     {slideDrawerModule === 'fleet' && 'เพิ่มยานพาหนะหรืออุปกรณ์กู้ชีพใหม่'}
@@ -1302,15 +1463,15 @@ export function AdminPortalView({
                     {slideDrawerModule === 'hero_slides' && 'เพิ่มสไลด์แบนเนอร์หน้าแรก'}
                     {slideDrawerModule === 'incidents' && 'รับแจ้งเหตุฉุกเฉินด่วน (Admin Quick Dispatch)'}
                   </h3>
-                  <span className="text-[11px] text-blue-300 font-mono">
-                    SLIDE-IN CREATION DRAWER • REALTIME SUPABASE SYNC
+                  <span className="text-[11px] text-blue-600 font-mono font-bold">
+                    SLIDE-IN DRAWER • REALTIME SUPABASE SYNC
                   </span>
                 </div>
               </div>
 
               <button
                 onClick={() => setIsSlideDrawerOpen(false)}
-                className="p-2 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                className={`p-2 rounded-full transition-colors cursor-pointer ${isLight ? 'text-slate-500 hover:bg-slate-200' : 'text-slate-400 hover:text-white hover:bg-white/10'}`}
                 title="ปิดหน้าต่างสไลด์"
               >
                 <X className="w-5 h-5" />
@@ -1318,7 +1479,7 @@ export function AdminPortalView({
             </div>
 
             {/* Drawer Scrollable Body Form */}
-            <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 scrollbar-thin text-slate-200">
+            <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 scrollbar-thin">
               {/* FORM: MISSIONS */}
               {slideDrawerModule === 'missions' && (
                 <form
@@ -1350,24 +1511,24 @@ export function AdminPortalView({
                   className="space-y-4"
                 >
                   <div>
-                    <label className="block text-xs font-bold text-amber-300 mb-1">หัวข้อภารกิจ</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">หัวข้อภารกิจ</label>
                     <input
                       name="m_title"
                       required
                       placeholder="เช่น ช่วยเหลือผู้ประสบอุบัติเหตุทางถนน บริเวณแยกบรบือ"
-                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
                     />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-bold text-amber-300 mb-1">หมวดหมู่</label>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">หมวดหมู่</label>
                       <select
                         name="m_cat"
-                        className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
                       >
                         {categories.map((c) => (
-                          <option key={c.slug} value={c.slug} className="bg-slate-900 text-white">
+                          <option key={c.slug} value={c.slug}>
                             {c.name_th}
                           </option>
                         ))}
@@ -1375,44 +1536,44 @@ export function AdminPortalView({
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-amber-300 mb-1">สถานที่เกิดเหตุ</label>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">สถานที่เกิดเหตุ</label>
                       <input
                         name="m_location"
                         required
                         placeholder="ต.บรบือ อ.บรบือ จ.มหาสารคาม"
-                        className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-amber-300 mb-1">รูปภาพหน้าปกภารกิจ (URL)</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">รูปภาพหน้าปกภารกิจ (URL)</label>
                     <input
                       name="m_cover"
                       required
                       defaultValue="https://images.unsplash.com/photo-1587745416684-47953f16f02f?auto=format&fit=crop&w=1200&q=80"
-                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-xs font-mono focus:border-amber-400 focus:outline-none"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs font-mono focus:border-[#16377e] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-amber-300 mb-1">สรุปย่อผลการปฏิบัติงาน</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">สรุปย่อผลการปฏิบัติงาน</label>
                     <textarea
                       name="m_summary"
                       rows={2}
                       required
                       placeholder="สรุปย่อเหตุการณ์และการให้ความช่วยเหลือ..."
-                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-amber-300 mb-1">รายละเอียดเชิงลึก</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">รายละเอียดเชิงลึก</label>
                     <textarea
                       name="m_details"
                       rows={4}
                       placeholder="บันทึกขั้นตอนการใช้อุปกรณ์ตัด-ถ่าง การปฐมพยาบาล และการนำส่งโรงพยาบาล..."
-                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
                     />
                   </div>
                 </form>
@@ -1448,50 +1609,50 @@ export function AdminPortalView({
                 >
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-bold text-amber-300 mb-1">รหัสเรียกขาน</label>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">รหัสเรียกขาน</label>
                       <input
                         name="f_callsign"
                         required
                         placeholder="เช่น ประจิม 05"
-                        className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm font-mono focus:border-amber-400 focus:outline-none"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm font-mono focus:border-[#16377e] focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-amber-300 mb-1">ทะเบียนรถ</label>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">ทะเบียนรถ</label>
                       <input
                         name="f_plate"
                         placeholder="เช่น กข-1234 มค"
-                        className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm font-mono focus:border-amber-400 focus:outline-none"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm font-mono focus:border-[#16377e] focus:outline-none"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-amber-300 mb-1">ขื่อยานพาหนะ/อุปกรณ์</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">ขื่อยานพาหนะ/อุปกรณ์</label>
                     <input
                       name="f_name"
                       required
                       placeholder="เช่น รถพยาบาลกู้ชีพฉุกเฉินระดับสูง (Advanced ALS)"
-                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-amber-300 mb-1">จุดประจำการ</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">จุดประจำการ</label>
                     <input
                       name="f_base"
                       defaultValue="ศูนย์ใหญ่บรบือ ถนนแจ้งสนิท"
-                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-amber-300 mb-1">ข้อมูลจำเพาะและอุปกรณ์ประจำรถ</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">ข้อมูลจำเพาะและอุปกรณ์ประจำรถ</label>
                     <textarea
                       name="f_specs"
                       rows={3}
                       placeholder="เครื่องกระตุกหัวใจ AED, ชุดถังออกซิเจน 6,000L, บอร์ดดามหลัง Spinal Board..."
-                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
                     />
                   </div>
                 </form>
@@ -1527,50 +1688,50 @@ export function AdminPortalView({
                 >
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-bold text-amber-300 mb-1">รหัสเจ้าหน้าที่</label>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">รหัสเจ้าหน้าที่</label>
                       <input
                         name="o_code"
                         required
                         placeholder="เช่น PCM-05"
-                        className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm font-mono focus:border-amber-400 focus:outline-none"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm font-mono focus:border-[#16377e] focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-amber-300 mb-1">เบอร์โทรศัพท์</label>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">เบอร์โทรศัพท์</label>
                       <input
                         name="o_phone"
                         defaultValue="061-119-3342"
-                        className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm font-mono focus:border-amber-400 focus:outline-none"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm font-mono focus:border-[#16377e] focus:outline-none"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-amber-300 mb-1">ชื่อ-นามสกุล</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">ชื่อ-นามสกุล</label>
                     <input
                       name="o_name"
                       required
                       placeholder="เช่น นายสมชาย ใจกล้า"
-                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-amber-300 mb-1">ตำแหน่งหน้าที่</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">ตำแหน่งหน้าที่</label>
                     <input
                       name="o_role"
                       required
                       placeholder="เช่น เจ้าหน้าที่กู้ชีพฉุกเฉิน (EMT-B) / ผู้ช่วยนักประดาน้ำ"
-                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-amber-300 mb-1">สถานีประจำการ</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">สถานีประจำการ</label>
                     <input
                       name="o_station"
                       defaultValue="ศูนย์ใหญ่บรบือ"
-                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
                     />
                   </div>
                 </form>
@@ -1602,54 +1763,54 @@ export function AdminPortalView({
                   className="space-y-4"
                 >
                   <div>
-                    <label className="block text-xs font-bold text-amber-300 mb-1">หัวข้อข่าวประชาสัมพันธ์</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">หัวข้อข่าวประชาสัมพันธ์</label>
                     <input
                       name="n_title"
                       required
                       placeholder="เช่น ประกาศแจ้งเตือนสภาพอากาศ และการเฝ้าระวังอุบัติเหตุ"
-                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-amber-300 mb-1">รูปภาพข่าว (URL)</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">รูปภาพข่าว (URL)</label>
                     <input
                       name="n_cover"
                       required
                       defaultValue="https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=1200&q=80"
-                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-xs font-mono focus:border-amber-400 focus:outline-none"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs font-mono focus:border-[#16377e] focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-amber-300 mb-1">สรุปย่อ</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">สรุปย่อ</label>
                     <textarea
                       name="n_summary"
                       rows={2}
                       required
-                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-amber-300 mb-1">เนื้อหาข่าวฉบับเต็ม</label>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">เนื้อหาข่าวฉบับเต็ม</label>
                     <textarea
                       name="n_content"
                       rows={4}
                       required
-                      className="w-full px-4 py-2.5 bg-blue-950/70 border border-blue-800/60 rounded-xl text-white text-sm focus:border-amber-400 focus:outline-none font-sarabun"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
                     />
                   </div>
                 </form>
               )}
             </div>
 
-            {/* Drawer Footer Actions */}
-            <div className="p-4 border-t border-blue-900/60 bg-[#060e24] flex items-center justify-end gap-3 shrink-0">
+            {/* Drawer Footer */}
+            <div className={`p-4 border-t flex items-center justify-end gap-3 shrink-0 ${isLight ? 'bg-slate-50 border-slate-200' : 'bg-[#060e24] border-blue-900/60'}`}>
               <button
                 type="button"
                 onClick={() => setIsSlideDrawerOpen(false)}
-                className="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold font-prompt transition-colors cursor-pointer"
+                className="px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-semibold transition-colors cursor-pointer min-h-[40px]"
               >
                 ยกเลิก
               </button>
@@ -1664,7 +1825,7 @@ export function AdminPortalView({
                     ? 'drawer-officer-form'
                     : 'drawer-news-form'
                 }
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 text-xs font-bold font-prompt shadow-lg shadow-amber-500/20 transition-all cursor-pointer hover:scale-105"
+                className="px-6 py-2.5 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white text-xs font-bold shadow-md transition-all cursor-pointer min-h-[40px]"
               >
                 💾 บันทึกข้อมูลขึ้นระบบ
               </button>

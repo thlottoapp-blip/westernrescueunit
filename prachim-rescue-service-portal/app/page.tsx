@@ -17,13 +17,14 @@ import { EmergencyHotlineBanner } from '@/components/home/EmergencyHotlineBanner
 import { Footer } from '@/components/shared/Footer';
 import { EmergencyReportView } from '@/components/pages/EmergencyReportView';
 import { MissionDetailView } from '@/components/pages/MissionDetailView';
+import { NewsArticlesView } from '@/components/pages/NewsArticlesView';
 import { AdminPortalView } from '@/components/pages/AdminPortalView';
 import { ToastContainer } from '@/components/shared/ToastNotification';
 import { usePrachimStore } from '@/lib/store';
 import { MissionLog } from '@/types/database';
 
 export default function HomePage() {
-  const [currentView, setCurrentView] = useState<'home' | 'report' | 'mission-detail' | 'admin'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'report' | 'mission-detail' | 'news' | 'admin'>('home');
   const [activeNavTab, setActiveNavTab] = useState('home');
   const [selectedMission, setSelectedMission] = useState<MissionLog | null>(null);
 
@@ -110,6 +111,11 @@ export default function HomePage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleOpenNewsPage = () => {
+    setCurrentView('news');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const handleOpenAdminPage = () => {
     setCurrentView('admin');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -156,7 +162,21 @@ export default function HomePage() {
     );
   }
 
-  // 3. Full Page: Admin Dispatch & CMS Control Center
+  // 3. Full Page: Dedicated News & Public Relations Page (NEW)
+  if (currentView === 'news') {
+    return (
+      <>
+        <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+        <NewsArticlesView
+          news={news}
+          onBackToHome={handleBackToHome}
+          onOpenReportModal={handleOpenReportPage}
+        />
+      </>
+    );
+  }
+
+  // 4. Full Page: Admin Dispatch & CMS Control Center
   if (currentView === 'admin') {
     return (
       <>
@@ -208,7 +228,7 @@ export default function HomePage() {
     );
   }
 
-  // 4. Default: Professional Command Hub Homepage View
+  // 5. Default: Professional Command Hub Homepage View
   return (
     <div className="min-h-screen bg-[#080d1a] text-slate-100 flex flex-col font-prompt selection:bg-red-600 selection:text-white">
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
@@ -225,6 +245,7 @@ export default function HomePage() {
         setActiveTab={setActiveNavTab}
         onOpenReportModal={handleOpenReportPage}
         onOpenAdminModal={handleOpenAdminPage}
+        onOpenNewsPage={handleOpenNewsPage}
         isAdminAuthenticated={isAdminAuthenticated}
       />
 
@@ -245,7 +266,7 @@ export default function HomePage() {
         }}
       />
 
-      {/* 5. Live Operations Dashboard & Real-Time Dispatch Hub (NEW) */}
+      {/* 5. Live Operations Dashboard & Real-Time Dispatch Hub */}
       <div id="section-live-dashboard">
         <LiveOperationsDashboard
           incidents={incidents}
@@ -262,7 +283,7 @@ export default function HomePage() {
         <DepartmentsGrid onSelectDepartment={handleSelectDepartment} />
       </div>
 
-      {/* 7. Geo-Location & Network Coverage Map (NEW) */}
+      {/* 7. Geo-Location & Network Coverage Map */}
       <div id="section-coverage-map">
         <NetworkCoverageMap
           siteConfig={siteConfig}
@@ -293,7 +314,7 @@ export default function HomePage() {
         />
       </div>
 
-      {/* 12. Community Impact & Web Traffic Analytics (NEW) */}
+      {/* 12. Community Impact & Web Traffic Analytics */}
       <TrafficImpactMetrics
         siteConfig={siteConfig}
         missionsCount={missions.length}

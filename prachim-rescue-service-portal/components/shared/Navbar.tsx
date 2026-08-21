@@ -31,6 +31,7 @@ interface NavbarProps {
   setActiveTab: (tab: string) => void;
   onOpenReportModal: () => void;
   onOpenAdminModal: () => void;
+  onOpenNewsPage?: () => void;
   isAdminAuthenticated: boolean;
 }
 
@@ -39,12 +40,14 @@ export function Navbar({
   setActiveTab,
   onOpenReportModal,
   onOpenAdminModal,
+  onOpenNewsPage,
   isAdminAuthenticated,
 }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navLinks = [
     { id: 'home', label: 'หน้าหลัก', icon: Radio },
+    { id: 'news', label: 'ข่าวสาร', icon: Radio },
     { id: 'departments', label: 'ภารกิจ & แผนก', icon: Ambulance },
     { id: 'missions', label: 'ผลงานปฏิบัติการ', icon: Waves },
     { id: 'pricing', label: 'เกณฑ์ค่าบริการ', icon: FileText },
@@ -53,6 +56,11 @@ export function Navbar({
   ];
 
   const handleNavClick = (id: string) => {
+    if (id === 'news' && onOpenNewsPage) {
+      onOpenNewsPage();
+      setIsMobileMenuOpen(false);
+      return;
+    }
     setActiveTab(id);
     setIsMobileMenuOpen(false);
 
