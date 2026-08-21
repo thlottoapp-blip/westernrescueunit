@@ -5,11 +5,14 @@ import { TopEmergencyBar } from '@/components/shared/TopEmergencyBar';
 import { Navbar } from '@/components/shared/Navbar';
 import { HeroSlider } from '@/components/home/HeroSlider';
 import { QuickServicesStrip } from '@/components/home/QuickServicesStrip';
+import { LiveOperationsDashboard } from '@/components/home/LiveOperationsDashboard';
 import { DepartmentsGrid } from '@/components/home/DepartmentsGrid';
+import { NetworkCoverageMap } from '@/components/home/NetworkCoverageMap';
 import { AboutSacredSection } from '@/components/home/AboutSacredSection';
 import { RescueProcessFlow } from '@/components/home/RescueProcessFlow';
 import { FeePolicyCard } from '@/components/home/FeePolicyCard';
 import { FeaturedMissions } from '@/components/home/FeaturedMissions';
+import { TrafficImpactMetrics } from '@/components/home/TrafficImpactMetrics';
 import { EmergencyHotlineBanner } from '@/components/home/EmergencyHotlineBanner';
 import { Footer } from '@/components/shared/Footer';
 import { EmergencyReportView } from '@/components/pages/EmergencyReportView';
@@ -138,25 +141,22 @@ export default function HomePage() {
   }
 
   // 2. Full Page: Mission Detail View
-  if (currentView === 'mission-detail' && selectedMission) {
+  if (currentView === 'mission-detail') {
     return (
       <>
         <ToastContainer toasts={toasts} onDismiss={dismissToast} />
         <MissionDetailView
-          mission={selectedMission}
+          mission={selectedMission || missions[0]}
           allMissions={missions}
           onBack={handleBackToHome}
-          onSelectMission={(m) => {
-            setSelectedMission(m);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }}
+          onSelectMission={handleOpenMissionDetail}
           onOpenReportPage={handleOpenReportPage}
         />
       </>
     );
   }
 
-  // 3. Full Page: Admin Dispatch and CMS Portal
+  // 3. Full Page: Admin Dispatch & CMS Control Center
   if (currentView === 'admin') {
     return (
       <>
@@ -208,9 +208,9 @@ export default function HomePage() {
     );
   }
 
-  // 4. Default: Homepage View
+  // 4. Default: Professional Command Hub Homepage View
   return (
-    <div className="min-h-screen bg-white text-slate-900 flex flex-col font-prompt selection:bg-red-600 selection:text-white">
+    <div className="min-h-screen bg-[#080d1a] text-slate-100 flex flex-col font-prompt selection:bg-red-600 selection:text-white">
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
 
       {/* 1. Top Emergency Bar */}
@@ -245,28 +245,65 @@ export default function HomePage() {
         }}
       />
 
-      {/* 5. Specialized Divisions & Departments Grid */}
-      <DepartmentsGrid onSelectDepartment={handleSelectDepartment} />
+      {/* 5. Live Operations Dashboard & Real-Time Dispatch Hub (NEW) */}
+      <div id="section-live-dashboard">
+        <LiveOperationsDashboard
+          incidents={incidents}
+          fleet={fleet}
+          officers={officers}
+          missions={missions}
+          onOpenReportModal={handleOpenReportPage}
+          onSelectMission={handleOpenMissionDetail}
+        />
+      </div>
 
-      {/* 6. Organization Heritage & Sacred Patron (พ่อปู่จูมคำ) */}
-      <AboutSacredSection onOpenReportModal={handleOpenReportPage} />
+      {/* 6. Specialized Divisions & Departments Grid */}
+      <div id="section-departments">
+        <DepartmentsGrid onSelectDepartment={handleSelectDepartment} />
+      </div>
 
-      {/* 7. Emergency Response Process Flow (4 Steps) */}
-      <RescueProcessFlow onOpenReportModal={handleOpenReportPage} />
+      {/* 7. Geo-Location & Network Coverage Map (NEW) */}
+      <div id="section-coverage-map">
+        <NetworkCoverageMap
+          siteConfig={siteConfig}
+          onOpenReportModal={handleOpenReportPage}
+        />
+      </div>
 
-      {/* 8. Fee Policy & Transparency Section */}
-      <FeePolicyCard />
+      {/* 8. Organization Heritage & Sacred Patron (พ่อปู่จูมคำ) */}
+      <div id="section-sacred">
+        <AboutSacredSection onOpenReportModal={handleOpenReportPage} />
+      </div>
 
-      {/* 9. Operational Archive & Featured Missions */}
-      <FeaturedMissions
-        missions={missions}
-        onSelectMission={handleOpenMissionDetail}
+      {/* 9. Emergency Response Process Flow (4 Steps) */}
+      <div id="section-process">
+        <RescueProcessFlow onOpenReportModal={handleOpenReportPage} />
+      </div>
+
+      {/* 10. Fee Policy & Transparency Section */}
+      <div id="section-policy">
+        <FeePolicyCard />
+      </div>
+
+      {/* 11. Operational Archive & Featured Missions */}
+      <div id="section-missions">
+        <FeaturedMissions
+          missions={missions}
+          onSelectMission={handleOpenMissionDetail}
+        />
+      </div>
+
+      {/* 12. Community Impact & Web Traffic Analytics (NEW) */}
+      <TrafficImpactMetrics
+        siteConfig={siteConfig}
+        missionsCount={missions.length}
+        incidentsCount={incidents.length}
       />
 
-      {/* 10. Emergency Hotline Callout Banner */}
+      {/* 13. Emergency Hotline Callout Banner */}
       <EmergencyHotlineBanner onOpenReportModal={handleOpenReportPage} />
 
-      {/* 11. Official Footer */}
+      {/* 14. Official Footer */}
       <Footer
         onOpenReportModal={handleOpenReportPage}
         onOpenAdminModal={handleOpenAdminPage}
@@ -275,4 +312,3 @@ export default function HomePage() {
     </div>
   );
 }
-
