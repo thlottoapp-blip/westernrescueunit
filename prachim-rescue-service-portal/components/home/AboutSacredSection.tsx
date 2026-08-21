@@ -13,12 +13,15 @@ import {
   Flame,
   Star,
 } from 'lucide-react';
+import { usePrachimStore } from '@/lib/store';
 
 interface AboutSacredSectionProps {
   onOpenReportModal: () => void;
 }
 
 export function AboutSacredSection({ onOpenReportModal }: AboutSacredSectionProps) {
+  const { siteConfig } = usePrachimStore();
+
   const values = [
     {
       title: 'จิตอาสาเพื่อมนุษยธรรม',
@@ -30,7 +33,7 @@ export function AboutSacredSection({ onOpenReportModal }: AboutSacredSectionProp
     },
     {
       title: 'เคารพสิ่งศักดิ์สิทธิ์และชุมชน',
-      desc: 'น้อมนำบารมี "พ่อปู่จูมคำ" สิ่งศักดิ์สิทธิ์คู่บ้านคู่เมืองบรบือเป็นขวัญกำลังใจ',
+      desc: `น้อมนำบารมี "${siteConfig?.sacred_patron_title || 'พ่อปู่จูมคำ'}" สิ่งศักดิ์สิทธิ์คู่บ้านคู่เมืองบรบือเป็นขวัญกำลังใจ`,
     },
     {
       title: 'เครือข่ายบูรณาการ 1669',
@@ -61,14 +64,14 @@ export function AboutSacredSection({ onOpenReportModal }: AboutSacredSectionProp
             </div>
 
             <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight font-prompt leading-snug mb-4">
-              สมาคมประจิมสารคาม พุทธศาสตร์สงเคราะห์
+              {siteConfig?.association_name || 'สมาคมประจิมสารคาม พุทธศาสตร์สงเคราะห์'}
               <span className="block text-[#16377e] text-xl sm:text-2xl font-bold mt-1">
                 (หน่วยกู้ภัยประจิม อำเภอบรบือ จังหวัดมหาสารคาม)
               </span>
             </h2>
 
             <p className="text-slate-600 text-sm sm:text-base font-sarabun leading-relaxed mb-6">
-              สมาคมประจิมสารคาม พุทธศาสตร์สงเคราะห์ ก่อตั้งขึ้นด้วยเจตนารมณ์อันบริสุทธิ์ของกลุ่มประชาชนและจิตอาสาในอำเภอบรบือ จังหวัดมหาสารคาม เพื่อเป็นกำลังสำคัญในการบรรเทาสาธารณภัย กู้ชีพ-กู้ภัย ช่วยเหลือผู้ป่วยฉุกเฉิน และผู้ประสบอุบัติเหตุบนท้องถนน โดยยึดมั่นในหลักมนุษยธรรมและคำสอนทางพระพุทธศาสนา
+              {siteConfig?.association_name || 'สมาคมประจิมสารคาม พุทธศาสตร์สงเคราะห์'} ก่อตั้งขึ้นด้วยเจตนารมณ์อันบริสุทธิ์ของกลุ่มประชาชนและจิตอาสาในอำเภอบรบือ จังหวัดมหาสารคาม เพื่อเป็นกำลังสำคัญในการบรรเทาสาธารณภัย กู้ชีพ-กู้ภัย ช่วยเหลือผู้ป่วยฉุกเฉิน และผู้ประสบอุบัติเหตุบนท้องถนน โดยยึดมั่นในหลักมนุษยธรรมและคำสอนทางพระพุทธศาสนา
             </p>
 
             {/* Sacred Patron Box */}
@@ -85,11 +88,11 @@ export function AboutSacredSection({ onOpenReportModal }: AboutSacredSectionProp
                       สิ่งศักดิ์สิทธิ์คู่บ้านคู่เมือง
                     </span>
                   </div>
-                  <h4 className="text-base sm:text-lg font-bold text-amber-300 font-prompt mt-1 whitespace-nowrap truncate">
-                    สิ่งศักดิ์สิทธิ์ประจำหน่วย: &ldquo;พ่อปู่จูมคำ&rdquo;
+                  <h4 className="text-base sm:text-lg font-bold text-amber-300 font-prompt mt-1">
+                    {siteConfig?.sacred_patron_title || 'สิ่งศักดิ์สิทธิ์ประจำหน่วย: "พ่อปู่จูมคำ"'}
                   </h4>
                   <p className="text-xs sm:text-sm text-slate-200 font-sarabun mt-1 leading-relaxed">
-                    สิ่งศักดิ์สิทธิ์คู่บ้านคู่เมืองอำเภอบรบือ ที่คณะเจ้าหน้าที่และอาสาสมัครกู้ภัยประจิมเคารพบูชาและยึดเหนี่ยวจิตใจ สัญลักษณ์มงคลบนตราประจำหน่วยเป็นมงคลชัยคุ้มครองทุกภารกิจให้ปลอดภัย แคล้วคลาด และเปี่ยมด้วยเมตตาธรรม
+                    {siteConfig?.sacred_patron_story || 'สิ่งศักดิ์สิทธิ์คู่บ้านคู่เมืองอำเภอบรบือ ที่คณะเจ้าหน้าที่และอาสาสมัครกู้ภัยประจิมเคารพบูชาและยึดเหนี่ยวจิตใจ สัญลักษณ์มงคลบนตราประจำหน่วยเป็นมงคลชัยคุ้มครองทุกภารกิจให้ปลอดภัย แคล้วคลาด และเปี่ยมด้วยเมตตาธรรม'}
                   </p>
                 </div>
               </div>
@@ -113,10 +116,10 @@ export function AboutSacredSection({ onOpenReportModal }: AboutSacredSectionProp
             {/* Emergency Action Buttons */}
             <div className="flex flex-wrap items-center gap-3 sm:gap-4">
               <a
-                href="tel:0611193342"
+                href={`tel:${siteConfig?.hotline_primary || '0611193342'}`}
                 className="inline-flex items-center justify-center gap-2 bg-[#16377e] hover:bg-[#1f489e] text-white font-bold px-6 py-3 rounded-full shadow-md shadow-blue-950/20 text-xs sm:text-sm font-prompt transition-all border border-amber-400/50 whitespace-nowrap shrink-0 min-h-[44px]"
               >
-                <span className="whitespace-nowrap">โทรติดต่อศูนย์กู้ภัย 061-119-3342</span>
+                <span className="whitespace-nowrap">โทรติดต่อศูนย์กู้ภัย {siteConfig?.hotline_primary || '061-119-3342'}</span>
               </a>
               <button
                 onClick={onOpenReportModal}
@@ -146,7 +149,7 @@ export function AboutSacredSection({ onOpenReportModal }: AboutSacredSectionProp
                   <span className="whitespace-nowrap">ที่ตั้งสำนักงานใหญ่</span>
                 </div>
                 <p className="text-xs sm:text-sm text-slate-200 font-sarabun">
-                  ถนนแจ้งสนิท ตำบลบรบือ อำเภอบรบือ จังหวัดมหาสารคาม 44130 (บริการตลอด 24 ชม.)
+                  {siteConfig?.address_line1 || 'ถนนแจ้งสนิท ตำบลบรบือ อำเภอบรบือ'} {siteConfig?.address_line2 || 'จังหวัดมหาสารคาม 44130'} (บริการตลอด 24 ชม.)
                 </p>
               </div>
             </div>

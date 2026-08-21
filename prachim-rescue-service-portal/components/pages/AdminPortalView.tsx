@@ -196,6 +196,7 @@ export function AdminPortalView({
   // Image Upload States for Drawer Forms
   const [missionCoverImage, setMissionCoverImage] = useState('https://images.unsplash.com/photo-1587745416684-47953f16f02f?auto=format&fit=crop&w=1200&q=80');
   const [newsCoverImage, setNewsCoverImage] = useState('https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b?auto=format&fit=crop&w=1200&q=80');
+  const [slideCoverImage, setSlideCoverImage] = useState('https://images.unsplash.com/photo-1587745416684-47953f16f02f?auto=format&fit=crop&w=1920&q=80');
 
   // Site Config Edit State
   const [configForm, setConfigForm] = useState<SiteConfig>(siteConfig);
@@ -1227,6 +1228,131 @@ export function AdminPortalView({
             )}
 
             {/* ------------------------------------------------------------- */}
+            {/* PANE 3: CATEGORIES DETAIL & ACTION */}
+            {/* ------------------------------------------------------------- */}
+            {activeMenu === 'categories' && selectedCategory && (
+              <div className={`rounded-3xl border p-6 sm:p-8 space-y-6 ${cardBg}`}>
+                <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b ${isLight ? 'border-slate-200' : 'border-blue-900/60'}`}>
+                  <div>
+                    <span className="text-xs font-mono font-bold text-blue-700">{selectedCategory.slug}</span>
+                    <h3 className={`text-xl font-bold mt-0.5 ${isLight ? 'text-slate-900' : 'text-white'}`}>{selectedCategory.name_th}</h3>
+                    <p className={`text-xs font-sarabun ${isLight ? 'text-slate-600' : 'text-blue-300'}`}>{selectedCategory.name_en}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleOpenCreateDrawer('categories')}
+                      className="px-4 py-2 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-xs cursor-pointer min-h-[38px]"
+                    >
+                      + เพิ่มหมวดหมู่
+                    </button>
+                    {onDeleteCategory && (
+                      <button
+                        onClick={() => onDeleteCategory(selectedCategory.id)}
+                        className="p-2 rounded-xl bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 min-h-[38px]"
+                        title="ลบหมวดหมู่"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className={`p-4 rounded-2xl border ${cardSubBg}`}>
+                    <span className="text-xs font-bold text-blue-700">รหัสอ้างอิง (Slug)</span>
+                    <p className={`text-base font-mono font-bold mt-1 ${isLight ? 'text-slate-900' : 'text-white'}`}>{selectedCategory.slug}</p>
+                  </div>
+                  <div className={`p-4 rounded-2xl border ${cardSubBg}`}>
+                    <span className="text-xs font-bold text-blue-700">ลำดับการแสดงผล</span>
+                    <p className={`text-base font-mono font-bold mt-1 ${isLight ? 'text-slate-900' : 'text-white'}`}>#{selectedCategory.sort_order}</p>
+                  </div>
+                </div>
+
+                <div className={`p-4 rounded-2xl border ${cardSubBg}`}>
+                  <span className="text-xs font-bold text-blue-700 mb-1.5 block">
+                    คำอธิบายหมวดหมู่ภารกิจ
+                  </span>
+                  <p className={`text-sm font-sarabun leading-relaxed break-words ${isLight ? 'text-slate-700' : 'text-slate-200'}`}>
+                    {selectedCategory.description}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* ------------------------------------------------------------- */}
+            {/* PANE 3: HERO SLIDES DETAIL & ACTION */}
+            {/* ------------------------------------------------------------- */}
+            {activeMenu === 'hero_slides' && selectedSlide && (
+              <div className={`rounded-3xl border p-6 sm:p-8 space-y-6 ${cardBg}`}>
+                <div className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b ${isLight ? 'border-slate-200' : 'border-blue-900/60'}`}>
+                  <div>
+                    <span className="text-xs font-mono font-bold text-blue-700">{selectedSlide.badge}</span>
+                    <h3 className={`text-xl font-bold mt-0.5 ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                      {selectedSlide.title_line1} {selectedSlide.title_line2}
+                    </h3>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {onUpdateHeroSlide && (
+                      <button
+                        onClick={() =>
+                          onUpdateHeroSlide(selectedSlide.id, {
+                            is_active: !selectedSlide.is_active,
+                          })
+                        }
+                        className={`px-4 py-2 rounded-xl text-xs font-bold cursor-pointer transition-all min-h-[38px] ${
+                          selectedSlide.is_active
+                            ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                            : 'bg-slate-200 hover:bg-slate-300 text-slate-800'
+                        }`}
+                      >
+                        {selectedSlide.is_active ? 'สถานะ: แสดงบนเว็บ' : 'สถานะ: ซ่อนสไลด์'}
+                      </button>
+                    )}
+                    <button
+                      onClick={() => handleOpenCreateDrawer('hero_slides')}
+                      className="px-4 py-2 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-xs cursor-pointer min-h-[38px]"
+                    >
+                      + เพิ่มสไลด์ใหม่
+                    </button>
+                    {onDeleteHeroSlide && (
+                      <button
+                        onClick={() => onDeleteHeroSlide(selectedSlide.id)}
+                        className="p-2 rounded-xl bg-red-100 hover:bg-red-200 text-red-700 border border-red-300 min-h-[38px]"
+                        title="ลบสไลด์"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="relative h-64 rounded-2xl overflow-hidden bg-cover bg-center border border-slate-200" style={{ backgroundImage: `url(${selectedSlide.cover_image})` }}>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent flex flex-col justify-end p-5 text-white">
+                    <span className="text-xs text-amber-300 font-mono font-bold uppercase">{selectedSlide.badge}</span>
+                    <h4 className="text-lg font-bold mt-0.5">{selectedSlide.title_line1} {selectedSlide.title_line2}</h4>
+                    <p className="text-xs text-slate-200 font-sarabun line-clamp-2 mt-1">{selectedSlide.subtitle}</p>
+                  </div>
+                </div>
+
+                {/* 3 Stats Display */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className={`p-3.5 rounded-2xl border text-center ${cardSubBg}`}>
+                    <span className="text-base font-bold text-amber-600 block">{selectedSlide.stat1_val}</span>
+                    <span className="text-[11px] text-slate-500 font-sarabun">{selectedSlide.stat1_lbl}</span>
+                  </div>
+                  <div className={`p-3.5 rounded-2xl border text-center ${cardSubBg}`}>
+                    <span className="text-base font-bold text-emerald-600 block">{selectedSlide.stat2_val}</span>
+                    <span className="text-[11px] text-slate-500 font-sarabun">{selectedSlide.stat2_lbl}</span>
+                  </div>
+                  <div className={`p-3.5 rounded-2xl border text-center ${cardSubBg}`}>
+                    <span className="text-base font-bold text-blue-600 block">{selectedSlide.stat3_val}</span>
+                    <span className="text-[11px] text-slate-500 font-sarabun">{selectedSlide.stat3_lbl}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ------------------------------------------------------------- */}
             {/* PANE 3: SITE CONFIG & HOTLINES */}
             {/* ------------------------------------------------------------- */}
             {activeMenu === 'site_config' && (
@@ -1810,6 +1936,246 @@ export function AdminPortalView({
                   </div>
                 </form>
               )}
+
+              {/* FORM: CATEGORIES */}
+              {slideDrawerModule === 'categories' && (
+                <form
+                  id="drawer-category-form"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const form = e.currentTarget;
+                    const nameTh = (form.elements.namedItem('c_name_th') as HTMLInputElement).value;
+                    const nameEn = (form.elements.namedItem('c_name_en') as HTMLInputElement).value;
+                    const slug = (form.elements.namedItem('c_slug') as HTMLInputElement).value;
+                    const desc = (form.elements.namedItem('c_desc') as HTMLTextAreaElement).value;
+                    const sortOrder = parseInt((form.elements.namedItem('c_sort') as HTMLInputElement).value || '1', 10);
+
+                    onAddCategory({
+                      name_th: nameTh,
+                      name_en: nameEn,
+                      slug: slug.trim().toLowerCase(),
+                      description: desc,
+                      category_type: 'mission',
+                      sort_order: sortOrder,
+                      is_active: true,
+                      icon_name: 'Ambulance',
+                    });
+                    setIsSlideDrawerOpen(false);
+                  }}
+                  className="space-y-4"
+                >
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">ชื่อหมวดหมู่ (ภาษาไทย)</label>
+                    <input
+                      name="c_name_th"
+                      required
+                      placeholder="เช่น การแพทย์ฉุกเฉินและอุบัติเหตุทางถนน"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">ชื่อหมวดหมู่ (ภาษาอังกฤษ)</label>
+                    <input
+                      name="c_name_en"
+                      required
+                      placeholder="เช่น EMS & Road Traffic Accidents"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-mono"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">รหัสอ้างอิง (Slug)</label>
+                      <input
+                        name="c_slug"
+                        required
+                        placeholder="เช่น ems-accident"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-mono"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">ลำดับการแสดงผล</label>
+                      <input
+                        name="c_sort"
+                        type="number"
+                        defaultValue={categories.length + 1}
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-mono"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">คำอธิบายหมวดหมู่</label>
+                    <textarea
+                      name="c_desc"
+                      rows={3}
+                      required
+                      placeholder="อธิบายขอบเขตงาน เช่น ออกปฏิบัติการรับ-ส่ง ปฐมพยาบาล 24 ชม...."
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
+                    />
+                  </div>
+                </form>
+              )}
+
+              {/* FORM: HERO SLIDES */}
+              {slideDrawerModule === 'hero_slides' && (
+                <form
+                  id="drawer-slide-form"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const form = e.currentTarget;
+                    const badge = (form.elements.namedItem('s_badge') as HTMLInputElement).value;
+                    const title1 = (form.elements.namedItem('s_title1') as HTMLInputElement).value;
+                    const title2 = (form.elements.namedItem('s_title2') as HTMLInputElement).value;
+                    const subtitle = (form.elements.namedItem('s_subtitle') as HTMLTextAreaElement).value;
+                    const stat1_val = (form.elements.namedItem('s_stat1_val') as HTMLInputElement).value;
+                    const stat1_lbl = (form.elements.namedItem('s_stat1_lbl') as HTMLInputElement).value;
+                    const stat2_val = (form.elements.namedItem('s_stat2_val') as HTMLInputElement).value;
+                    const stat2_lbl = (form.elements.namedItem('s_stat2_lbl') as HTMLInputElement).value;
+                    const stat3_val = (form.elements.namedItem('s_stat3_val') as HTMLInputElement).value;
+                    const stat3_lbl = (form.elements.namedItem('s_stat3_lbl') as HTMLInputElement).value;
+                    const btnPrimary = (form.elements.namedItem('s_primary_btn') as HTMLInputElement).value;
+                    const btnSecondary = (form.elements.namedItem('s_secondary_btn') as HTMLInputElement).value;
+
+                    onAddHeroSlide({
+                      badge,
+                      title_line1: title1,
+                      title_line2: title2,
+                      subtitle,
+                      cover_image: slideCoverImage,
+                      stat1_val,
+                      stat1_lbl,
+                      stat2_val,
+                      stat2_lbl,
+                      stat3_val,
+                      stat3_lbl,
+                      primary_btn_text: btnPrimary,
+                      primary_btn_action: 'report',
+                      secondary_btn_text: btnSecondary,
+                      secondary_btn_url: 'tel:0611193342',
+                      is_active: true,
+                      sort_order: heroSlides.length + 1,
+                      icon_name: 'Ambulance',
+                    });
+                    setIsSlideDrawerOpen(false);
+                  }}
+                  className="space-y-4"
+                >
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">ป้ายกำกับด้านบน (Badge)</label>
+                    <input
+                      name="s_badge"
+                      required
+                      placeholder="เช่น การแพทย์ฉุกเฉินและอุบัติเหตุทางถนน 24 ชม."
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">หัวข้อบรรทัดที่ 1</label>
+                      <input
+                        name="s_title1"
+                        required
+                        placeholder="เช่น เข้าถึงรวดเร็ว. กู้ชีพฉุกเฉิน."
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">หัวข้อบรรทัดที่ 2</label>
+                      <input
+                        name="s_title2"
+                        required
+                        placeholder="เช่น ช่วยเหลือทุกชีวิต ปลอดภัย."
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <ImageUploadField
+                      label="รูปภาพสไลด์แบนเนอร์ (อัปโหลดจากเครื่อง)"
+                      value={slideCoverImage}
+                      onChange={setSlideCoverImage}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1">ข้อความบรรยายสไลด์</label>
+                    <textarea
+                      name="s_subtitle"
+                      rows={2}
+                      required
+                      placeholder="ข้อความบรรยายรายละเอียดสไลด์..."
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-700 mb-1">สถิติ 1 (ค่า)</label>
+                      <input
+                        name="s_stat1_val"
+                        defaultValue="< 8 นาที"
+                        className="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs focus:border-[#16377e] focus:outline-none"
+                      />
+                      <input
+                        name="s_stat1_lbl"
+                        defaultValue="เวลาตอบสนอง"
+                        className="w-full px-2.5 py-1.5 mt-1 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-[10px] focus:border-[#16377e] focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-700 mb-1">สถิติ 2 (ค่า)</label>
+                      <input
+                        name="s_stat2_val"
+                        defaultValue="ฟรี 100%"
+                        className="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs focus:border-[#16377e] focus:outline-none"
+                      />
+                      <input
+                        name="s_stat2_lbl"
+                        defaultValue="บริการ EMS"
+                        className="w-full px-2.5 py-1.5 mt-1 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-[10px] focus:border-[#16377e] focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-700 mb-1">สถิติ 3 (ค่า)</label>
+                      <input
+                        name="s_stat3_val"
+                        defaultValue="24 ชั่วโมง"
+                        className="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs focus:border-[#16377e] focus:outline-none"
+                      />
+                      <input
+                        name="s_stat3_lbl"
+                        defaultValue="ปฏิบัติการ"
+                        className="w-full px-2.5 py-1.5 mt-1 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-[10px] focus:border-[#16377e] focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">ปุ่มหลัก (ข้อความ)</label>
+                      <input
+                        name="s_primary_btn"
+                        defaultValue="แจ้งเหตุด่วนฉุกเฉิน"
+                        className="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs focus:border-[#16377e] focus:outline-none"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">ปุ่มรอง (ข้อความ)</label>
+                      <input
+                        name="s_secondary_btn"
+                        defaultValue="โทร 061-119-3342"
+                        className="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs focus:border-[#16377e] focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                </form>
+              )}
             </div>
 
             {/* Drawer Footer */}
@@ -1830,6 +2196,10 @@ export function AdminPortalView({
                     ? 'drawer-fleet-form'
                     : slideDrawerModule === 'officers'
                     ? 'drawer-officer-form'
+                    : slideDrawerModule === 'categories'
+                    ? 'drawer-category-form'
+                    : slideDrawerModule === 'hero_slides'
+                    ? 'drawer-slide-form'
                     : 'drawer-news-form'
                 }
                 className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white text-xs font-bold shadow-md transition-all cursor-pointer min-h-[40px]"
