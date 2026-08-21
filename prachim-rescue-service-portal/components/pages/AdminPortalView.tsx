@@ -2401,6 +2401,114 @@ export function AdminPortalView({
                     </div>
                   </div>
 
+                  {/* Card 7: Social Media Channels & Links */}
+                  <div className={`p-6 rounded-3xl border space-y-4 ${cardBg}`}>
+                    <h4 className="text-sm font-black text-blue-700 dark:text-amber-400 flex items-center gap-2">
+                      <Share2 className="w-4 h-4" />
+                      <span>7. ลิงก์ช่องทางโซเชียลมีเดีย & พิกัดแผนที่ (Social Media & Maps)</span>
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
+                          ลิงก์เพจ Facebook
+                        </label>
+                        <input
+                          value={configForm.facebook_url || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, facebook_url: e.target.value })}
+                          placeholder="https://facebook.com/..."
+                          className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                          }`}
+                        />
+                      </div>
+                      <div>
+                        <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
+                          ชื่อเพจ Facebook
+                        </label>
+                        <input
+                          value={configForm.facebook_page || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, facebook_page: e.target.value })}
+                          placeholder="หน่วยกู้ภัยประจิม บรบือ"
+                          className={`w-full px-4 py-2.5 border rounded-xl text-sm ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                          }`}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
+                          ลิงก์ LINE Official Account
+                        </label>
+                        <input
+                          value={configForm.line_url || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, line_url: e.target.value })}
+                          placeholder="https://line.me/R/ti/p/..."
+                          className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                          }`}
+                        />
+                      </div>
+                      <div>
+                        <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
+                          LINE ID (@Line)
+                        </label>
+                        <input
+                          value={configForm.line_id || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, line_id: e.target.value })}
+                          placeholder="@prachimrescue"
+                          className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                          }`}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
+                          ลิงก์ช่อง TikTok
+                        </label>
+                        <input
+                          value={configForm.tiktok_url || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, tiktok_url: e.target.value })}
+                          placeholder="https://tiktok.com/@..."
+                          className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                          }`}
+                        />
+                      </div>
+                      <div>
+                        <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
+                          ลิงก์ช่อง YouTube
+                        </label>
+                        <input
+                          value={configForm.youtube_url || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, youtube_url: e.target.value })}
+                          placeholder="https://youtube.com/..."
+                          className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono ${
+                            isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                          }`}
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className={`block text-xs font-bold mb-1 ${isLight ? 'text-slate-700' : 'text-blue-200'}`}>
+                        ลิงก์หมุดพิกัด Google Maps สำนักงานใหญ่
+                      </label>
+                      <input
+                        value={configForm.google_maps_url || ''}
+                        onChange={(e) => setConfigForm({ ...configForm, google_maps_url: e.target.value })}
+                        placeholder="https://maps.google.com/..."
+                        className={`w-full px-4 py-2.5 border rounded-xl text-sm font-mono ${
+                          isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
+                        }`}
+                      />
+                    </div>
+                  </div>
+
                   <div className="flex justify-end pt-2">
                     <button
                       type="submit"

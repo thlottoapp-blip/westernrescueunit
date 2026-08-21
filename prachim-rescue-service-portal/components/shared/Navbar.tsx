@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { OfficialLogo } from '@/components/shared/OfficialLogo';
+import { usePrachimStore } from '@/lib/store';
 import {
   FacebookIcon,
   LineIcon,
@@ -44,6 +45,7 @@ export function Navbar({
   isAdminAuthenticated,
 }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { siteConfig } = usePrachimStore();
 
   const navLinks = [
     { id: 'home', label: 'หน้าหลัก', icon: Radio },
@@ -96,37 +98,37 @@ export function Navbar({
             {/* Social Media Official Icons */}
             <div className="hidden sm:flex items-center gap-1.5">
               <a
-                href="https://www.facebook.com/search/top?q=หน่วยกู้ภัยประจิม+บรบือ"
+                href={siteConfig?.facebook_url || 'https://www.facebook.com/search/top?q=หน่วยกู้ภัยประจิม+บรบือ'}
                 target="_blank"
                 rel="noopener noreferrer"
-                title="Facebook: หน่วยกู้ภัยประจิม บรบือ"
+                title={`Facebook: ${siteConfig?.facebook_page || 'หน่วยกู้ภัยประจิม บรบือ'}`}
                 className="w-5.5 h-5.5 rounded-full flex items-center justify-center hover:scale-110 transition-transform bg-[#1877F2] text-white shadow-xs"
               >
                 <FacebookIcon size={12} />
               </a>
               <a
-                href="https://line.me/R/ti/p/@prachimrescue"
+                href={siteConfig?.line_url || 'https://line.me/R/ti/p/@prachimrescue'}
                 target="_blank"
                 rel="noopener noreferrer"
-                title="LINE Official: @prachimrescue"
+                title={`LINE Official: ${siteConfig?.line_id || '@prachimrescue'}`}
                 className="w-5.5 h-5.5 rounded-full flex items-center justify-center hover:scale-110 transition-transform bg-[#06C755] text-white shadow-xs"
               >
                 <LineIcon size={12} />
               </a>
               <a
-                href="https://www.tiktok.com/@prachimrescue"
+                href={siteConfig?.tiktok_url || 'https://www.tiktok.com/@prachimrescue'}
                 target="_blank"
                 rel="noopener noreferrer"
-                title="TikTok: @prachimrescue"
+                title={`TikTok: ${siteConfig?.tiktok_handle || '@prachimrescue'}`}
                 className="w-5.5 h-5.5 rounded-full flex items-center justify-center hover:scale-110 transition-transform bg-black text-white border border-slate-700 shadow-xs"
               >
                 <TikTokIcon size={12} />
               </a>
               <a
-                href="https://www.youtube.com/results?search_query=หน่วยกู้ภัยประจิม+บรบือ"
+                href={siteConfig?.youtube_url || 'https://www.youtube.com/results?search_query=หน่วยกู้ภัยประจิม+บรบือ'}
                 target="_blank"
                 rel="noopener noreferrer"
-                title="YouTube: กู้ภัยประจิม Official"
+                title={`YouTube: ${siteConfig?.youtube_name || 'กู้ภัยประจิม Official'}`}
                 className="w-5.5 h-5.5 rounded-full flex items-center justify-center hover:scale-110 transition-transform bg-[#FF0000] text-white shadow-xs"
               >
                 <YouTubeIcon size={12} />
