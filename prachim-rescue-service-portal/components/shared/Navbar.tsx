@@ -101,7 +101,7 @@ export function Navbar({
                 href={siteConfig?.facebook_url || 'https://www.facebook.com/search/top?q=หน่วยกู้ภัยประจิม+บรบือ'}
                 target="_blank"
                 rel="noopener noreferrer"
-                title={`Facebook: ${siteConfig?.facebook_page || 'หน่วยกู้ภัยประจิม บรบือ'}`}
+                title={`Facebook: ${siteConfig?.facebook_name || 'หน่วยกู้ภัยประจิม บรบือ'}`}
                 className="w-5.5 h-5.5 rounded-full flex items-center justify-center hover:scale-110 transition-transform bg-[#1877F2] text-white shadow-xs"
               >
                 <FacebookIcon size={12} />

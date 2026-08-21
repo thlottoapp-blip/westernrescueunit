@@ -2426,8 +2426,8 @@ export function AdminPortalView({
                           ชื่อเพจ Facebook
                         </label>
                         <input
-                          value={configForm.facebook_page || ''}
-                          onChange={(e) => setConfigForm({ ...configForm, facebook_page: e.target.value })}
+                          value={configForm.facebook_name || ''}
+                          onChange={(e) => setConfigForm({ ...configForm, facebook_name: e.target.value })}
                           placeholder="หน่วยกู้ภัยประจิม บรบือ"
                           className={`w-full px-4 py-2.5 border rounded-xl text-sm ${
                             isLight ? 'bg-white border-slate-300 text-slate-900 focus:border-[#16377e]' : 'bg-blue-950/60 border-blue-800 text-white focus:border-amber-400'
