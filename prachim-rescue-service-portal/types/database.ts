@@ -42,6 +42,10 @@ export interface EmergencyIncident {
   province?: string;
   latitude?: number;
   longitude?: number;
+  caller_latitude?: number;
+  caller_longitude?: number;
+  caller_accuracy_meters?: number;
+  caller_verification_status?: 'verified_on_scene' | 'remote_reporting' | 'suspected_fake';
   victim_count?: number;
   details?: string;
   image_url?: string;

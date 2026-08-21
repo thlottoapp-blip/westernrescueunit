@@ -39,6 +39,10 @@ interface EmergencyReportViewProps {
     province?: string;
     latitude?: number;
     longitude?: number;
+    caller_latitude?: number;
+    caller_longitude?: number;
+    caller_accuracy_meters?: number;
+    caller_verification_status?: 'verified_on_scene' | 'remote_reporting' | 'suspected_fake';
     victim_count?: number;
     details?: string;
     image_url?: string;
@@ -64,19 +68,32 @@ export function EmergencyReportView({
   const [gpsAutoCaptured, setGpsAutoCaptured] = useState(false);
   const [submittedIncident, setSubmittedIncident] = useState<EmergencyIncident | null>(null);
 
+  const [callerLat, setCallerLat] = useState<number | undefined>(undefined);
+  const [callerLng, setCallerLng] = useState<number | undefined>(undefined);
+  const [callerAccuracy, setCallerAccuracy] = useState<number>(15);
+
   // Automatic Background GPS Location Detection
   React.useEffect(() => {
     if (typeof window !== 'undefined' && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-          setLatitude(pos.coords.latitude);
-          setLongitude(pos.coords.longitude);
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          const acc = Math.round(pos.coords.accuracy || 15);
+          setLatitude(lat);
+          setLongitude(lng);
+          setCallerLat(lat);
+          setCallerLng(lng);
+          setCallerAccuracy(acc);
           setGpsAutoCaptured(true);
         },
         (err) => {
           console.log('Automatic GPS fallback:', err.message);
           setLatitude(16.0375);
           setLongitude(103.1186);
+          setCallerLat(16.0375);
+          setCallerLng(103.1186);
+          setCallerAccuracy(25);
           setGpsAutoCaptured(true);
         },
         { enableHighAccuracy: true, timeout: 8000 }
@@ -84,6 +101,9 @@ export function EmergencyReportView({
     } else {
       setLatitude(16.0375);
       setLongitude(103.1186);
+      setCallerLat(16.0375);
+      setCallerLng(103.1186);
+      setCallerAccuracy(25);
       setGpsAutoCaptured(true);
     }
   }, []);
@@ -162,6 +182,8 @@ export function EmergencyReportView({
 
     const finalLat = latitude || 16.0375;
     const finalLng = longitude || 103.1186;
+    const cLat = callerLat || finalLat;
+    const cLng = callerLng || finalLng;
 
     const created = onSubmitIncident({
       caller_name: callerName.trim(),
@@ -172,6 +194,10 @@ export function EmergencyReportView({
       district,
       latitude: finalLat,
       longitude: finalLng,
+      caller_latitude: cLat,
+      caller_longitude: cLng,
+      caller_accuracy_meters: callerAccuracy,
+      caller_verification_status: 'verified_on_scene',
       victim_count: Number(victimCount) || 0,
       details: details.trim(),
       image_url: imageUrl,

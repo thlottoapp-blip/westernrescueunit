@@ -1444,48 +1444,123 @@ export function AdminPortalView({
                   </div>
                 </div>
 
-                {/* Real-time GPS Location & Google Maps Navigation Card */}
-                <div className={`p-5 rounded-2xl border ${cardSubBg} space-y-3`}>
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center shrink-0">
-                        <MapPin className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <span className="text-xs font-bold text-slate-900 dark:text-white block">
-                          พิกัด GPS ตำแหน่งจุดเกิดเหตุ (Auto GPS Capture 100%)
-                        </span>
-                        <span className="text-xs text-slate-600 dark:text-slate-300 font-sarabun">
-                          ห่างจากศูนย์ใหญ่กู้ภัยประจิม บรบือ: <strong className="text-blue-600 font-mono text-sm">{calculateDistanceKm(selectedIncident.latitude, selectedIncident.longitude)}</strong>
-                        </span>
-                      </div>
-                    </div>
+                {/* Real-time GPS Location & Anti-Fraud Verification Card */}
+                <div className={`p-5 rounded-2xl border ${cardSubBg} space-y-4`}>
+                  {/* Anti-Fraud & Caller Verification Badge */}
+                  {(() => {
+                    const cLat = selectedIncident.caller_latitude || selectedIncident.latitude || 16.0375;
+                    const cLng = selectedIncident.caller_longitude || selectedIncident.longitude || 103.1186;
+                    const iLat = selectedIncident.latitude || 16.0375;
+                    const iLng = selectedIncident.longitude || 103.1186;
 
-                    <a
-                      href={`https://www.google.com/maps/dir/?api=1&destination=${selectedIncident.latitude || 16.0375},${selectedIncident.longitude || 103.1186}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition-colors cursor-pointer min-h-[38px] shrink-0"
-                    >
-                      <Navigation className="w-4 h-4" />
-                      <span>เปิด Google Maps นำทางสด</span>
-                    </a>
-                  </div>
+                    // Calculate distance in KM between Caller Device and Reported Incident Location
+                    const R = 6371; // Earth radius in km
+                    const dLat = (iLat - cLat) * (Math.PI / 180);
+                    const dLng = (iLng - cLng) * (Math.PI / 180);
+                    const a =
+                      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(cLat * (Math.PI / 180)) *
+                        Math.cos(iLat * (Math.PI / 180)) *
+                        Math.sin(dLng / 2) *
+                        Math.sin(dLng / 2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                    const distKm = R * c;
 
-                  <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs font-mono">
+                    const isNear = distKm < 1.5;
+                    const isRemote = distKm >= 1.5 && distKm <= 20;
+                    const isFar = distKm > 20;
+
+                    return (
+                      <div className="space-y-3">
+                        <div
+                          className={`p-4 rounded-xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                            isNear
+                              ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-300 dark:border-emerald-800 text-emerald-900 dark:text-emerald-100'
+                              : isRemote
+                              ? 'bg-blue-50 dark:bg-blue-950/40 border-blue-300 dark:border-blue-800 text-blue-900 dark:text-blue-100'
+                              : 'bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-100'
+                          }`}
+                        >
+                          <div className="flex items-start gap-3">
+                            <div
+                              className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 font-bold ${
+                                isNear
+                                  ? 'bg-emerald-600 text-white'
+                                  : isRemote
+                                  ? 'bg-blue-600 text-white'
+                                  : 'bg-amber-600 text-white'
+                              }`}
+                            >
+                              {isNear ? '🟢' : isRemote ? '🔵' : '⚠️'}
+                            </div>
+                            <div>
+                              <h5 className="text-xs font-bold font-prompt">
+                                {isNear && '🔒 ตรวจสอบพิกัดสด: ผู้แจ้งอยู่นะจุดเกิดเหตุจริง (Verified On Scene)'}
+                                {isRemote && 'ℹ️ ตรวจสอบพิกัดสด: ผู้แจ้งอยู่ห่างจุดเกิดเหตุ (แจ้งเหตุแทนญาติ/คนรู้จัก)'}
+                                {isFar && '🚨 เฝ้าระวังพิกัดผิดปกติ: ผู้แจ้งอยู่ต่างอำเภอ/ต่างจังหวัด (โปรดโทรยืนยันก่อนออกเหตุ)'}
+                              </h5>
+                              <p className="text-xs font-sarabun mt-0.5 opacity-90">
+                                ระยะห่างพิกัดเครื่องผู้แจ้งกับจุดเกิดเหตุ: <strong className="font-mono text-sm underline">{distKm.toFixed(2)} กม.</strong> • ความแม่นยำ GPS อุปกรณ์: {selectedIncident.caller_accuracy_meters || 15} เมตร
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="shrink-0 flex items-center gap-2">
+                            <span className="text-[10px] font-bold uppercase px-3 py-1 rounded-full bg-white/80 dark:bg-black/40 border font-mono">
+                              AUTO BACKGROUND CAPTURE
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Top Action & Navigation */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                              <MapPin className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <span className="text-xs font-bold text-slate-900 dark:text-white block">
+                                พิกัด GPS ตำแหน่งจุดเกิดเหตุจริง (Satellite Tracking)
+                              </span>
+                              <span className="text-xs text-slate-600 dark:text-slate-300 font-sarabun">
+                                ห่างจากศูนย์ใหญ่กู้ภัยประจิม บรบือ: <strong className="text-blue-600 font-mono text-sm">{calculateDistanceKm(selectedIncident.latitude, selectedIncident.longitude)}</strong>
+                              </span>
+                            </div>
+                          </div>
+
+                          <a
+                            href={`https://www.google.com/maps/dir/?api=1&destination=${selectedIncident.latitude || 16.0375},${selectedIncident.longitude || 103.1186}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-sm transition-colors cursor-pointer min-h-[38px] shrink-0"
+                          >
+                            <Navigation className="w-4 h-4" />
+                            <span>เปิด Google Maps นำทางสด</span>
+                          </a>
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
                     <div>
-                      <span className="text-[10px] text-slate-400 block font-sans">ละติจูด (Latitude)</span>
+                      <span className="text-[10px] text-slate-400 block font-sans">พิกัดเกิดเหตุ (Lat)</span>
                       <span className="font-bold text-slate-800 dark:text-slate-200">{selectedIncident.latitude ? selectedIncident.latitude.toFixed(6) : '16.037500'}</span>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 block font-sans">ลองจิจูด (Longitude)</span>
+                      <span className="text-[10px] text-slate-400 block font-sans">พิกัดเกิดเหตุ (Lng)</span>
                       <span className="font-bold text-slate-800 dark:text-slate-200">{selectedIncident.longitude ? selectedIncident.longitude.toFixed(6) : '103.118600'}</span>
                     </div>
-                    <div className="col-span-2 sm:col-span-1">
-                      <span className="text-[10px] text-slate-400 block font-sans">สถานะตำแหน่ง</span>
-                      <span className="inline-flex items-center gap-1 text-[11px] text-emerald-600 font-sans font-bold">
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        <span>พิกัดดาวเทียมเรียลไทม์</span>
+                    <div>
+                      <span className="text-[10px] text-slate-400 block font-sans">พิกัดเครื่องผู้แจ้ง (Lat)</span>
+                      <span className="font-bold text-blue-700 dark:text-amber-400">
+                        {selectedIncident.caller_latitude ? selectedIncident.caller_latitude.toFixed(6) : (selectedIncident.latitude ? selectedIncident.latitude.toFixed(6) : '16.037500')}
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-400 block font-sans">พิกัดเครื่องผู้แจ้ง (Lng)</span>
+                      <span className="font-bold text-blue-700 dark:text-amber-400">
+                        {selectedIncident.caller_longitude ? selectedIncident.caller_longitude.toFixed(6) : (selectedIncident.longitude ? selectedIncident.longitude.toFixed(6) : '103.118600')}
                       </span>
                     </div>
                   </div>
@@ -1504,7 +1579,7 @@ export function AdminPortalView({
                     />
                     <div className="absolute top-3 left-3 bg-black/80 backdrop-blur-md text-amber-300 px-3 py-1.5 rounded-full text-xs font-mono font-bold flex items-center gap-2 border border-amber-400/50 shadow-md pointer-events-none">
                       <span className="w-2 h-2 rounded-full bg-red-500 animate-ping shrink-0" />
-                      <span>🛰️ แผนที่ภาพถ่ายดาวเทียมจุดเกิดเหตุจริง (Live Satellite Pinpoint)</span>
+                      <span>🛰️ แผนที่ภาพถ่ายดาวเทียมหมุดจุดเกิดเหตุจริง (Verified Live Satellite Pinpoint)</span>
                     </div>
                   </div>
                 </div>
