@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Prompt } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/react';
 import './globals.css';
 
 const promptFont = Prompt({
@@ -34,8 +35,10 @@ export default function RootLayout({
     <html lang="th" className={`${promptFont.variable} scroll-smooth`}>
       <body className="font-prompt antialiased bg-[#080d1a] text-slate-100 selection:bg-red-600 selection:text-white min-h-screen">
         {children}
+        <Analytics />
       </body>
     </html>
   );
 }
+
 
