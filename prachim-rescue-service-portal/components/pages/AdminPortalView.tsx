@@ -251,6 +251,8 @@ export function AdminPortalView({
   const handleOpenCreateDrawer = (moduleName: typeof activeMenu) => {
     setSlideDrawerModule(moduleName);
     setEditingItemId(null);
+    setDrawerFleetImage('');
+    setDrawerOfficerImage('');
     setIsSlideDrawerOpen(true);
   };
 
@@ -258,6 +260,22 @@ export function AdminPortalView({
   const handleOpenEditDrawer = (moduleName: typeof activeMenu, itemId: string) => {
     setSlideDrawerModule(moduleName);
     setEditingItemId(itemId);
+    if (moduleName === 'missions') {
+      const m = missions.find((item) => item.id === itemId);
+      if (m?.cover_image_url) setMissionCoverImage(m.cover_image_url);
+    } else if (moduleName === 'news') {
+      const n = news.find((item) => item.id === itemId);
+      if (n?.cover_image_url) setNewsCoverImage(n.cover_image_url);
+    } else if (moduleName === 'fleet') {
+      const f = fleet.find((item) => item.id === itemId);
+      if (f?.image_url) setDrawerFleetImage(f.image_url);
+    } else if (moduleName === 'officers') {
+      const o = officers.find((item) => item.id === itemId);
+      if (o?.photo_url) setDrawerOfficerImage(o.photo_url);
+    } else if (moduleName === 'hero_slides') {
+      const s = heroSlides.find((item) => item.id === itemId);
+      if (s?.cover_image) setSlideCoverImage(s.cover_image);
+    }
     setIsSlideDrawerOpen(true);
   };
 
@@ -425,8 +443,8 @@ export function AdminPortalView({
   const bgMasterList = isLight ? 'bg-slate-100/70 border-slate-200' : 'bg-[#0e1f4d] border-blue-900/60';
   const bgMasterHeader = isLight ? 'bg-white border-slate-200' : 'bg-[#0c1a40] border-blue-900/60';
   const bgWorkspace = isLight ? 'bg-slate-50' : 'bg-[#070e24]';
-  const cardBg = isLight ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-900/90 border-blue-900/60 shadow-xl';
-  const cardSubBg = isLight ? 'bg-slate-50 border-slate-200' : 'bg-blue-950/40 border-blue-900/40';
+  const cardBg = isLight ? 'bg-white border-slate-300 shadow-sm' : 'bg-slate-900/90 border-blue-900/60 shadow-xl';
+  const cardSubBg = isLight ? 'bg-[#f4f7fc] border-slate-300' : 'bg-blue-950/50 border-blue-900/50';
 
   return (
     <div className={`h-screen w-screen flex flex-col font-prompt overflow-hidden selection:bg-red-600 selection:text-white ${bgMain}`}>
@@ -753,22 +771,22 @@ export function AdminPortalView({
                             ? 'bg-blue-50 border-[#16377e] shadow-sm ring-1 ring-[#16377e]'
                             : 'bg-[#16377e] border-amber-400 shadow-md'
                           : isLight
-                          ? 'bg-white hover:bg-slate-50 border-slate-200 text-slate-800'
+                          ? 'bg-white hover:bg-slate-50 border-slate-300 text-slate-900'
                           : 'bg-[#0a1636]/70 hover:bg-blue-950/60 border-blue-900/40 text-blue-100'
                       }
                     `}
                   >
                     <div className="flex items-start justify-between gap-2 mb-1">
-                      <span className="text-xs font-mono font-bold text-blue-700">
+                      <span className="text-xs font-mono font-black text-blue-800 dark:text-amber-400">
                         {inc.incident_number}
                       </span>
                       <span
                         className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                           inc.status === 'pending'
-                            ? 'bg-red-100 text-red-700 border border-red-300'
+                            ? 'bg-red-100 text-red-800 border border-red-300 font-black'
                             : inc.status === 'resolved'
-                            ? 'bg-emerald-100 text-emerald-700 border border-emerald-300'
-                            : 'bg-amber-100 text-amber-800 border border-amber-300'
+                            ? 'bg-emerald-100 text-emerald-900 border border-emerald-300 font-black'
+                            : 'bg-amber-100 text-amber-900 border border-amber-300 font-black'
                         }`}
                       >
                         {inc.status === 'pending'
@@ -778,10 +796,10 @@ export function AdminPortalView({
                           : 'กำลังปฏิบัติการ'}
                       </span>
                     </div>
-                    <h4 className={`text-xs font-bold line-clamp-1 mb-0.5 ${isLight ? 'text-slate-900' : 'text-white'}`}>
+                    <h4 className={`text-xs font-black line-clamp-1 mb-0.5 ${isLight ? 'text-slate-950' : 'text-white'}`}>
                       {inc.caller_name} • {inc.location_name}
                     </h4>
-                    <p className={`text-[11px] font-sarabun line-clamp-2 ${isLight ? 'text-slate-600' : 'text-blue-200/80'}`}>
+                    <p className={`text-[11px] font-sarabun font-semibold line-clamp-2 ${isLight ? 'text-slate-800' : 'text-blue-100'}`}>
                       {inc.details || 'ไม่มีรายละเอียดเพิ่มเติม'}
                     </p>
                   </div>
@@ -807,19 +825,19 @@ export function AdminPortalView({
                             ? 'bg-blue-50 border-[#16377e] shadow-sm ring-1 ring-[#16377e]'
                             : 'bg-[#16377e] border-amber-400 shadow-md'
                           : isLight
-                          ? 'bg-white hover:bg-slate-50 border-slate-200'
+                          ? 'bg-white hover:bg-slate-50 border-slate-300'
                           : 'bg-[#0a1636]/70 hover:bg-blue-950/60 border-blue-900/40'
                       }
                     `}
                   >
                     <div
-                      className="w-12 h-12 rounded-xl bg-cover bg-center shrink-0 border border-slate-300"
+                      className="w-12 h-12 rounded-xl bg-cover bg-center shrink-0 border border-slate-300 shadow-xs"
                       style={{ backgroundImage: `url(${m.cover_image_url})` }}
                     />
                     <div className="flex-1 min-w-0">
-                      <span className="text-[10px] text-blue-700 font-mono font-bold">{m.incident_date}</span>
-                      <h4 className={`text-xs font-bold line-clamp-1 ${isLight ? 'text-slate-900' : 'text-white'}`}>{m.title}</h4>
-                      <p className={`text-[11px] font-sarabun truncate ${isLight ? 'text-slate-600' : 'text-blue-200/70'}`}>{m.location}</p>
+                      <span className="text-[10px] text-blue-800 dark:text-amber-400 font-mono font-bold">{m.incident_date}</span>
+                      <h4 className={`text-xs font-black line-clamp-1 ${isLight ? 'text-slate-950' : 'text-white'}`}>{m.title}</h4>
+                      <p className={`text-[11px] font-sarabun font-semibold truncate ${isLight ? 'text-slate-800' : 'text-blue-100'}`}>{m.location}</p>
                     </div>
                   </div>
                 );
@@ -844,14 +862,14 @@ export function AdminPortalView({
                             ? 'bg-blue-50 border-[#16377e] shadow-sm ring-1 ring-[#16377e]'
                             : 'bg-[#16377e] border-amber-400 shadow-md'
                           : isLight
-                          ? 'bg-white hover:bg-slate-50 border-slate-200'
+                          ? 'bg-white hover:bg-slate-50 border-slate-300'
                           : 'bg-[#0a1636]/70 hover:bg-blue-950/60 border-blue-900/40'
                       }
                     `}
                   >
-                    <span className="text-[10px] text-blue-700 font-mono font-bold">{n.published_date}</span>
-                    <h4 className={`text-xs font-bold line-clamp-2 my-1 ${isLight ? 'text-slate-900' : 'text-white'}`}>{n.title}</h4>
-                    <p className={`text-[11px] font-sarabun line-clamp-2 ${isLight ? 'text-slate-600' : 'text-blue-200/70'}`}>{n.summary}</p>
+                    <span className="text-[10px] text-blue-800 dark:text-amber-400 font-mono font-bold">{n.published_date}</span>
+                    <h4 className={`text-xs font-black line-clamp-2 my-1 ${isLight ? 'text-slate-950' : 'text-white'}`}>{n.title}</h4>
+                    <p className={`text-[11px] font-sarabun font-semibold line-clamp-2 ${isLight ? 'text-slate-800' : 'text-blue-100'}`}>{n.summary}</p>
                   </div>
                 );
               })}
@@ -875,21 +893,21 @@ export function AdminPortalView({
                             ? 'bg-blue-50 border-[#16377e] shadow-sm ring-1 ring-[#16377e]'
                             : 'bg-[#16377e] border-amber-400 shadow-md'
                           : isLight
-                          ? 'bg-white hover:bg-slate-50 border-slate-200'
+                          ? 'bg-white hover:bg-slate-50 border-slate-300'
                           : 'bg-[#0a1636]/70 hover:bg-blue-950/60 border-blue-900/40'
                       }
                     `}
                   >
                     <div>
-                      <span className="text-xs font-mono font-bold text-blue-700">{f.call_sign}</span>
-                      <h4 className={`text-xs font-bold line-clamp-1 mt-0.5 ${isLight ? 'text-slate-900' : 'text-white'}`}>{f.name_th}</h4>
-                      <p className={`text-[10px] font-sarabun ${isLight ? 'text-slate-500' : 'text-blue-300'}`}>{f.plate_number || 'ประจำศูนย์'}</p>
+                      <span className="text-xs font-mono font-bold text-blue-800 dark:text-amber-400">{f.call_sign}</span>
+                      <h4 className={`text-xs font-black line-clamp-1 mt-0.5 ${isLight ? 'text-slate-950' : 'text-white'}`}>{f.name_th}</h4>
+                      <p className={`text-[11px] font-sarabun font-semibold ${isLight ? 'text-slate-800' : 'text-blue-100'}`}>{f.plate_number || 'ประจำศูนย์'}</p>
                     </div>
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                         f.status === 'available'
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : 'bg-red-100 text-red-800'
+                          ? 'bg-emerald-100 text-emerald-900 font-bold border border-emerald-300'
+                          : 'bg-red-100 text-red-900 font-bold border border-red-300'
                       }`}
                     >
                       {f.status === 'available' ? 'พร้อมออกเหตุ' : 'ออกเหตุ'}
@@ -917,19 +935,19 @@ export function AdminPortalView({
                             ? 'bg-blue-50 border-[#16377e] shadow-sm ring-1 ring-[#16377e]'
                             : 'bg-[#16377e] border-amber-400 shadow-md'
                           : isLight
-                          ? 'bg-white hover:bg-slate-50 border-slate-200'
+                          ? 'bg-white hover:bg-slate-50 border-slate-300'
                           : 'bg-[#0a1636]/70 hover:bg-blue-950/60 border-blue-900/40'
                       }
                     `}
                   >
                     <div>
-                      <span className="text-xs font-mono font-bold text-blue-700">{o.officer_code}</span>
-                      <h4 className={`text-xs font-bold line-clamp-1 mt-0.5 ${isLight ? 'text-slate-900' : 'text-white'}`}>{o.full_name}</h4>
-                      <p className={`text-[10px] font-sarabun ${isLight ? 'text-slate-500' : 'text-blue-300'}`}>{o.role_title}</p>
+                      <span className="text-xs font-mono font-bold text-blue-800 dark:text-amber-400">{o.officer_code}</span>
+                      <h4 className={`text-xs font-black line-clamp-1 mt-0.5 ${isLight ? 'text-slate-950' : 'text-white'}`}>{o.full_name}</h4>
+                      <p className={`text-[11px] font-sarabun font-semibold ${isLight ? 'text-slate-800' : 'text-blue-100'}`}>{o.role_title}</p>
                     </div>
                     <span
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        o.is_on_duty ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'
+                        o.is_on_duty ? 'bg-emerald-100 text-emerald-900 font-bold border border-emerald-300' : 'bg-slate-200 text-slate-800 border border-slate-300'
                       }`}
                     >
                       {o.is_on_duty ? 'เข้าเวร' : 'พักเวร'}
@@ -957,14 +975,14 @@ export function AdminPortalView({
                             ? 'bg-blue-50 border-[#16377e] shadow-sm ring-1 ring-[#16377e]'
                             : 'bg-[#16377e] border-amber-400 shadow-md'
                           : isLight
-                          ? 'bg-white hover:bg-slate-50 border-slate-200'
+                          ? 'bg-white hover:bg-slate-50 border-slate-300'
                           : 'bg-[#0a1636]/70 hover:bg-blue-950/60 border-blue-900/40'
                       }
                     `}
                   >
-                    <span className="text-[10px] font-mono text-blue-700 font-bold">{c.slug}</span>
-                    <h4 className={`text-xs font-bold mt-0.5 ${isLight ? 'text-slate-900' : 'text-white'}`}>{c.name_th}</h4>
-                    <p className={`text-[11px] font-sarabun line-clamp-2 mt-1 ${isLight ? 'text-slate-600' : 'text-blue-200/70'}`}>{c.description}</p>
+                    <span className="text-[10px] font-mono text-blue-800 dark:text-amber-400 font-bold">{c.slug}</span>
+                    <h4 className={`text-xs font-black mt-0.5 ${isLight ? 'text-slate-950' : 'text-white'}`}>{c.name_th}</h4>
+                    <p className={`text-[11px] font-sarabun font-semibold line-clamp-2 mt-1 ${isLight ? 'text-slate-800' : 'text-blue-100'}`}>{c.description}</p>
                   </div>
                 );
               })}
@@ -988,19 +1006,19 @@ export function AdminPortalView({
                             ? 'bg-blue-50 border-[#16377e] shadow-sm ring-1 ring-[#16377e]'
                             : 'bg-[#16377e] border-amber-400 shadow-md'
                           : isLight
-                          ? 'bg-white hover:bg-slate-50 border-slate-200'
+                          ? 'bg-white hover:bg-slate-50 border-slate-300'
                           : 'bg-[#0a1636]/70 hover:bg-blue-950/60 border-blue-900/40'
                       }
                     `}
                   >
                     <div
-                      className="w-12 h-12 rounded-xl bg-cover bg-center shrink-0 border border-slate-300"
+                      className="w-12 h-12 rounded-xl bg-cover bg-center shrink-0 border border-slate-300 shadow-xs"
                       style={{ backgroundImage: `url(${s.cover_image})` }}
                     />
                     <div className="flex-1 min-w-0">
-                      <span className="text-[10px] text-blue-700 font-mono font-bold">สไลด์ที่ {idx + 1}</span>
-                      <h4 className={`text-xs font-bold line-clamp-1 ${isLight ? 'text-slate-900' : 'text-white'}`}>{s.title_line1}</h4>
-                      <p className={`text-[10px] font-sarabun truncate ${isLight ? 'text-slate-500' : 'text-blue-200/70'}`}>{s.badge}</p>
+                      <span className="text-[10px] text-blue-800 dark:text-amber-400 font-mono font-bold">สไลด์ที่ {idx + 1}</span>
+                      <h4 className={`text-xs font-black line-clamp-1 ${isLight ? 'text-slate-950' : 'text-white'}`}>{s.title_line1}</h4>
+                      <p className={`text-[11px] font-sarabun font-semibold truncate ${isLight ? 'text-slate-800' : 'text-blue-100'}`}>{s.badge}</p>
                     </div>
                   </div>
                 );
@@ -1538,6 +1556,13 @@ export function AdminPortalView({
                   </div>
                   <div className="flex items-center gap-2">
                     <button
+                      onClick={() => handleOpenEditDrawer('missions', selectedMission.id)}
+                      className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer min-h-[38px]"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                      <span>แก้ไขภารกิจ</span>
+                    </button>
+                    <button
                       onClick={() => handleOpenCreateDrawer('missions')}
                       className="px-4 py-2 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-xs cursor-pointer min-h-[38px]"
                     >
@@ -1588,6 +1613,13 @@ export function AdminPortalView({
                   </div>
                   <div className="flex items-center gap-2">
                     <button
+                      onClick={() => handleOpenEditDrawer('news', selectedNews.id)}
+                      className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer min-h-[38px]"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                      <span>แก้ไขข่าว</span>
+                    </button>
+                    <button
                       onClick={() => handleOpenCreateDrawer('news')}
                       className="px-4 py-2 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-xs cursor-pointer min-h-[38px]"
                     >
@@ -1633,6 +1665,13 @@ export function AdminPortalView({
                     <h3 className={`text-xl font-bold mt-0.5 ${isLight ? 'text-slate-900' : 'text-white'}`}>{selectedFleetItem.name_th}</h3>
                   </div>
                   <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleOpenEditDrawer('fleet', selectedFleetItem.id)}
+                      className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer min-h-[38px]"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                      <span>แก้ไขรถ/อุปกรณ์</span>
+                    </button>
                     <button
                       onClick={() =>
                         onUpdateFleetStatus(
@@ -1725,6 +1764,13 @@ export function AdminPortalView({
 
                   <div className="flex items-center gap-2">
                     <button
+                      onClick={() => handleOpenEditDrawer('officers', selectedOfficer.id)}
+                      className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer min-h-[38px]"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                      <span>แก้ไขข้อมูล</span>
+                    </button>
+                    <button
                       onClick={() => onToggleOfficerDuty(selectedOfficer.id)}
                       className={`px-4 py-2 rounded-xl text-xs font-bold cursor-pointer transition-all min-h-[38px] ${
                         selectedOfficer.is_on_duty
@@ -1778,6 +1824,13 @@ export function AdminPortalView({
                   </div>
                   <div className="flex items-center gap-2">
                     <button
+                      onClick={() => handleOpenEditDrawer('categories', selectedCategory.id)}
+                      className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer min-h-[38px]"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                      <span>แก้ไขหมวดหมู่</span>
+                    </button>
+                    <button
                       onClick={() => handleOpenCreateDrawer('categories')}
                       className="px-4 py-2 rounded-xl bg-[#16377e] hover:bg-[#0f2452] text-white font-bold text-xs cursor-pointer min-h-[38px]"
                     >
@@ -1830,6 +1883,13 @@ export function AdminPortalView({
                     </h3>
                   </div>
                   <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleOpenEditDrawer('hero_slides', selectedSlide.id)}
+                      className="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs inline-flex items-center gap-1.5 cursor-pointer min-h-[38px]"
+                    >
+                      <Edit2 className="w-3.5 h-3.5" />
+                      <span>แก้ไขสไลด์</span>
+                    </button>
                     {onUpdateHeroSlide && (
                       <button
                         onClick={() =>
@@ -2130,12 +2190,13 @@ export function AdminPortalView({
                 </div>
                 <div>
                   <h3 className={`text-base font-bold ${isLight ? 'text-slate-900' : 'text-white'}`}>
-                    {slideDrawerModule === 'missions' && 'เพิ่มบันทึกภารกิจปฏิบัติการใหม่'}
-                    {slideDrawerModule === 'news' && 'เผยแพร่ข่าวสารประชาสัมพันธ์ใหม่'}
-                    {slideDrawerModule === 'fleet' && 'เพิ่มยานพาหนะหรืออุปกรณ์กู้ชีพใหม่'}
-                    {slideDrawerModule === 'officers' && 'เพิ่มเจ้าหน้าที่กู้ภัยใหม่'}
-                    {slideDrawerModule === 'categories' && 'เพิ่มหมวดหมู่งานกู้ภัยใหม่'}
-                    {slideDrawerModule === 'hero_slides' && 'เพิ่มสไลด์แบนเนอร์หน้าแรก'}
+                    {editingItemId ? 'แก้ไขข้อมูล: ' : 'เพิ่มข้อมูลใหม่: '}
+                    {slideDrawerModule === 'missions' && (editingItemId ? 'แก้ไขบันทึกภารกิจ' : 'เพิ่มบันทึกภารกิจปฏิบัติการใหม่')}
+                    {slideDrawerModule === 'news' && (editingItemId ? 'แก้ไขข่าวประชาสัมพันธ์' : 'เผยแพร่ข่าวสารประชาสัมพันธ์ใหม่')}
+                    {slideDrawerModule === 'fleet' && (editingItemId ? 'แก้ไขยานพาหนะ/อุปกรณ์' : 'เพิ่มยานพาหนะหรืออุปกรณ์กู้ชีพใหม่')}
+                    {slideDrawerModule === 'officers' && (editingItemId ? 'แก้ไขข้อมูลเจ้าหน้าที่' : 'เพิ่มเจ้าหน้าที่กู้ภัยใหม่')}
+                    {slideDrawerModule === 'categories' && (editingItemId ? 'แก้ไขหมวดหมู่งานกู้ภัย' : 'เพิ่มหมวดหมู่งานกู้ภัยใหม่')}
+                    {slideDrawerModule === 'hero_slides' && (editingItemId ? 'แก้ไขสไลด์แบนเนอร์' : 'เพิ่มสไลด์แบนเนอร์หน้าแรก')}
                     {slideDrawerModule === 'incidents' && 'รับแจ้งเหตุฉุกเฉินด่วน (Admin Quick Dispatch)'}
                   </h3>
                   <span className="text-[11px] text-blue-600 font-mono font-bold">
@@ -2156,581 +2217,707 @@ export function AdminPortalView({
             {/* Drawer Scrollable Body Form */}
             <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-4 scrollbar-thin">
               {/* FORM: MISSIONS */}
-              {slideDrawerModule === 'missions' && (
-                <form
-                  id="drawer-mission-form"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const form = e.currentTarget;
-                    const title = (form.elements.namedItem('m_title') as HTMLInputElement).value;
-                    const location = (form.elements.namedItem('m_location') as HTMLInputElement).value;
-                    const catSlug = (form.elements.namedItem('m_cat') as HTMLSelectElement).value;
-                    const summary = (form.elements.namedItem('m_summary') as HTMLTextAreaElement).value;
-                    const details = (form.elements.namedItem('m_details') as HTMLTextAreaElement).value;
+              {slideDrawerModule === 'missions' && (() => {
+                const item = editingItemId ? missions.find((m) => m.id === editingItemId) : null;
+                return (
+                  <form
+                    id="drawer-mission-form"
+                    key={editingItemId || 'new-mission'}
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      const form = e.currentTarget;
+                      const title = (form.elements.namedItem('m_title') as HTMLInputElement).value;
+                      const location = (form.elements.namedItem('m_location') as HTMLInputElement).value;
+                      const catSlug = (form.elements.namedItem('m_cat') as HTMLSelectElement).value;
+                      const summary = (form.elements.namedItem('m_summary') as HTMLTextAreaElement).value;
+                      const details = (form.elements.namedItem('m_details') as HTMLTextAreaElement).value;
 
-                    onAddMission({
-                      title,
-                      location,
-                      district: 'บรบือ',
-                      incident_date: new Date().toISOString().split('T')[0],
-                      category_slug: catSlug,
-                      summary,
-                      details,
-                      cover_image_url: missionCoverImage,
-                      is_featured: true,
-                      officer_count: 4,
-                    });
-                    setIsSlideDrawerOpen(false);
-                  }}
-                  className="space-y-4"
-                >
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">หัวข้อภารกิจ</label>
-                    <input
-                      name="m_title"
-                      required
-                      placeholder="เช่น ช่วยเหลือผู้ประสบอุบัติเหตุทางถนน บริเวณแยกบรบือ"
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      if (editingItemId) {
+                        onUpdateMission(editingItemId, {
+                          title,
+                          location,
+                          category_slug: catSlug,
+                          summary,
+                          details,
+                          cover_image_url: missionCoverImage,
+                        });
+                        showToast('บันทึกการแก้ไขภารกิจเรียบร้อยแล้ว');
+                      } else {
+                        onAddMission({
+                          title,
+                          location,
+                          district: 'บรบือ',
+                          incident_date: new Date().toISOString().split('T')[0],
+                          category_slug: catSlug,
+                          summary,
+                          details,
+                          cover_image_url: missionCoverImage,
+                          is_featured: true,
+                          officer_count: 4,
+                        });
+                        showToast('เพิ่มภารกิจใหม่ขึ้นระบบเรียบร้อยแล้ว');
+                      }
+                      setIsSlideDrawerOpen(false);
+                    }}
+                    className="space-y-4"
+                  >
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">หมวดหมู่</label>
-                      <select
-                        name="m_cat"
+                      <label className="block text-xs font-bold text-slate-700 mb-1">หัวข้อภารกิจ</label>
+                      <input
+                        name="m_title"
+                        required
+                        defaultValue={item?.title || ''}
+                        placeholder="เช่น ช่วยเหลือผู้ประสบอุบัติเหตุทางถนน บริเวณแยกบรบือ"
                         className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
-                      >
-                        {categories.map((c) => (
-                          <option key={c.slug} value={c.slug}>
-                            {c.name_th}
-                          </option>
-                        ))}
-                      </select>
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">หมวดหมู่</label>
+                        <select
+                          name="m_cat"
+                          defaultValue={item?.category_slug || categories[0]?.slug}
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
+                        >
+                          {categories.map((c) => (
+                            <option key={c.slug} value={c.slug}>
+                              {c.name_th}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">สถานที่เกิดเหตุ</label>
+                        <input
+                          name="m_location"
+                          required
+                          defaultValue={item?.location || ''}
+                          placeholder="ต.บรบือ อ.บรบือ จ.มหาสารคาม"
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
+                        />
+                      </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">สถานที่เกิดเหตุ</label>
-                      <input
-                        name="m_location"
+                      <ImageUploadField
+                        label="รูปภาพหน้าปกภารกิจ (อัปโหลดจากเครื่อง)"
+                        value={missionCoverImage}
+                        onChange={setMissionCoverImage}
                         required
-                        placeholder="ต.บรบือ อ.บรบือ จ.มหาสารคาม"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">สรุปย่อผลการปฏิบัติงาน</label>
+                      <textarea
+                        name="m_summary"
+                        rows={2}
+                        required
+                        defaultValue={item?.summary || ''}
+                        placeholder="สรุปย่อเหตุการณ์และการให้ความช่วยเหลือ..."
                         className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
                       />
                     </div>
-                  </div>
 
-                  <div>
-                    <ImageUploadField
-                      label="รูปภาพหน้าปกภารกิจ (อัปโหลดจากเครื่อง)"
-                      value={missionCoverImage}
-                      onChange={setMissionCoverImage}
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">สรุปย่อผลการปฏิบัติงาน</label>
-                    <textarea
-                      name="m_summary"
-                      rows={2}
-                      required
-                      placeholder="สรุปย่อเหตุการณ์และการให้ความช่วยเหลือ..."
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">รายละเอียดเชิงลึก</label>
-                    <textarea
-                      name="m_details"
-                      rows={4}
-                      placeholder="บันทึกขั้นตอนการใช้อุปกรณ์ตัด-ถ่าง การปฐมพยาบาล และการนำส่งโรงพยาบาล..."
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
-                    />
-                  </div>
-                </form>
-              )}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">รายละเอียดเชิงลึก</label>
+                      <textarea
+                        name="m_details"
+                        rows={4}
+                        defaultValue={item?.details || ''}
+                        placeholder="บันทึกขั้นตอนการใช้อุปกรณ์ตัด-ถ่าง การปฐมพยาบาล และการนำส่งโรงพยาบาล..."
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
+                      />
+                    </div>
+                  </form>
+                );
+              })()}
 
               {/* FORM: FLEET */}
-              {slideDrawerModule === 'fleet' && (
-                <form
-                  id="drawer-fleet-form"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const form = e.currentTarget;
-                    const callSign = (form.elements.namedItem('f_callsign') as HTMLInputElement).value;
-                    const nameTh = (form.elements.namedItem('f_name') as HTMLInputElement).value;
-                    const plate = (form.elements.namedItem('f_plate') as HTMLInputElement).value;
-                    const base = (form.elements.namedItem('f_base') as HTMLInputElement).value;
-                    const specs = (form.elements.namedItem('f_specs') as HTMLTextAreaElement).value;
+              {slideDrawerModule === 'fleet' && (() => {
+                const item = editingItemId ? fleet.find((f) => f.id === editingItemId) : null;
+                return (
+                  <form
+                    id="drawer-fleet-form"
+                    key={editingItemId || 'new-fleet'}
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      const form = e.currentTarget;
+                      const callSign = (form.elements.namedItem('f_callsign') as HTMLInputElement).value;
+                      const nameTh = (form.elements.namedItem('f_name') as HTMLInputElement).value;
+                      const plate = (form.elements.namedItem('f_plate') as HTMLInputElement).value;
+                      const base = (form.elements.namedItem('f_base') as HTMLInputElement).value;
+                      const specs = (form.elements.namedItem('f_specs') as HTMLTextAreaElement).value;
 
-                    if (onAddFleetItem) {
-                      onAddFleetItem({
-                        call_sign: callSign,
-                        name_th: nameTh,
-                        equipment_type: 'ambulance_ems',
-                        status: 'available',
-                        plate_number: plate,
-                        location_base: base,
-                        specifications: specs,
-                      });
-                    }
-                    setIsSlideDrawerOpen(false);
-                  }}
-                  className="space-y-4"
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      if (editingItemId && onUpdateFleetItem) {
+                        onUpdateFleetItem(editingItemId, {
+                          call_sign: callSign,
+                          name_th: nameTh,
+                          plate_number: plate,
+                          location_base: base,
+                          specifications: specs,
+                          image_url: drawerFleetImage,
+                        });
+                        showToast('บันทึกการแก้ไขยานพาหนะเรียบร้อยแล้ว');
+                      } else if (onAddFleetItem) {
+                        onAddFleetItem({
+                          call_sign: callSign,
+                          name_th: nameTh,
+                          equipment_type: 'ambulance_ems',
+                          status: 'available',
+                          plate_number: plate,
+                          location_base: base,
+                          specifications: specs,
+                          image_url: drawerFleetImage,
+                        });
+                        showToast('เพิ่มยานพาหนะ/อุปกรณ์ใหม่เรียบร้อยแล้ว');
+                      }
+                      setIsSlideDrawerOpen(false);
+                    }}
+                    className="space-y-4"
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">รหัสเรียกขาน</label>
+                        <input
+                          name="f_callsign"
+                          required
+                          defaultValue={item?.call_sign || ''}
+                          placeholder="เช่น ประจิม 05"
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm font-mono focus:border-[#16377e] focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">ทะเบียนรถ</label>
+                        <input
+                          name="f_plate"
+                          defaultValue={item?.plate_number || ''}
+                          placeholder="เช่น กข-1234 มค"
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm font-mono focus:border-[#16377e] focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">รหัสเรียกขาน</label>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">ชื่อยานพาหนะ/อุปกรณ์</label>
                       <input
-                        name="f_callsign"
+                        name="f_name"
                         required
-                        placeholder="เช่น ประจิม 05"
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm font-mono focus:border-[#16377e] focus:outline-none"
+                        defaultValue={item?.name_th || ''}
+                        placeholder="เช่น รถพยาบาลกู้ชีพฉุกเฉินระดับสูง (Advanced ALS)"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
                       />
                     </div>
+
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">ทะเบียนรถ</label>
-                      <input
-                        name="f_plate"
-                        placeholder="เช่น กข-1234 มค"
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm font-mono focus:border-[#16377e] focus:outline-none"
+                      <ImageUploadField
+                        label="รูปภาพยานพาหนะ/อุปกรณ์ (อัปโหลดจากเครื่อง)"
+                        value={drawerFleetImage}
+                        onChange={setDrawerFleetImage}
                       />
                     </div>
-                  </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">ชื่อยานพาหนะ/อุปกรณ์</label>
-                    <input
-                      name="f_name"
-                      required
-                      placeholder="เช่น รถพยาบาลกู้ชีพฉุกเฉินระดับสูง (Advanced ALS)"
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
-                    />
-                  </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">จุดประจำการ</label>
+                      <input
+                        name="f_base"
+                        defaultValue={item?.location_base || 'ศูนย์ใหญ่บรบือ'}
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
+                      />
+                    </div>
 
-                  <div>
-                    <ImageUploadField
-                      label="รูปภาพยานพาหนะ/อุปกรณ์ (อัปโหลดจากเครื่อง)"
-                      value={drawerFleetImage}
-                      onChange={setDrawerFleetImage}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">จุดประจำการ</label>
-                    <input
-                      name="f_base"
-                      defaultValue="ศูนย์ใหญ่บรบือ"
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">สเปกและอุปกรณ์ภายใน</label>
-                    <textarea
-                      name="f_specs"
-                      rows={3}
-                      placeholder="เครื่องกระตุกหัวใจ AED, เครื่องช่วยหายใจ, เปลตัก..."
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
-                    />
-                  </div>
-                </form>
-              )}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">สเปกและอุปกรณ์ภายใน</label>
+                      <textarea
+                        name="f_specs"
+                        rows={3}
+                        defaultValue={item?.specifications || ''}
+                        placeholder="เครื่องกระตุกหัวใจ AED, เครื่องช่วยหายใจ, เปลตัก..."
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
+                      />
+                    </div>
+                  </form>
+                );
+              })()}
 
               {/* FORM: OFFICERS */}
-              {slideDrawerModule === 'officers' && (
-                <form
-                  id="drawer-officer-form"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const form = e.currentTarget;
-                    const code = (form.elements.namedItem('o_code') as HTMLInputElement).value;
-                    const name = (form.elements.namedItem('o_name') as HTMLInputElement).value;
-                    const role = (form.elements.namedItem('o_role') as HTMLInputElement).value;
-                    const phone = (form.elements.namedItem('o_phone') as HTMLInputElement).value;
-                    const station = (form.elements.namedItem('o_station') as HTMLInputElement).value;
+              {slideDrawerModule === 'officers' && (() => {
+                const item = editingItemId ? officers.find((o) => o.id === editingItemId) : null;
+                return (
+                  <form
+                    id="drawer-officer-form"
+                    key={editingItemId || 'new-officer'}
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      const form = e.currentTarget;
+                      const code = (form.elements.namedItem('o_code') as HTMLInputElement).value;
+                      const name = (form.elements.namedItem('o_name') as HTMLInputElement).value;
+                      const role = (form.elements.namedItem('o_role') as HTMLInputElement).value;
+                      const phone = (form.elements.namedItem('o_phone') as HTMLInputElement).value;
+                      const station = (form.elements.namedItem('o_station') as HTMLInputElement).value;
 
-                    if (onAddOfficer) {
-                      onAddOfficer({
-                        officer_code: code,
-                        full_name: name,
-                        role_title: role,
-                        phone: phone || '061-119-3342',
-                        station_base: station,
-                        is_on_duty: true,
-                        joined_date: new Date().toISOString().split('T')[0],
-                        photo_url: drawerOfficerImage || '',
-                      });
-                    }
-                    setIsSlideDrawerOpen(false);
-                  }}
-                  className="space-y-4"
-                >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      if (editingItemId && onUpdateOfficer) {
+                        onUpdateOfficer(editingItemId, {
+                          officer_code: code,
+                          full_name: name,
+                          role_title: role,
+                          phone: phone || '061-119-3342',
+                          station_base: station,
+                          photo_url: drawerOfficerImage || '',
+                        });
+                        showToast('บันทึกการแก้ไขเจ้าหน้าที่เรียบร้อยแล้ว');
+                      } else if (onAddOfficer) {
+                        onAddOfficer({
+                          officer_code: code,
+                          full_name: name,
+                          role_title: role,
+                          phone: phone || '061-119-3342',
+                          station_base: station,
+                          is_on_duty: true,
+                          joined_date: new Date().toISOString().split('T')[0],
+                          photo_url: drawerOfficerImage || '',
+                        });
+                        showToast('เพิ่มเจ้าหน้าที่ใหม่เรียบร้อยแล้ว');
+                      }
+                      setIsSlideDrawerOpen(false);
+                    }}
+                    className="space-y-4"
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">รหัสประจำตัว</label>
+                        <input
+                          name="o_code"
+                          required
+                          defaultValue={item?.officer_code || ''}
+                          placeholder="เช่น PJ-009"
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm font-mono focus:border-[#16377e] focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">เบอร์โทรศัพท์</label>
+                        <input
+                          name="o_phone"
+                          defaultValue={item?.phone || '061-119-3342'}
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm font-mono focus:border-[#16377e] focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">รหัสประจำตัว</label>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">ชื่อ-นามสกุล</label>
                       <input
-                        name="o_code"
+                        name="o_name"
                         required
-                        placeholder="เช่น PJ-009"
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm font-mono focus:border-[#16377e] focus:outline-none"
+                        defaultValue={item?.full_name || ''}
+                        placeholder="เช่น นายสมชาย ใจกล้า"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
                       />
                     </div>
+
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">เบอร์โทรศัพท์</label>
-                      <input
-                        name="o_phone"
-                        defaultValue="061-119-3342"
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm font-mono focus:border-[#16377e] focus:outline-none"
+                      <ImageUploadField
+                        label="รูปภาพโปรไฟล์เจ้าหน้าที่ (อัปโหลดจากเครื่อง)"
+                        value={drawerOfficerImage}
+                        onChange={setDrawerOfficerImage}
                       />
                     </div>
-                  </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">ชื่อ-นามสกุล</label>
-                    <input
-                      name="o_name"
-                      required
-                      placeholder="เช่น นายสมชาย ใจกล้า"
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
-                    />
-                  </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">ตำแหน่งหน้าที่</label>
+                      <input
+                        name="o_role"
+                        required
+                        defaultValue={item?.role_title || ''}
+                        placeholder="เช่น เจ้าหน้าที่กู้ชีพฉุกเฉิน (EMT-B) / ผู้ช่วยนักประดาน้ำ"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
+                      />
+                    </div>
 
-                  <div>
-                    <ImageUploadField
-                      label="รูปภาพโปรไฟล์เจ้าหน้าที่ (อัปโหลดจากเครื่อง)"
-                      value={drawerOfficerImage}
-                      onChange={setDrawerOfficerImage}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">ตำแหน่งหน้าที่</label>
-                    <input
-                      name="o_role"
-                      required
-                      placeholder="เช่น เจ้าหน้าที่กู้ชีพฉุกเฉิน (EMT-B) / ผู้ช่วยนักประดาน้ำ"
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">สถานีประจำการ</label>
-                    <input
-                      name="o_station"
-                      defaultValue="ศูนย์ใหญ่บรบือ"
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
-                    />
-                  </div>
-                </form>
-              )}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">สถานีประจำการ</label>
+                      <input
+                        name="o_station"
+                        defaultValue={item?.station_base || 'ศูนย์ใหญ่บรบือ'}
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
+                      />
+                    </div>
+                  </form>
+                );
+              })()}
 
               {/* FORM: NEWS */}
-              {slideDrawerModule === 'news' && (
-                <form
-                  id="drawer-news-form"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const form = e.currentTarget;
-                    const title = (form.elements.namedItem('n_title') as HTMLInputElement).value;
-                    const summary = (form.elements.namedItem('n_summary') as HTMLTextAreaElement).value;
-                    const content = (form.elements.namedItem('n_content') as HTMLTextAreaElement).value;
+              {slideDrawerModule === 'news' && (() => {
+                const item = editingItemId ? news.find((n) => n.id === editingItemId) : null;
+                return (
+                  <form
+                    id="drawer-news-form"
+                    key={editingItemId || 'new-news'}
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      const form = e.currentTarget;
+                      const title = (form.elements.namedItem('n_title') as HTMLInputElement).value;
+                      const summary = (form.elements.namedItem('n_summary') as HTMLTextAreaElement).value;
+                      const content = (form.elements.namedItem('n_content') as HTMLTextAreaElement).value;
 
-                    onAddNews({
-                      title,
-                      summary,
-                      content,
-                      cover_image_url: newsCoverImage,
-                      published_date: new Date().toISOString().split('T')[0],
-                      is_pinned: false,
-                      author_name: 'ศูนย์ประชาสัมพันธ์ สมาคมประจิมสารคาม',
-                    });
-                    setIsSlideDrawerOpen(false);
-                  }}
-                  className="space-y-4"
-                >
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">หัวข้อข่าวประชาสัมพันธ์</label>
-                    <input
-                      name="n_title"
-                      required
-                      placeholder="เช่น ประกาศแจ้งเตือนสภาพอากาศ และการเฝ้าระวังอุบัติเหตุ"
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
-                    />
-                  </div>
+                      if (editingItemId) {
+                        onUpdateNews(editingItemId, {
+                          title,
+                          summary,
+                          content,
+                          cover_image_url: newsCoverImage,
+                        });
+                        showToast('บันทึกการแก้ไขข่าวสารเรียบร้อยแล้ว');
+                      } else {
+                        onAddNews({
+                          title,
+                          summary,
+                          content,
+                          cover_image_url: newsCoverImage,
+                          published_date: new Date().toISOString().split('T')[0],
+                          is_pinned: false,
+                          author_name: 'ศูนย์ประชาสัมพันธ์ สมาคมประจิมสารคาม',
+                        });
+                        showToast('เผยแพร่ข่าวใหม่เรียบร้อยแล้ว');
+                      }
+                      setIsSlideDrawerOpen(false);
+                    }}
+                    className="space-y-4"
+                  >
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">หัวข้อข่าวประชาสัมพันธ์</label>
+                      <input
+                        name="n_title"
+                        required
+                        defaultValue={item?.title || ''}
+                        placeholder="เช่น ประกาศแจ้งเตือนสภาพอากาศ และการเฝ้าระวังอุบัติเหตุ"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
+                      />
+                    </div>
 
-                  <div>
-                    <ImageUploadField
-                      label="รูปภาพข่าวประชาสัมพันธ์ (อัปโหลดจากเครื่อง)"
-                      value={newsCoverImage}
-                      onChange={setNewsCoverImage}
-                      required
-                    />
-                  </div>
+                    <div>
+                      <ImageUploadField
+                        label="รูปภาพข่าวประชาสัมพันธ์ (อัปโหลดจากเครื่อง)"
+                        value={newsCoverImage}
+                        onChange={setNewsCoverImage}
+                        required
+                      />
+                    </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">สรุปย่อ</label>
-                    <textarea
-                      name="n_summary"
-                      rows={2}
-                      required
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
-                    />
-                  </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">สรุปย่อ</label>
+                      <textarea
+                        name="n_summary"
+                        rows={2}
+                        required
+                        defaultValue={item?.summary || ''}
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
+                      />
+                    </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">เนื้อหาข่าวฉบับเต็ม</label>
-                    <textarea
-                      name="n_content"
-                      rows={4}
-                      required
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
-                    />
-                  </div>
-                </form>
-              )}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">เนื้อหาข่าวฉบับเต็ม</label>
+                      <textarea
+                        name="n_content"
+                        rows={4}
+                        required
+                        defaultValue={item?.content || ''}
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
+                      />
+                    </div>
+                  </form>
+                );
+              })()}
 
               {/* FORM: CATEGORIES */}
-              {slideDrawerModule === 'categories' && (
-                <form
-                  id="drawer-category-form"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const form = e.currentTarget;
-                    const nameTh = (form.elements.namedItem('c_name_th') as HTMLInputElement).value;
-                    const nameEn = (form.elements.namedItem('c_name_en') as HTMLInputElement).value;
-                    const slug = (form.elements.namedItem('c_slug') as HTMLInputElement).value;
-                    const desc = (form.elements.namedItem('c_desc') as HTMLTextAreaElement).value;
-                    const sortOrder = parseInt((form.elements.namedItem('c_sort') as HTMLInputElement).value || '1', 10);
+              {slideDrawerModule === 'categories' && (() => {
+                const item = editingItemId ? categories.find((c) => c.id === editingItemId) : null;
+                return (
+                  <form
+                    id="drawer-category-form"
+                    key={editingItemId || 'new-category'}
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      const form = e.currentTarget;
+                      const nameTh = (form.elements.namedItem('c_name_th') as HTMLInputElement).value;
+                      const nameEn = (form.elements.namedItem('c_name_en') as HTMLInputElement).value;
+                      const slug = (form.elements.namedItem('c_slug') as HTMLInputElement).value;
+                      const desc = (form.elements.namedItem('c_desc') as HTMLTextAreaElement).value;
+                      const sortOrder = parseInt((form.elements.namedItem('c_sort') as HTMLInputElement).value || '1', 10);
 
-                    onAddCategory({
-                      name_th: nameTh,
-                      name_en: nameEn,
-                      slug: slug.trim().toLowerCase(),
-                      description: desc,
-                      category_type: 'mission',
-                      sort_order: sortOrder,
-                      is_active: true,
-                      icon_name: 'Ambulance',
-                    });
-                    setIsSlideDrawerOpen(false);
-                  }}
-                  className="space-y-4"
-                >
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">ชื่อหมวดหมู่ (ภาษาไทย)</label>
-                    <input
-                      name="c_name_th"
-                      required
-                      placeholder="เช่น การแพทย์ฉุกเฉินและอุบัติเหตุทางถนน"
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">ชื่อหมวดหมู่ (ภาษาอังกฤษ)</label>
-                    <input
-                      name="c_name_en"
-                      required
-                      placeholder="เช่น EMS & Road Traffic Accidents"
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-mono"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      if (editingItemId) {
+                        onUpdateCategory(editingItemId, {
+                          name_th: nameTh,
+                          name_en: nameEn,
+                          slug: slug.trim().toLowerCase(),
+                          description: desc,
+                          sort_order: sortOrder,
+                        });
+                        showToast('บันทึกการแก้ไขหมวดหมู่เรียบร้อยแล้ว');
+                      } else {
+                        onAddCategory({
+                          name_th: nameTh,
+                          name_en: nameEn,
+                          slug: slug.trim().toLowerCase(),
+                          description: desc,
+                          category_type: 'mission',
+                          sort_order: sortOrder,
+                          is_active: true,
+                          icon_name: 'Ambulance',
+                        });
+                        showToast('เพิ่มหมวดหมู่ใหม่เรียบร้อยแล้ว');
+                      }
+                      setIsSlideDrawerOpen(false);
+                    }}
+                    className="space-y-4"
+                  >
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">รหัสอ้างอิง (Slug)</label>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">ชื่อหมวดหมู่ (ภาษาไทย)</label>
                       <input
-                        name="c_slug"
+                        name="c_name_th"
                         required
-                        placeholder="เช่น ems-accident"
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-mono"
+                        defaultValue={item?.name_th || ''}
+                        placeholder="เช่น การแพทย์ฉุกเฉินและอุบัติเหตุทางถนน"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">ลำดับการแสดงผล</label>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">ชื่อหมวดหมู่ (ภาษาอังกฤษ)</label>
                       <input
-                        name="c_sort"
-                        type="number"
-                        defaultValue={categories.length + 1}
+                        name="c_name_en"
+                        required
+                        defaultValue={item?.name_en || ''}
+                        placeholder="เช่น EMS & Road Traffic Accidents"
                         className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-mono"
                       />
                     </div>
-                  </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">คำอธิบายหมวดหมู่</label>
-                    <textarea
-                      name="c_desc"
-                      rows={3}
-                      required
-                      placeholder="อธิบายขอบเขตงาน เช่น ออกปฏิบัติการรับ-ส่ง ปฐมพยาบาล 24 ชม...."
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
-                    />
-                  </div>
-                </form>
-              )}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">รหัสอ้างอิง (Slug)</label>
+                        <input
+                          name="c_slug"
+                          required
+                          defaultValue={item?.slug || ''}
+                          placeholder="เช่น ems-accident"
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-mono"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">ลำดับการแสดงผล</label>
+                        <input
+                          name="c_sort"
+                          type="number"
+                          defaultValue={item?.sort_order || categories.length + 1}
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">คำอธิบายหมวดหมู่</label>
+                      <textarea
+                        name="c_desc"
+                        rows={3}
+                        required
+                        defaultValue={item?.description || ''}
+                        placeholder="อธิบายขอบเขตงาน เช่น ออกปฏิบัติการรับ-ส่ง ปฐมพยาบาล 24 ชม...."
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
+                      />
+                    </div>
+                  </form>
+                );
+              })()}
 
               {/* FORM: HERO SLIDES */}
-              {slideDrawerModule === 'hero_slides' && (
-                <form
-                  id="drawer-slide-form"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    const form = e.currentTarget;
-                    const badge = (form.elements.namedItem('s_badge') as HTMLInputElement).value;
-                    const title1 = (form.elements.namedItem('s_title1') as HTMLInputElement).value;
-                    const title2 = (form.elements.namedItem('s_title2') as HTMLInputElement).value;
-                    const subtitle = (form.elements.namedItem('s_subtitle') as HTMLTextAreaElement).value;
-                    const stat1_val = (form.elements.namedItem('s_stat1_val') as HTMLInputElement).value;
-                    const stat1_lbl = (form.elements.namedItem('s_stat1_lbl') as HTMLInputElement).value;
-                    const stat2_val = (form.elements.namedItem('s_stat2_val') as HTMLInputElement).value;
-                    const stat2_lbl = (form.elements.namedItem('s_stat2_lbl') as HTMLInputElement).value;
-                    const stat3_val = (form.elements.namedItem('s_stat3_val') as HTMLInputElement).value;
-                    const stat3_lbl = (form.elements.namedItem('s_stat3_lbl') as HTMLInputElement).value;
-                    const btnPrimary = (form.elements.namedItem('s_primary_btn') as HTMLInputElement).value;
-                    const btnSecondary = (form.elements.namedItem('s_secondary_btn') as HTMLInputElement).value;
+              {slideDrawerModule === 'hero_slides' && (() => {
+                const item = editingItemId ? heroSlides.find((s) => s.id === editingItemId) : null;
+                return (
+                  <form
+                    id="drawer-slide-form"
+                    key={editingItemId || 'new-slide'}
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      const form = e.currentTarget;
+                      const badge = (form.elements.namedItem('s_badge') as HTMLInputElement).value;
+                      const title1 = (form.elements.namedItem('s_title1') as HTMLInputElement).value;
+                      const title2 = (form.elements.namedItem('s_title2') as HTMLInputElement).value;
+                      const subtitle = (form.elements.namedItem('s_subtitle') as HTMLTextAreaElement).value;
+                      const stat1_val = (form.elements.namedItem('s_stat1_val') as HTMLInputElement).value;
+                      const stat1_lbl = (form.elements.namedItem('s_stat1_lbl') as HTMLInputElement).value;
+                      const stat2_val = (form.elements.namedItem('s_stat2_val') as HTMLInputElement).value;
+                      const stat2_lbl = (form.elements.namedItem('s_stat2_lbl') as HTMLInputElement).value;
+                      const stat3_val = (form.elements.namedItem('s_stat3_val') as HTMLInputElement).value;
+                      const stat3_lbl = (form.elements.namedItem('s_stat3_lbl') as HTMLInputElement).value;
+                      const btnPrimary = (form.elements.namedItem('s_primary_btn') as HTMLInputElement).value;
+                      const btnSecondary = (form.elements.namedItem('s_secondary_btn') as HTMLInputElement).value;
 
-                    onAddHeroSlide({
-                      badge,
-                      title_line1: title1,
-                      title_line2: title2,
-                      subtitle,
-                      cover_image: slideCoverImage,
-                      stat1_val,
-                      stat1_lbl,
-                      stat2_val,
-                      stat2_lbl,
-                      stat3_val,
-                      stat3_lbl,
-                      primary_btn_text: btnPrimary,
-                      primary_btn_action: 'report',
-                      secondary_btn_text: btnSecondary,
-                      secondary_btn_url: 'tel:0611193342',
-                      is_active: true,
-                      sort_order: heroSlides.length + 1,
-                      icon_name: 'Ambulance',
-                    });
-                    setIsSlideDrawerOpen(false);
-                  }}
-                  className="space-y-4"
-                >
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">ป้ายกำกับด้านบน (Badge)</label>
-                    <input
-                      name="s_badge"
-                      required
-                      placeholder="เช่น การแพทย์ฉุกเฉินและอุบัติเหตุทางถนน 24 ชม."
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      if (editingItemId && onUpdateHeroSlide) {
+                        onUpdateHeroSlide(editingItemId, {
+                          badge,
+                          title_line1: title1,
+                          title_line2: title2,
+                          subtitle,
+                          cover_image: slideCoverImage,
+                          stat1_val,
+                          stat1_lbl,
+                          stat2_val,
+                          stat2_lbl,
+                          stat3_val,
+                          stat3_lbl,
+                          primary_btn_text: btnPrimary,
+                          secondary_btn_text: btnSecondary,
+                        });
+                        showToast('บันทึกการแก้ไขสไลด์แบนเนอร์เรียบร้อยแล้ว');
+                      } else {
+                        onAddHeroSlide({
+                          badge,
+                          title_line1: title1,
+                          title_line2: title2,
+                          subtitle,
+                          cover_image: slideCoverImage,
+                          stat1_val,
+                          stat1_lbl,
+                          stat2_val,
+                          stat2_lbl,
+                          stat3_val,
+                          stat3_lbl,
+                          primary_btn_text: btnPrimary,
+                          primary_btn_action: 'report',
+                          secondary_btn_text: btnSecondary,
+                          secondary_btn_url: 'tel:0611193342',
+                          is_active: true,
+                          sort_order: heroSlides.length + 1,
+                          icon_name: 'Ambulance',
+                        });
+                        showToast('เพิ่มสไลด์แบนเนอร์ใหม่เรียบร้อยแล้ว');
+                      }
+                      setIsSlideDrawerOpen(false);
+                    }}
+                    className="space-y-4"
+                  >
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">หัวข้อบรรทัดที่ 1</label>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">ป้ายกำกับด้านบน (Badge)</label>
                       <input
-                        name="s_title1"
+                        name="s_badge"
                         required
-                        placeholder="เช่น เข้าถึงรวดเร็ว. กู้ชีพฉุกเฉิน."
+                        defaultValue={item?.badge || ''}
+                        placeholder="เช่น การแพทย์ฉุกเฉินและอุบัติเหตุทางถนน 24 ชม."
                         className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
                       />
                     </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">หัวข้อบรรทัดที่ 1</label>
+                        <input
+                          name="s_title1"
+                          required
+                          defaultValue={item?.title_line1 || ''}
+                          placeholder="เช่น เข้าถึงรวดเร็ว. กู้ชีพฉุกเฉิน."
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">หัวข้อบรรทัดที่ 2</label>
+                        <input
+                          name="s_title2"
+                          required
+                          defaultValue={item?.title_line2 || ''}
+                          placeholder="เช่น ช่วยเหลือทุกชีวิต ปลอดภัย."
+                          className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">หัวข้อบรรทัดที่ 2</label>
-                      <input
-                        name="s_title2"
+                      <ImageUploadField
+                        label="รูปภาพสไลด์แบนเนอร์ (อัปโหลดจากเครื่อง)"
+                        value={slideCoverImage}
+                        onChange={setSlideCoverImage}
                         required
-                        placeholder="เช่น ช่วยเหลือทุกชีวิต ปลอดภัย."
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none"
                       />
                     </div>
-                  </div>
 
-                  <div>
-                    <ImageUploadField
-                      label="รูปภาพสไลด์แบนเนอร์ (อัปโหลดจากเครื่อง)"
-                      value={slideCoverImage}
-                      onChange={setSlideCoverImage}
-                      required
-                    />
-                  </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">ข้อความบรรยายสไลด์</label>
+                      <textarea
+                        name="s_subtitle"
+                        rows={2}
+                        required
+                        defaultValue={item?.subtitle || ''}
+                        placeholder="ข้อความบรรยายรายละเอียดสไลด์..."
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
+                      />
+                    </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">ข้อความบรรยายสไลด์</label>
-                    <textarea
-                      name="s_subtitle"
-                      rows={2}
-                      required
-                      placeholder="ข้อความบรรยายรายละเอียดสไลด์..."
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-sm focus:border-[#16377e] focus:outline-none font-sarabun"
-                    />
-                  </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-700 mb-1">สถิติ 1 (ค่า)</label>
+                        <input
+                          name="s_stat1_val"
+                          defaultValue={item?.stat1_val || '< 8 นาที'}
+                          className="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs focus:border-[#16377e] focus:outline-none"
+                        />
+                        <input
+                          name="s_stat1_lbl"
+                          defaultValue={item?.stat1_lbl || 'เวลาตอบสนอง'}
+                          className="w-full px-2.5 py-1.5 mt-1 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-[10px] focus:border-[#16377e] focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-700 mb-1">สถิติ 2 (ค่า)</label>
+                        <input
+                          name="s_stat2_val"
+                          defaultValue={item?.stat2_val || 'ฟรี 100%'}
+                          className="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs focus:border-[#16377e] focus:outline-none"
+                        />
+                        <input
+                          name="s_stat2_lbl"
+                          defaultValue={item?.stat2_lbl || 'บริการ EMS'}
+                          className="w-full px-2.5 py-1.5 mt-1 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-[10px] focus:border-[#16377e] focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold text-slate-700 mb-1">สถิติ 3 (ค่า)</label>
+                        <input
+                          name="s_stat3_val"
+                          defaultValue={item?.stat3_val || '24 ชั่วโมง'}
+                          className="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs focus:border-[#16377e] focus:outline-none"
+                        />
+                        <input
+                          name="s_stat3_lbl"
+                          defaultValue={item?.stat3_lbl || 'ปฏิบัติการ'}
+                          className="w-full px-2.5 py-1.5 mt-1 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-[10px] focus:border-[#16377e] focus:outline-none"
+                        />
+                      </div>
+                    </div>
 
-                  <div className="grid grid-cols-3 gap-2">
-                    <div>
-                      <label className="block text-[11px] font-bold text-slate-700 mb-1">สถิติ 1 (ค่า)</label>
-                      <input
-                        name="s_stat1_val"
-                        defaultValue="< 8 นาที"
-                        className="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs focus:border-[#16377e] focus:outline-none"
-                      />
-                      <input
-                        name="s_stat1_lbl"
-                        defaultValue="เวลาตอบสนอง"
-                        className="w-full px-2.5 py-1.5 mt-1 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-[10px] focus:border-[#16377e] focus:outline-none"
-                      />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">ปุ่มหลัก (ข้อความ)</label>
+                        <input
+                          name="s_primary_btn"
+                          defaultValue={item?.primary_btn_text || 'แจ้งเหตุด่วนฉุกเฉิน'}
+                          className="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs focus:border-[#16377e] focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">ปุ่มรอง (ข้อความ)</label>
+                        <input
+                          name="s_secondary_btn"
+                          defaultValue={item?.secondary_btn_text || 'โทร 061-119-3342'}
+                          className="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs focus:border-[#16377e] focus:outline-none"
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <label className="block text-[11px] font-bold text-slate-700 mb-1">สถิติ 2 (ค่า)</label>
-                      <input
-                        name="s_stat2_val"
-                        defaultValue="ฟรี 100%"
-                        className="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs focus:border-[#16377e] focus:outline-none"
-                      />
-                      <input
-                        name="s_stat2_lbl"
-                        defaultValue="บริการ EMS"
-                        className="w-full px-2.5 py-1.5 mt-1 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-[10px] focus:border-[#16377e] focus:outline-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-bold text-slate-700 mb-1">สถิติ 3 (ค่า)</label>
-                      <input
-                        name="s_stat3_val"
-                        defaultValue="24 ชั่วโมง"
-                        className="w-full px-2.5 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs focus:border-[#16377e] focus:outline-none"
-                      />
-                      <input
-                        name="s_stat3_lbl"
-                        defaultValue="ปฏิบัติการ"
-                        className="w-full px-2.5 py-1.5 mt-1 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-[10px] focus:border-[#16377e] focus:outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">ปุ่มหลัก (ข้อความ)</label>
-                      <input
-                        name="s_primary_btn"
-                        defaultValue="แจ้งเหตุด่วนฉุกเฉิน"
-                        className="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs focus:border-[#16377e] focus:outline-none"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">ปุ่มรอง (ข้อความ)</label>
-                      <input
-                        name="s_secondary_btn"
-                        defaultValue="โทร 061-119-3342"
-                        className="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 text-xs focus:border-[#16377e] focus:outline-none"
-                      />
-                    </div>
-                  </div>
-                </form>
-              )}
+                  </form>
+                );
+              })()}
             </div>
 
             {/* Drawer Footer */}
